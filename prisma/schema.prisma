@@ -1,305 +1,329 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
-    @@index([userId])
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
+  @@index([userId])
 }
 
 model ResetToken {
-    id      String   @id @default(cuid())
-    token   String   @unique
-    userId  String
-    expires DateTime
-    user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      String   @id @default(cuid())
+  token   String   @unique
+  userId  String
+  expires DateTime
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
+  @@index([userId])
 }
 
 model User {
-    id                 String                   @id @default(cuid())
-    name               String?
-    email              String?                  @unique
-    emailVerified      DateTime?
-    image              String?
-    accounts           Account[]
-    sessions           Session[]
-    role               Role?                    @relation(fields: [roleId], references: [id], onDelete: Cascade)
-    roleId             Int?                     @default(1)
-    password           String?
+  id                 String                   @id @default(cuid())
+  name               String?
+  email              String?                  @unique
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  sessions           Session[]
+  role               Role?                    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId             Int?                     @default(1)
+  password           String?
     ResetToken         ResetToken[]
-    orders             Orden[]
-    Mensaje            Mensaje[]
-    serviciosAsignados ProcesoDesarrolloOrden[]
-    available          Boolean?                 @default(true)
-    userPersonalDataId String?                  @unique
-    userPersonalData   UserPersonalData?        @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
-
-    @@index([roleId])
+      orders             Orden[]
+       Mensaje            Mensaje[]
+       serviciosAsignados ProcesoDesarrolloOrden[]
+       available          Boolean?                 @default(true)
+        userPersonalDataId String?                  @unique
+       userPersonalData   UserPersonalData?        @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
+ 
+  @@index([roleId])
 }
 
 model UserPersonalData {
-    id                   String   @id @default(cuid())
-    userId               String   @unique
-    user                 User?
-    createdAt            DateTime @default(now())
-    updatedAt            DateTime @default(now())
-    telefono             Int
-    whatsapp             Int
-    marca                String
-    direccionFacturacion String
-    direccionEnvio       String
-    ciudad               String
-    cuitORazonSocial     String
-    mediosDePago         String
-    datosBancarios       String
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
+  telefono             Int
+  whatsapp             Int
+  marca                String
+  direccionFacturacion String
+  direccionEnvio       String
+  ciudad               String
+  cuitORazonSocial     String
+  mediosDePago         String
+  datosBancarios       String
 
-    @@index([userId])
+  @@index([userId])
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 model Role {
-    id          Int    @id
-    name        String @unique
-    description String
-    users       User[]
+  id          Int    @id
+  name        String @unique
+  description String
+  users       User[]
 }
 
 model PrecioPrenda {
-    id            String                @id @default(cuid())
-    precioBase    Float
-    tipo          TipoPrenda            @relation(fields: [tipoId], references: [id], onDelete: Cascade)
-    tipoId        String
-    complejidad   ComplejidadConfeccion @relation(fields: [complejidadId], references: [id], onDelete: Cascade)
-    complejidadId String
-    ordenes       Orden[]
+  id            String                @id @default(cuid())
+  precioBase    Float
+  tipo          TipoPrenda            @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+  tipoId        String
+  complejidad   ComplejidadConfeccion @relation(fields: [complejidadId], references: [id], onDelete: Cascade)
+  complejidadId String
+  ordenes       Orden[]
 
-    @@index([tipoId])
-    @@index([complejidadId])
+  @@index([tipoId])
+  @@index([complejidadId])
 }
 
 model TipoPrenda {
-    id      String         @id @default(cuid())
-    name    String         @unique
-    picture String
-    precios PrecioPrenda[]
+  id      String         @id @default(cuid())
+  name    String         @unique
+  picture String
+  precios PrecioPrenda[]
 }
 
 model ComplejidadConfeccion {
-    id          String         @id @default(cuid())
-    name        String         @unique
-    description String
-    prendas     PrecioPrenda[]
+  id          String         @id @default(cuid())
+  name        String         @unique
+  description String
+  prendas     PrecioPrenda[]
 }
 
 model PrecioDelDolar {
-    id         String   @id @default(cuid())
-    precio     Float
-    fechaDesde DateTime @default(now())
-    fechaHasta DateTime @default(now())
+  id         String   @id @default(cuid())
+  precio     Float
+  fechaDesde DateTime @default(now())
+  fechaHasta DateTime @default(now())
 }
 
 model Orden {
-    id               String                   @id @default(cuid())
+  id               String                   @id @default(cuid())
     prenda           PrecioPrenda             @relation(fields: [idPrenda], references: [id], onDelete: Cascade)
-    idPrenda         String
-    nombre           String?
-    cantidad         Int?
-    idEstado         Int?
-    estado           EstadoOrden?             @relation(fields: [idEstado], references: [id], onDelete: Cascade)
-    user             User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId           String?
-    createdAt        DateTime                 @default(now())
-    updatedAt        DateTime                 @default(now())
-    expiresAt        DateTime                 @default(now())
-    servicios        Servicio[]
-    archivos         Archivo[]
-    cotizacionOrden  CotizacionOrden[]
-    detallesPrenda   DetallesPrenda?
+  idPrenda         String
+  nombre           String?
+  cantidad         Int?
+  idEstado         Int?
+  estado           EstadoOrden?             @relation(fields: [idEstado], references: [id], onDelete: Cascade)
+  user             User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @default(now())
+  expiresAt        DateTime                 @default(now())
+  servicios        Servicio[]
+ archivos         Archivo[]
+  cotizacionOrden  CotizacionOrden[]
+  detallesPrenda   DetallesPrenda?
     idDetallesPrenda String?
     procesos         ProcesoDesarrolloOrden[]
     mensajes         Mensaje[]
 
-    @@index([idPrenda])
-    @@index([userId])
-    @@index([idEstado])
+  @@index([idPrenda])
+  @@index([userId])
+  @@index([idEstado])
 }
 
 model Mensaje {
-    id        String   @id @default(cuid())
-    orden     Orden    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
-    idOrden   String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
-    mensaje   String
-    seccion   String   @default("general")
+  id        String   @id @default(cuid())
+  orden     Orden    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  idOrden   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  mensaje   String
+  seccion   String   @default("general")
 
-    @@index([idOrden])
-    @@index([userId])
+  @@index([idOrden])
+  @@index([userId])
 }
 
 model CotizacionOrden {
-    id        String   @id @default(cuid())
-    orden     Orden    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
-    idOrden   String
-    precio    Float
-    createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  orden     Orden    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  idOrden   String
+  precio    Float
+  createdAt DateTime @default(now())
 
-    @@index([idOrden])
+  @@index([idOrden])
 }
 
 model EstadoOrden {
-    id      Int     @id @default(autoincrement())
-    nombre  String
-    ordenes Orden[]
+  id      Int     @id @default(autoincrement())
+  nombre  String
+  ordenes Orden[]
 }
 
 model ProcesoDesarrollo {
-    id                     Int                      @id @default(autoincrement())
-    nombre                 String
-    icono                  String
-    procesoDesarrolloOrden ProcesoDesarrolloOrden[]
-    servicio               Servicio[]
-    servicioId             String?
+  id                     Int                      @id @default(autoincrement())
+  nombre                 String
+  icono                  String
+  procesoDesarrolloOrden ProcesoDesarrolloOrden[]
+   servicio               Servicio[]
+   servicioId             String?
 }
 
 model EstadoProcesoDesarrollo {
-    id                     Int                      @id @default(autoincrement())
-    descripcion            String                   @unique
-    color                  String
-    ProcesoDesarrolloOrden ProcesoDesarrolloOrden[]
+  id                     Int                      @id @default(autoincrement())
+  descripcion            String                   @unique
+  color                  String
+  ProcesoDesarrolloOrden ProcesoDesarrolloOrden[]
 }
 
 model ProcesoDesarrolloOrden {
-    id                String                  @id @default(cuid())
-    orden             Orden                   @relation(fields: [idOrden], references: [id], onDelete: Cascade)
-    idOrden           String
-    proceso           ProcesoDesarrollo       @relation(fields: [idProceso], references: [id], onDelete: Cascade)
-    idProceso         Int
-    estado            EstadoProcesoDesarrollo @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
-    idEstadoProceso   Int
-    FichaTecnica      FichaTecnica?           @relation()
-    idFichaTecnica    String?
-    usuarioDeServicio User[]
-    lastUpdated       DateTime                @default(now())
+  id                String                  @id @default(cuid())
+  orden             Orden                   @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  idOrden           String
+  proceso           ProcesoDesarrollo       @relation(fields: [idProceso], references: [id], onDelete: Cascade)
+  idProceso         Int
+  estado            EstadoProcesoDesarrollo @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
+  idEstadoProceso   Int
+  FichaTecnica      FichaTecnica?           @relation()
+  idFichaTecnica    String?
+usuarioDeServicio User[]
+  lastUpdated       DateTime                @default(now())
 
-    @@index([idOrden])
-    @@index([idProceso])
-    @@index([idEstadoProceso])
+  @@index([idOrden])
+  @@index([idProceso])
+  @@index([idEstadoProceso])
 }
 
 model Servicio {
-    id                  String              @id @default(cuid())
-    name                String              @unique
-    description         String
-    precioFijo          Float               @default(0)
-    factorMultiplicador Float               @default(0)
-    ordenes             Orden[]
-    procesos            ProcesoDesarrollo[]
+  id                  String              @id @default(cuid())
+  name                String              @unique
+  description         String
+  precioFijo          Float               @default(0)
+  factorMultiplicador Float               @default(0)
+  ordenes             Orden[]
+  procesos            ProcesoDesarrollo[]
 }
 
 model Archivo {
-    id          String  @id @default(cuid())
-    name        String
-    observacion String?
-    urlID       String
-    type        String
-    Orden       Orden   @relation(fields: [ordenId], references: [id], onDelete: Cascade)
-    ordenId     String
+  id          String  @id @default(cuid())
+  name        String
+  observacion String?
+  urlID       String
+  type        String 
+  Orden       Orden   @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  ordenId     String
 
-    @@index([ordenId])
+  @@index([ordenId])
 }
 
 model DetallesPrenda {
-    id        String           @id @default(cuid())
-    atributos AtributoPrenda[]
-    orden     Orden            @relation(fields: [ordenId], references: [id], onDelete: Cascade)
-    ordenId   String           @unique
+  id        String           @id @default(cuid())
+  atributos AtributoPrenda[]
+  orden     Orden            @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+ordenId   String           @unique
 }
 
 model AtributoPrenda {
-    id               String         @id @default(cuid())
-    name             String
-    cantidad         Int?
-    observacion      String?
-    detallesPrenda   DetallesPrenda @relation(fields: [detallesPrendaId], references: [id], onDelete: Cascade)
-    detallesPrendaId String
+  id               String         @id @default(cuid())
+  name             String
+  cantidad         Int?
+  observacion      String?
+  detallesPrenda   DetallesPrenda @relation(fields: [detallesPrendaId], references: [id], onDelete: Cascade)
+  detallesPrendaId String
 
-    @@index([detallesPrendaId])
+  @@index([detallesPrendaId])
 }
 
 model FichaTecnica {
-    id          String                 @id @default(cuid())
-    proceso     ProcesoDesarrolloOrden @relation(fields: [procesoId], references: [id], onDelete: Cascade)
-    procesoId   String                 @unique
-    contenido   ContenidoFichaTencica? @relation()
-    contenidoId String?                @unique
-    archivos    ArchivoFichaTecnica[]
-    updatedAt   DateTime               @default(now())
-    estimatedAt DateTime               @default(now())
+  id          String                 @id @default(cuid())
+  proceso     ProcesoDesarrolloOrden @relation(fields: [procesoId], references: [id], onDelete: Cascade)
+  procesoId   String                 @unique
+  contenido   ContenidoFichaTencica? @relation()
+  contenidoId String?                @unique
+  archivos    ArchivoFichaTecnica[]
+  updatedAt   DateTime               @default(now())
+  estimatedAt DateTime               @default(now())
 
-    @@index([procesoId])
+  @@index([procesoId])
 }
 
 model ContenidoFichaTencica {
-    id             String       @id @default(cuid())
-    fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
-    fichaTecnicaId String       @unique
-    contenido      String
+  id             String       @id @default(cuid())
+  fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
+  fichaTecnicaId String       @unique
+  contenido      String 
 }
 
 model ArchivoFichaTecnica {
-    id             String       @id @default(cuid())
+  id             String       @id @default(cuid())
     fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
-    fichaTecnicaId String
-    name           String
-    observacion    String?
-    urlID          String
-    type           String?
+  fichaTecnicaId String
+  name           String
+  observacion    String?
+  urlID          String
+  type           String?
 
-    @@index([fichaTecnicaId])
+  @@index([fichaTecnicaId])
+}
+
+model OrdenToServicio {
+  A String
+  B String
+
+  @@unique([A, B], map: "_OrdenToServicio_AB_unique")
+  @@index([B], map: "_OrdenToServicio_B_index")
+  @@map("_OrdenToServicio")
+}
+
+model ProcesoDesarrolloOrdenToUser {
+  A String
+  B String
+
+  @@unique([A, B], map: "_ProcesoDesarrolloOrdenToUser_AB_unique")
+  @@index([B], map: "_ProcesoDesarrolloOrdenToUser_B_index")
+  @@map("_ProcesoDesarrolloOrdenToUser")
+}
+
+model ProcesoDesarrolloToServicio {
+  A Int
+  B String
+
+  @@unique([A, B], map: "_ProcesoDesarrolloToServicio_AB_unique")
+  @@index([B], map: "_ProcesoDesarrolloToServicio_B_index")
+  @@map("_ProcesoDesarrolloToServicio")
 }
