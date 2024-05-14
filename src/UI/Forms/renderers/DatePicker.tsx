@@ -30,6 +30,7 @@ function DatePicker<Model>(props: DatePickerProps<Model>) {
                             value={value}
                             onChange={(event) => { onChange(event.$d.toISOString()) }}
                             renderInput={(params) => <TextField {...params} fullWidth />}
+                            disablePast={true}
                         />
                     </LocalizationProvider>
                 </>

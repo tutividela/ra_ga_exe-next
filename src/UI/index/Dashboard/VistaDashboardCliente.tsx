@@ -31,15 +31,15 @@ const VistaDashboardCliente = (props: props) => {
     const { addError } = useContext(ErrorHandlerContext);
     const { data: sessionData } = useSession();
 
-
     const { data: orderData, isLoading: isFetchingOrders } = useQuery(['ordenes', props?.emailToFetchOrders], () => fetchOrderFromEmail(props?.emailToFetchOrders), {
         onError: () => addError('Error al traer ordenes')
-    })
+    });
 
-    const { data: reducedUserInfo, isLoading: isFetchingReducedUserInfo } = useQuery<ReducedUserInfoSchemaType>(
+    const { data: reducedUserInfo, isLoading: isFetchingReducedUserInfo, isRefetching: isRefetchingReducedUserInfo } = useQuery<ReducedUserInfoSchemaType>(
         ['reducedUserInfo', props?.emailToFetchOrders], () => getReducedUser(props?.emailToFetchOrders), {
         onError: () => addError('Error al traer información del usuario'),
-    })
+        refetchOnWindowFocus: true,
+    });
 
 
     function CustomToolbar() {
@@ -68,7 +68,7 @@ const VistaDashboardCliente = (props: props) => {
                         </Link>
                     </div>
                     <div className="lg:hidden rounded-2xl">
-                        <Link href={"/fichaTecnicaForm"}>
+                        <Link href={"/user/" + reducedUserInfo?.user.id}>
                             <Button variant="outlined" startIcon={<PersonIcon />} >
                                 Datos de usuario
                             </Button>
@@ -111,7 +111,7 @@ const VistaDashboardCliente = (props: props) => {
                 </div>
 
                 <div className="hidden lg:flex lg:flex-col p-4 lg:w-1/3 xl:w-1/4 shadow-2xl rounded-3xl bg-gray-100  mr-10">
-                    <LoadingIndicator show={isFetchingReducedUserInfo}>
+                    <LoadingIndicator show={isFetchingReducedUserInfo || isRefetchingReducedUserInfo}>
                         <div className="text-xl my-8 flex justify-between">
                             <div>Mi cuenta</div>
                             <div>
@@ -126,7 +126,7 @@ const VistaDashboardCliente = (props: props) => {
                         </div>
 
 
-                        {!isFetchingReducedUserInfo &&
+                        {!(isFetchingReducedUserInfo || isRefetchingReducedUserInfo) &&
                             <HookForm defaultValues={reducedUserInfo} formOptions={{ resolver: zodResolver(ReducedUserInfoSchema) }} onSubmit={handleFormSubmit} >
                                 <FormItem layout={reducedUserInfoLayout} />
                             </HookForm>

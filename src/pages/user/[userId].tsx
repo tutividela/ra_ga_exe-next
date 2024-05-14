@@ -21,7 +21,7 @@ import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { useContext } from "react";
-import { useMutation, useQueryClient, useQuery } from "react-query";
+import { useMutation, useQueryClient, useQuery, useIsMutating } from "react-query";
 
 const Home: NextPage = () => {
 
@@ -48,19 +48,20 @@ const Home: NextPage = () => {
         (
             (data) => updateUser(data), {
             onError: () => addError('Error al modificar información del usuario'),
-            onSuccess: () => {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(['userInfo', userId]);
                 addError('Información modificada exitosamente', 'success')
-                queryClient.invalidateQueries(['userInfo', userId])
-                queryClient.invalidateQueries(['reducedUserInfo'])
+                router.back();
             }
-        })
+        });
+        const isMutating = Boolean(useIsMutating());
 
 
     return (
         <div className="bg-split-white-black">
             <Head>
                 <title>HS-Taller</title>
-                <meta name="description" content="Ramiro Onate, Gaspar Garcia, Exequiel videla" />
+                <meta name="description" content="Ramiro Onate, Gaspar Garcia, Exequiel Videla" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
@@ -70,8 +71,8 @@ const Home: NextPage = () => {
                     <div>
                         <ErrorAlerter />
                         <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
-                            <LoadingIndicator show={isFetchingUserInfo && !userInfo} >
-                                <PageTitle title="Mis datos" hasBack={false} />
+                            <LoadingIndicator show={isFetchingUserInfo || isMutating} >
+                                <PageTitle title="Mis Datos" hasBack={false} />
                                 <div className="flex justify-center items-center">
                                     {!isFetchingUserInfo && userInfo &&
                                         <div className="md:w-1/4 w-3/4">

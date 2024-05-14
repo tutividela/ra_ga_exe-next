@@ -19,8 +19,6 @@ const Home: NextPage = () => {
   const { data } = useSession()
   const { addError } = useContext(ErrorHandlerContext)
 
-  //const role = useGetRole(data?.user?.email || '')
-
   const { data: roleData } = useQuery(['userRole', data?.user?.email], () => data?.user?.email ? getRole(data?.user?.email) : null,
     { refetchOnWindowFocus: false, onError: (error) => addError(JSON.stringify(error)) }
   )

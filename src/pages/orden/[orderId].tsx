@@ -44,7 +44,7 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
         refetchOnWindowFocus: false
     });
 
-    const [selectedProcess, setSelectedProcess] = useState('general')
+    const [selectedProcess, setSelectedProcess] = useState('general');
     const handleSelectProcess = (processID: string) => {
         setSelectedProcess(processID)
     }

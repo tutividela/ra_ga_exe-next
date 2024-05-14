@@ -83,67 +83,71 @@ const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect }: Props
         onSelect(id)
     }
 
-    if (id === 'general') return (
-        <>
-            <OrderGeneralChangeDialog open={generalDialogOpen} onClose={handleGeneralDialogClose} />
-            <div className={`py-2 px-4 flex flex-row justify-between items-center space-x-4 text-2 m-2 border-2 transition-all ${backgroundColor}`} onClick={handleSelectProcess}>
-                <div className='flex flex-row items-center space-x-4'>
-
-                    <div>
-                        <Image src={icon} alt='hola' width={30} height={30} />
+    if (id === 'general') {
+        return (
+            <>
+                <OrderGeneralChangeDialog open={generalDialogOpen} onClose={handleGeneralDialogClose} />
+                <div className={`py-2 px-4 flex flex-row justify-between items-center space-x-4 text-2 m-2 border-2 transition-all ${backgroundColor}`} onClick={handleSelectProcess}>
+                    <div className='flex flex-row items-center space-x-4'>
+    
+                        <div>
+                            <Image src={icon} alt='hola' width={30} height={30} />
+                        </div>
+                        <div>
+                            <li className='flex flex-col'>
+                                <div className='font-bold text-lg'>{nombreProceso}</div>
+                                <div className='text-gray-400 text-xs'>Detalles generales de la orden</div>
+                            </li>
+                        </div>
                     </div>
-                    <div>
-                        <li className='flex flex-col'>
-                            <div className='font-bold text-lg'>{nombreProceso}</div>
-                            <div className='text-gray-400 text-xs'>Detalles generales de la orden</div>
-                        </li>
-                    </div>
-                </div>
-
-                {(role === adminRole) && <div className='flex flex-row'>
-                    <div>
-                        <IconButton type='button' onClick={handleGeneralDialogOpen}>
-                            <EditIcon />
-                        </IconButton>
-                    </div>
-                </div>}
-            </div>
-        </>
-    )
-    if (role === adminRole || role === prestadorDeServiciosRole) return (
-        <>
-            <OrderProcessItemChangeDialog process={proceso} open={statusDialogOpen} onClose={handleStatusDialogClose} />
-            <OrderProcessItemResourcesDialog process={proceso} open={resourceDialogOpen} onClose={handleResourceDialogClose} />
-            <div className={`py-2 px-4 flex flex-row items-center justify-between text-2 m-2 border-2 ${backgroundColor}`} onClick={handleSelectProcess}>
-                <div className='flex flex-row items-center space-x-4'>
-                    <div>
-                        <Image src={icon} alt='hola' width={30} height={30} />
-                    </div>
-                    <div>
-                        <li className='flex flex-col'>
-                            <div className='font-bold text-lg'>{nombreProceso}</div>
-                            <div className='text-gray-400 text-xs'>Estado: <span className={`${color}`}>{estado}</span></div>
-                            <div className='text-gray-400 text-xs'>Plazo estimado: <span >{estimatedAt}</span></div>
-                            {/* Date.now() - lastUpdated?.getTime() < 24 * 60 * 60 * 1000 && <div className='text-gray-400 text-xs'>Actualizado hace: <span >{Math.round((Date.now() - lastUpdated?.getTime()) / 1000 / 60)} minutos</span></div> */}
-                            {lastUpdated? <div className='text-gray-400 text-xs'>Actualizado el: <span >{new Date(lastUpdated).toLocaleDateString('es-AR')}</span></div> : null}
-                        </li>
-                    </div>
-                </div>
-                <div className='flex flex-row'>
-                    {role === adminRole && <div>
-                        <IconButton type='button' onClick={handleResourceDialogOpen}>
-                            <PersonAddIcon />
-                        </IconButton>
+    
+                    {(role === adminRole) && <div className='flex flex-row'>
+                        <div>
+                            <IconButton type='button' onClick={handleGeneralDialogOpen}>
+                                <EditIcon />
+                            </IconButton>
+                        </div>
                     </div>}
-                    <div>
-                        <IconButton type='button' onClick={handleStatusDialogOpen}>
-                            <EditIcon />
-                        </IconButton>
+                </div>
+            </>
+        );
+    } 
+
+    if (role === adminRole || role === prestadorDeServiciosRole) {
+        return (
+            <>
+                <OrderProcessItemChangeDialog process={proceso} open={statusDialogOpen} onClose={handleStatusDialogClose} />
+                <OrderProcessItemResourcesDialog process={proceso} open={resourceDialogOpen} onClose={handleResourceDialogClose} />
+                <div className={`py-2 px-4 flex flex-row items-center justify-between text-2 m-2 border-2 ${backgroundColor}`} onClick={handleSelectProcess}>
+                    <div className='flex flex-row items-center space-x-4'>
+                        <div>
+                            <Image src={icon} alt='hola' width={30} height={30} />
+                        </div>
+                        <div>
+                            <li className='flex flex-col'>
+                                <div className='font-bold text-lg'>{nombreProceso}</div>
+                                <div className='text-gray-400 text-xs'>Estado: <span className={`${color}`}>{estado}</span></div>
+                                <div className='text-gray-400 text-xs'>Plazo estimado: <span >{estimatedAt}</span></div>
+                                {lastUpdated? <div className='text-gray-400 text-xs'>Actualizado el: <span >{new Date(lastUpdated).toLocaleDateString('es-AR')}</span></div> : null}
+                            </li>
+                        </div>
+                    </div>
+                    <div className='flex flex-row'>
+                        {role === adminRole && <div>
+                            <IconButton type='button' onClick={handleResourceDialogOpen}>
+                                <PersonAddIcon />
+                            </IconButton>
+                        </div>}
+                        <div>
+                            <IconButton type='button' onClick={handleStatusDialogOpen}>
+                                <EditIcon />
+                            </IconButton>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </>
-    )
+            </>
+        )
+    }
 
     return (
         <div className={`py-2 px-4 flex flex-row items-center space-x-4 text-2 m-2 border-2 transition-all ${backgroundColor}`} onClick={handleSelectProcess}>

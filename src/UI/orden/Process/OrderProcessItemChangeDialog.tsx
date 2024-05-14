@@ -51,7 +51,10 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     })
 
     const { mutateAsync, isLoading: isUpdatingState } = useMutation(updateProcessState, {
-        onSuccess: () => { props.onClose(); queryClient.invalidateQueries(['order']) },
+        onSuccess: () => { 
+            props.onClose(); 
+            queryClient.invalidateQueries(['order']) 
+        },
         onError: (err) => addError(JSON.stringify(err))
     })
 

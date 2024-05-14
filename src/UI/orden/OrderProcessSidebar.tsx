@@ -36,9 +36,17 @@ const OrderProcessSidebar = ({ orderData, role, selectedProcess, onSelect }: Pro
             <div className='m-2 font-bold text-lg'>Procesos</div>
             <div className='flex flex-col max-h-screen overflow-y-auto'>
                 {orderData?.procesos.filter(proc => {
-                    if (proc.proceso === 'Molderia' || proc.proceso === 'Geometral') return true
-                    if (role === clienteRole) return proc.estado !== 'No Pedido'
-                    if (role === prestadorDeServiciosRole) return proc.recursos.some(el => el.key === data.user.email)
+                    if (proc.proceso === 'Molderia' || proc.proceso === 'Geometral') {
+                        return true;
+                    }
+
+                    if (role === clienteRole) {
+                        return proc.estado !== 'No Pedido'
+                    }
+
+                    if (role === prestadorDeServiciosRole) {
+                        return proc.recursos.some(el => el.key === data.user.email)
+                    }
                     return true
                 })
                     .map(proc => <SelectableOrderProcessItem
