@@ -71,8 +71,8 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                             checkboxSelection
                         />
                     ): (
-                        <div>
-                            <p>No hay tiempo cargado</p>
+                        <div className="flex align-middle m-3 justify-center h-auto">
+                            <p className="font-semibold text-lg">No hay tiempo cargado</p>
                         </div>
                     )
                 }
