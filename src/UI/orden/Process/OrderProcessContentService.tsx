@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import ServiceDetailsTab from "./Tabs/Services/Details/ServiceDetailsTab";
 import ServiceFilesTab from "./Tabs/Services/Files/ServiceFilesTab";
+import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/ServiceReportesTiempoTab";
+import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 
 type Props = {
-    orderData: ExtendedOrdenData
-    selectedProcess: string
+    orderData: ExtendedOrdenData;
+    selectedProcess: string;
+    rol: string;
 }
 
-const OrderProcessContentService = ({ orderData, selectedProcess }: Props) => {
+const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) => {
     const [value, setValue] = useState(0);
     const [slide, setSlide] = useState(true)
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -33,6 +36,7 @@ const OrderProcessContentService = ({ orderData, selectedProcess }: Props) => {
                                 {<Tab label="Detalles" value={0} />}
                                 {true && <Tab label="Archivos" value={1} />}
                                 {true && <Tab label="Mensajes" value={2} />}
+                                {(rol === adminRole || rol === ayudanteRole) && <Tab label="Reportes de Tiempo" value={3} />}
                             </Tabs>
                         </div>
                         <div hidden={value !== 0} className='w-full'>
@@ -44,6 +48,14 @@ const OrderProcessContentService = ({ orderData, selectedProcess }: Props) => {
                         <div hidden={value !== 2} className='w-full'>
                             <OrderMessagesTab orderData={orderData} selectedProcess={selectedProcess} />
                         </div>
+                        {
+                            (rol === adminRole || rol === ayudanteRole) && 
+                                <div hidden={value !== 3} className='w-full'>
+                                    <ServiceReportesTiempoTab orderData={orderData} selectedProcess={selectedProcess}/>
+                                </div>
+                        }
+
+                        
                     </div>
                 </div>
             </div>

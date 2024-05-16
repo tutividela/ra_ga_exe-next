@@ -4,8 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    //const { id } = req.query;
-
+    const id = req.body.orderId;
     try {
         const orders = await prisma.orden.findUnique({
             include: {
@@ -38,7 +37,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
                 },
                 mensajes: { include: { user: true } }
             },
-            where: { id: req.body.orderId }
+            where: { id: id }
         })
 
         const formattedProcesses = orders.procesos.map(proc => ({

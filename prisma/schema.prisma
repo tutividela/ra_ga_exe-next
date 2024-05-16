@@ -59,14 +59,15 @@ model User {
   role               Role?                    @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId             Int?                     @default(1)
   password           String?
-    ResetToken         ResetToken[]
-      orders             Orden[]
-       Mensaje            Mensaje[]
-       serviciosAsignados ProcesoDesarrolloOrden[]
-       available          Boolean?                 @default(true)
-        userPersonalDataId String?                  @unique
-       userPersonalData   UserPersonalData?        @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
- 
+  ResetToken         ResetToken[]
+  orders             Orden[]
+  Mensaje            Mensaje[]
+  serviciosAsignados ProcesoDesarrolloOrden[]
+  available          Boolean?                 @default(true)
+  userPersonalDataId String?                  @unique
+  userPersonalData   UserPersonalData?        @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
+  CargaDeTiempo      CargaDeTiempo[]
+
   @@index([roleId])
 }
 
@@ -140,7 +141,7 @@ model PrecioDelDolar {
 
 model Orden {
   id               String                   @id @default(cuid())
-    prenda           PrecioPrenda             @relation(fields: [idPrenda], references: [id], onDelete: Cascade)
+  prenda           PrecioPrenda             @relation(fields: [idPrenda], references: [id], onDelete: Cascade)
   idPrenda         String
   nombre           String?
   cantidad         Int?
@@ -152,12 +153,12 @@ model Orden {
   updatedAt        DateTime                 @default(now())
   expiresAt        DateTime                 @default(now())
   servicios        Servicio[]
- archivos         Archivo[]
+  archivos         Archivo[]
   cotizacionOrden  CotizacionOrden[]
   detallesPrenda   DetallesPrenda?
-    idDetallesPrenda String?
-    procesos         ProcesoDesarrolloOrden[]
-    mensajes         Mensaje[]
+  idDetallesPrenda String?
+  procesos         ProcesoDesarrolloOrden[]
+  mensajes         Mensaje[]
 
   @@index([idPrenda])
   @@index([userId])
@@ -200,8 +201,8 @@ model ProcesoDesarrollo {
   nombre                 String
   icono                  String
   procesoDesarrolloOrden ProcesoDesarrolloOrden[]
-   servicio               Servicio[]
-   servicioId             String?
+  servicio               Servicio[]
+  servicioId             String?
 }
 
 model EstadoProcesoDesarrollo {
@@ -221,8 +222,9 @@ model ProcesoDesarrolloOrden {
   idEstadoProceso   Int
   FichaTecnica      FichaTecnica?           @relation()
   idFichaTecnica    String?
-usuarioDeServicio User[]
+  usuarioDeServicio User[]
   lastUpdated       DateTime                @default(now())
+  cargasDeTiempo    CargaDeTiempo[]
 
   @@index([idOrden])
   @@index([idProceso])
@@ -244,7 +246,7 @@ model Archivo {
   name        String
   observacion String?
   urlID       String
-  type        String 
+  type        String
   Orden       Orden   @relation(fields: [ordenId], references: [id], onDelete: Cascade)
   ordenId     String
 
@@ -255,7 +257,7 @@ model DetallesPrenda {
   id        String           @id @default(cuid())
   atributos AtributoPrenda[]
   orden     Orden            @relation(fields: [ordenId], references: [id], onDelete: Cascade)
-ordenId   String           @unique
+  ordenId   String           @unique
 }
 
 model AtributoPrenda {
@@ -286,12 +288,12 @@ model ContenidoFichaTencica {
   id             String       @id @default(cuid())
   fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
   fichaTecnicaId String       @unique
-  contenido      String 
+  contenido      String
 }
 
 model ArchivoFichaTecnica {
   id             String       @id @default(cuid())
-    fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
+  fichaTecnica   FichaTecnica @relation(fields: [fichaTecnicaId], references: [id], onDelete: Cascade)
   fichaTecnicaId String
   name           String
   observacion    String?
@@ -299,6 +301,22 @@ model ArchivoFichaTecnica {
   type           String?
 
   @@index([fichaTecnicaId])
+}
+
+model CargaDeTiempo {
+  id                       String                 @id @default(cuid())
+  horas                    Int                    @default(0)
+  minutos                  Int                    @default(0)
+  comentario               String
+  idProcesoDesarrolloOrden String
+  idUsuario                String
+  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
+  usuarioDeCreacion        User                   @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  fechaDeCarga             DateTime               @default(now())
+  fechaDeActualizacion     DateTime               @default(now())
+
+  @@index([idProcesoDesarrolloOrden])
+  @@index([idUsuario])
 }
 
 model OrdenToServicio {
