@@ -1,5 +1,5 @@
 import { ValidatedOrderSchema } from "@backend/schemas/OrderCreationSchema";
-import { Prisma } from "@prisma/client";
+import { Prisma, Servicio } from "@prisma/client";
 import { prisma } from "@server/db/client";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 
@@ -102,24 +102,57 @@ export const findPrendaPrecioByTypeAndComplexity = async (tipoId: string, comple
 
 // }
 
-export const calculateOrderTotal = async (orderData: ValidatedOrderSchema, complexityId: string) => {
+export const calculateOrderTotal = async (datosDeLaOrden: ValidatedOrderSchema, complexityId: string) => {
     try {
-        const precioDolar = await getPrecioDolar()
-        await prisma.servicio.findMany({ where: { name: { in: Object.keys(orderData) } } })
+        const {procesosDesarrolloSeleccionados} = datosDeLaOrden;
+        let precioTotal: number = 0;
+        const preciosIndividuales = [];
 
-        const preciosIndividuales = []
-        const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(orderData.tipoPrenda.id, complexityId);
+        const precioDolar = await getPrecioDolar();
+        const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(datosDeLaOrden.tipoPrenda.id, complexityId);
+        const todosProcesoDesarrolloConServicio = await prisma.procesoDesarrollo.findMany({
+            include: {
+                servicio: true
+            }
+        });
+        const preciosDeServiciosSeleccionados = Object.entries(procesosDesarrolloSeleccionados).map((procesoDesarrollo) => {
+            let precioFijoYFactorMultiplicador = {
+                precioFijo: 0,
+                factorMultiplicador: 0
+            }
+            const [nombre, {selected: seleccionado}] = procesoDesarrollo; 
 
-        const services = await prisma.servicio.findMany({})
+            if(seleccionado) {
+                const servicios = todosProcesoDesarrolloConServicio.filter(
+                    (procesoDesarrolloConServicio) => procesoDesarrolloConServicio.nombre === nombre
+                )[0].servicio;
 
+                servicios.forEach((servicio: Servicio) => {
+                    precioFijoYFactorMultiplicador.precioFijo += servicio.precioFijo;
+                    precioFijoYFactorMultiplicador.factorMultiplicador += servicio.factorMultiplicador;
+                });
+                preciosIndividuales.push({
+                    servicio: nombre,
+                    precioTotal: precioDolar?.precio * (prendaPrecio.precioBase * precioFijoYFactorMultiplicador.factorMultiplicador + precioFijoYFactorMultiplicador.precioFijo)
+                });
+            }
+        });
+        preciosIndividuales.forEach((precioIndividual: {servicio: string, precioTotal: number}) => precioTotal += precioIndividual.precioTotal);
+
+        return {
+            precioTotal,
+            preciosIndividuales,
+            precioDolar
+        }
+        /* const services = await prisma.servicio.findMany({})
         const servicesPrices = services.reduce<{ [key: string]: { precioFijo: number, factorMultiplicador: number } }>((acc, service) => {
             acc[service.name] = { precioFijo: service.precioFijo, factorMultiplicador: service.factorMultiplicador }
             return acc
-        }, {})
+        }, {}); 
 
-        const factores = Object.keys(orderData).reduce((prev, key) => {
+        const factores = Object.keys(datosDeLaOrden).reduce((prev, key) => {
             if (key in servicesPrices) {
-                if (orderData[key]?.selected) {
+                if (datosDeLaOrden[key]?.selected) {
                     prev.factorMultiplicador += servicesPrices[key].factorMultiplicador
                     prev.precioFijo += servicesPrices[key].precioFijo
                     prev.servicios[key] = { precioFijo: servicesPrices[key].precioFijo, factorMultiplicador: servicesPrices[key].factorMultiplicador }
@@ -132,6 +165,7 @@ export const calculateOrderTotal = async (orderData: ValidatedOrderSchema, compl
             return prev
         }, { precioFijo: 0, factorMultiplicador: 0, servicios: {} })
         return { precioTotal: (precioDolar?.precio * (prendaPrecio.precioBase * factores.factorMultiplicador + factores.precioFijo)), preciosIndividuales, precioDolar }
+    */
     }
     catch (e) {
         console.error(e)

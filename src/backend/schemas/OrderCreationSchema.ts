@@ -42,7 +42,6 @@ export const OrderCreationDataSchema = z.object({
     nombreProducto: z.string(),
     complejidad: z.string(),
     cliente: z.string(),
-
     geometral: z.object({
         selected: z.boolean(),
         observaciones: z.string(),
@@ -61,14 +60,20 @@ export const OrderCreationDataSchema = z.object({
             type: z.string()
         }))
     }),
-    "Corte Muestra": z.object({ selected: z.boolean(), }),
-    "Confección Muestra": z.object({ selected: z.boolean() }),
-    "Ficha Técnica de Consumos": z.object({ selected: z.boolean() }),
-    "Digitalización y Progresiones": z.object({ selected: z.boolean() }),
-    "Impresión Moldertía Base": z.object({ selected: z.boolean() }),
-    "Terminación": z.object({ selected: z.boolean() }),
-    "Cotización": z.object({ selected: z.boolean() }),
-    "Moldería Base": z.object({ selected: z.boolean() }),
+    procesosDesarrolloSeleccionados: z.object({
+        Diseño: z.object({selected: z.boolean()}),
+        Molderia: z.object({ selected: z.boolean() }),
+        ["Digitalización"]: z.object({ selected: z.boolean() }),
+        Geometral: z.object({ selected: z.boolean() }),
+        Impresion: z.object({ selected: z.boolean() }),
+        Materiales: z.object({selected: z.boolean()}),
+        Corte: z.object({ selected: z.boolean(), }),
+        ["Pre-confección"]: z.object({selected: z.boolean()}),
+        ["Confección"]: z.object({ selected: z.boolean() }),
+        Tizado: z.object({selected: z.boolean()}),
+        Terminado: z.object({ selected: z.boolean() }), 
+    }),
+    cotización: z.object({ selected: z.boolean() }),
     talles: z.string(),
     cantidad: z.string(),
     tipoPrenda: z.object({

@@ -1,6 +1,7 @@
 import { calculateOrderTotal, findPrendaPrecioByTypeAndComplexity, getAtributosPrenda, updateExpiredOrders } from '@backend/dbcalls/order';
 import { checkIfUserExists, fromToday } from '@backend/dbcalls/user';
 import { OrderCreationDataSchema } from '@backend/schemas/OrderCreationSchema';
+import { ProcesoDesarrollo, Servicio } from '@prisma/client';
 import { prisma } from '@server/db/client';
 import { generateEmailer } from '@utils/email/generateEmailer';
 import { newOrderNotificationHTML } from '@utils/email/newOrderNotification';
@@ -10,44 +11,81 @@ import { ZodError } from 'zod';
 
 const handleOrderCreation = async (req: NextApiRequest, res: NextApiResponse) => {
 
-
-
     try {
         const data = OrderCreationDataSchema.parse(req.body);
-        const { id: idComplejidad } = await prisma.complejidadConfeccion.findFirst({ where: { name: data.complejidad } })
-
-
-        const selectedAttributes = Object.entries(data).filter(([, value]: [string, any]) => value?.selected && value?.selected === true).map(([key]) => key)
-
-        const procesos = await prisma.procesoDesarrollo.findMany({ include: { servicio: true } })
-        const selectedServices = await prisma.servicio.findMany({ select: { name: true, procesos: true }, where: { name: { in: selectedAttributes } } })
-
-        const processCreateMap = procesos.map(proc => {
-            const { servicio } = proc
-            const selected = servicio.some(serv => selectedAttributes.includes(serv.name))
-            return {
-                idEstadoProceso: selected || servicio.length === 0 ? 1 : 3,
-                idProceso: proc.id,
+        const idsPlanchadoEntregadoAprobadoPedidos = [
+            {
+                idProceso: 4,
+                idEstadoProceso: 3
+            },
+            {
+                idProceso: 13,
+                idEstadoProceso: 1
+            },
+            {
+                idProceso: 14,
+                idEstadoProceso: 1
+            },
+            {
+                idProceso: 15,
+                idEstadoProceso: 1
             }
-        })
+        ];
+        const {procesosDesarrolloSeleccionados} = data;
+        const { id: idComplejidadDeOrdenACrear } = await prisma.complejidadConfeccion.findFirst({ where: { name: data.complejidad } })
+        const todosProcesosDesarrolloConServicio = await prisma.procesoDesarrollo.findMany({
+            include: {
+                servicio: true
+            }
+        });
 
-        const idOrden = generateOrderID(data)
+        let serviciosSeleccionados = [];
+        Object.entries(procesosDesarrolloSeleccionados).forEach((procesoDesarrollo) => {
+            const [nombre, {selected: seleccionado}] = procesoDesarrollo;
+            if(seleccionado) {
+                const servicios = todosProcesosDesarrolloConServicio.find(
+                    (procesoDesarrolloConServicio) => procesoDesarrolloConServicio.nombre === nombre
+                ).servicio;
+                serviciosSeleccionados = [...serviciosSeleccionados, ...servicios];
+            }
+        });
+        
+        const idsProcesoDesarrolloYEstadoProcesoDesarrollo = Object.entries(procesosDesarrolloSeleccionados).map((procesoDesarrollo) => {     
+            const {id} = todosProcesosDesarrolloConServicio.find((proceso) => proceso.nombre === procesoDesarrollo[0]);
+            
+            if(id === 7) {
+                return {
+                    idProceso: id,
+                    idEstadoProceso: procesoDesarrollo[1].selected? 2: 3
+                }
+            }
 
-        const { sendEmail } = generateEmailer({
+            return {
+                idProceso: id,
+                idEstadoProceso: procesoDesarrollo[1].selected? 1: 3
+            }
+        });
+        console.log(idsProcesoDesarrolloYEstadoProcesoDesarrollo)
+
+        const idOrden = generateOrderID(data.user?.name, data.tipoPrenda?.name);
+
+        /* const { sendEmail } = generateEmailer({
             password: process.env.MAILGUN_SMTP_PASS,
             user: 'postmaster@gasppo.lol',
             from: 'soporte@gasppo.lol',
             fromTitle: 'Soporte HS-Taller'
-        })
+        }) */
 
         await updateExpiredOrders();
 
-        const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(data.tipoPrenda.id, idComplejidad);
-        const precio = await calculateOrderTotal(data, idComplejidad)
-        const atributosPrenda = await getAtributosPrenda(data)
-        const { id: idEstadoBase } = await prisma.estadoOrden.findFirst({ where: { nombre: 'Aguardando Confirmación' } })
-        const user = await checkIfUserExists({ email: data.user.email })
-        const orden = await prisma.orden.create({
+        const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(data.tipoPrenda.id, idComplejidadDeOrdenACrear);
+        const preciosDolarTotalEIndividuales = await calculateOrderTotal(data, idComplejidadDeOrdenACrear);
+        
+        const atributosDeProducto = await getAtributosPrenda(data);
+        const { id: idEstadoAguardandoConfirmacion } = await prisma.estadoOrden.findFirst({ where: { id: 1 } });
+        const usuarioActual = await checkIfUserExists({ email: data.user.email });
+
+        const ordenCreada = await prisma.orden.create({
             include: { user: true, estado: true, archivos: true, servicios: true, cotizacionOrden: true, procesos: true },
             data: {
                 id: idOrden,
@@ -55,13 +93,13 @@ const handleOrderCreation = async (req: NextApiRequest, res: NextApiResponse) =>
                 cantidad: 100,
                 expiresAt: fromToday(60 * 60 * 24 * 15),
                 estado: {
-                    connect: { id: idEstadoBase }
+                    connect: { id: idEstadoAguardandoConfirmacion }
                 },
                 prenda: {
                     connect: { id: prendaPrecio.id }
                 },
                 user: {
-                    connect: { id: user.id }
+                    connect: { id: usuarioActual.id }
                 },
                 archivos: {
                     createMany: {
@@ -72,43 +110,48 @@ const handleOrderCreation = async (req: NextApiRequest, res: NextApiResponse) =>
                 },
                 cotizacionOrden: {
                     create: {
-                        precio: precio.precioTotal,
+                        precio: preciosDolarTotalEIndividuales.precioTotal,
                     }
                 },
                 detallesPrenda: {
                     create: {
                         atributos: {
                             createMany: {
-                                data: atributosPrenda.map(atr => ({ name: atr.name, observacion: atr.observaciones, cantidad: atr.cantidad }))
+                                data: atributosDeProducto.map(atr => ({ name: atr.name, observacion: atr.observaciones, cantidad: atr.cantidad }))
                             }
                         }
                     }
                 },
                 servicios: {
-                    connect: selectedServices.map(service => ({ name: service.name }))
+                    connect: serviciosSeleccionados.map(service => ({ name: service.name }))
                 },
                 procesos: {
                     createMany: {
-                        data: processCreateMap
+                        data: [
+                            ...idsProcesoDesarrolloYEstadoProcesoDesarrollo, 
+                            ...idsPlanchadoEntregadoAprobadoPedidos
+                        ]
                     }
                 }
             }
-        })
+        });
 
-        const procesosOrden = orden.procesos
+        const procesosDesarrolloOrdenDeOrden = ordenCreada.procesos;
 
         await prisma.fichaTecnica.createMany({
-            data: procesosOrden.map(proc => ({ procesoId: proc.id }))
-        })
+            data: procesosDesarrolloOrdenDeOrden.map(proc => ({ procesoId: proc.id }))
+        });
 
-        await sendEmail({
+        /* await sendEmail({
             html: newOrderNotificationHTML({ name: user.name, orderId: orden.id }),
             to: user.email,
             subject: 'Orden creada'
-        })
-        res.status(200).json({ message: 'Orden creada con éxito', data: orden });
+        }) */
+
+        res.status(200).json({ message: 'Orden creada con éxito',  /* data: ordenCreada */ });
 
     } catch (e) {
+        console.log(e)
         if (e instanceof ZodError) {
             e.format
             res.status(400).json({ error: e.flatten() })

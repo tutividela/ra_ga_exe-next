@@ -1,11 +1,14 @@
+import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CargaDeTiempo } from "@prisma/client";
+import AddIcon from '@mui/icons-material/Add';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { RegistroCargaTiempo } from "types/types";
+import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
 
 type Props = {
     orderData: ExtendedOrdenData
@@ -36,6 +39,7 @@ const columnas: GridColDef[] = [
   
 
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
+    const [showCargarTiempo, setShowCargarTiempo] = useState(false);
     const {id} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
 
@@ -53,23 +57,42 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
         }
     });
 
+    function handleAbrirModalCargaTiempo(): void {
+        setShowCargarTiempo(true);
+    }
+    function handleCerrarModalCargaTiempo(): void {
+        setShowCargarTiempo(false);
+    }
+
 
     return(
         <LoadingIndicator show={seEstaBuscandoCagasDeTiempo} variant="blocking">
-            <div style={{ height: 400, width: '100%' }}>
+            <div style={{ height: 400, display: 'flex', flexDirection: 'column', width: '100%'}}>
                 {
                     cargasDeTiempo.length > 0? (
-                        <DataGrid
-                            rows={filas}
-                            columns={columnas}
-                            initialState={{
-                                pagination: {
-                                    page: 0,
-                                    pageSize: 5 ,
-                                },
-                            }}
-                            checkboxSelection
-                        />
+                        <>
+                            <DataGrid
+                                rows={filas}
+                                columns={columnas}
+                                initialState={{
+                                    pagination: {
+                                        page: 0,
+                                        pageSize: 4,
+                                    },
+                                }}
+                                checkboxSelection
+
+                            />
+                            <div className="flex justify-center m-2">
+                                <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAbrirModalCargaTiempo}>Cargar tiempo</Button>
+                            </div>
+                            {
+                                showCargarTiempo? (
+                                    <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo}/>
+                                ): null
+                            }
+                        </>
+                        
                     ): (
                         <div className="flex align-middle m-3 justify-center h-auto">
                             <p className="font-semibold text-lg">No hay tiempo cargado</p>

@@ -29,13 +29,22 @@ const FichaTecnicaControls = (props: FichaTecnicaControlsProps) => {
             case 2:
                 return !data.atributosPrenda.genero.observaciones || !data.cantidad 
             case 3:
+                return !(
+                    data.procesosDesarrolloSeleccionados.Diseño.selected && 
+                    data.procesosDesarrolloSeleccionados.Molderia.selected && 
+                    data.procesosDesarrolloSeleccionados.Digitalización.selected &&
+                    data.procesosDesarrolloSeleccionados.Geometral.selected
+                )
+            case 4:
                 return false
             default:
                 return false
         }
     }
 
-    const continueDisabled = useMemo(() => currStep === numberSteps - 1 || isInvalid(currStep, data), [currStep, numberSteps, data])
+    const continueDisabled = useMemo(() => {
+        return currStep === numberSteps - 1 || isInvalid(currStep, data)
+    }, [currStep, numberSteps, data])
 
     return (
         <>

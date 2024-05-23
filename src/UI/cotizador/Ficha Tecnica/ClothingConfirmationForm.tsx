@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 
 const ClothingConfirmationForm = () => {
 
-    const { watch } = useFormContext<OrderCreationData>()
+    const { watch } = useFormContext<OrderCreationData>();
     const cotizadorData = watch()
 
     return (
@@ -39,14 +39,18 @@ const ClothingConfirmationForm = () => {
             <div className="border-gray-300 border-2 w-full md:w-2/4 mt-3"></div>
 
             <div className="mt-3 w-full md:w-2/4">
-                <div>{cotizadorData["Moldería Base"]?.selected ? "✔️ " : "❌ "} Moldería Base </div>
-                <div>{cotizadorData["Digitalización y Progresiones"]?.selected ? "✔️ " : "❌ "} Digitalización y Progresiones </div>
-                <div>{cotizadorData["Impresión Moldertía Base"]?.selected ? "✔️ " : "❌ "} Impresión Moldertía Base </div>
-                <div>{cotizadorData["Ficha Técnica de Consumos"]?.selected ? "✔️ " : "❌ "} Ficha Técnica (Geometral + Guía de Armado) </div>
-                <div>{cotizadorData["Corte Muestra"]?.selected ? "✔️ " : "❌ "} Corte Muestra </div>
-                <div>{cotizadorData["Confección Muestra"]?.selected ? "✔️ " : "❌ "} Confección Muestra </div>
-                <div>{cotizadorData.Terminación?.selected ? "✔️ " : "❌ "} Terminación (Ojal, Botón, Plancha, etc) </div>
-                <div>{cotizadorData.Cotización?.selected ? "✔️ " : "❌ "} Cotización </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Diseño?.selected ? "✔️ " : "❌ "} Diseño </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Molderia?.selected ? "✔️ " : "❌ "} Moldería Base </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Digitalización?.selected ? "✔️ " : "❌ "} Digitalización y Progresiones </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Geometral?.selected ? "✔️ " : "❌ "} Ficha Técnica (Geometral + Guía de Armado) </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Impresion.selected ? "✔️ " : "❌ "} Impresión Moldería Base </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Materiales?.selected ? "✔️ " : "❌ "} Materiales </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Corte.selected ? "✔️ " : "❌ "} Corte Muestra </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados["Pre-confección"]?.selected ? "✔️ " : "❌ "} Pre-Confeccion </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados["Confección"]?.selected ? "✔️ " : "❌ "} Confección Muestra </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Tizado?.selected ? "✔️ " : "❌ "} Tizado </div>
+                <div>{cotizadorData.procesosDesarrolloSeleccionados.Terminado?.selected ? "✔️ " : "❌ "} Terminación (Ojal, Botón, Plancha, etc) </div>
+                <div>{cotizadorData.cotización?.selected ? "✔️ " : "❌ "} Cotización </div>
             </div>
 
             <div className="border-gray-300 border-2 w-full md:w-2/4 mt-3"></div>

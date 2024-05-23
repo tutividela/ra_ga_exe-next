@@ -5,9 +5,9 @@ export const clothingFilesLayout: LayoutElement<OrderCreationData> = {
     type: 'Horizontal',
     elements: [{
         type: 'Horizontal',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         width: 12,
-        elements: [
+        elements: [  
             {
                 type: 'Uploader',
                 scope: 'files',

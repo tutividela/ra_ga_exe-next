@@ -68,9 +68,9 @@ const Home: NextPage = () => {
 
     const handleFormSubmit = async (data: OrderCreationData) => {
 
-        const orderID = generateOrderID(data)
+        const orderID = generateOrderID(data.user.name, data.tipoPrenda.name);
         if (data?.files?.length > 0) {
-            const uploadedFiles = await (await handleUploadFile(data.files, orderID)).data
+            const uploadedFiles = (await handleUploadFile(data.files, orderID)).data;
             Array.isArray(uploadedFiles) ?
                 uploadedFiles.forEach(file => updateFileURL(data, file)) :
                 updateFileURL(data, uploadedFiles)

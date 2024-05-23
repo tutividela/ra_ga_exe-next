@@ -1,6 +1,7 @@
 import { FormControlLabel, FormLabel, Switch as MSwitch } from '@mui/material';
 import { Controller } from 'react-hook-form';
 import { LayoutElement } from '../types';
+import { useIsDisabled } from '@utils/useIsDisabled';
 
 
 
@@ -12,7 +13,7 @@ export type SwitchProps<Model> = {
 
 function Switch<Model>(props: SwitchProps<Model>) {
     const { layout } = props
-
+    const isDisabled = useIsDisabled(layout?.rules || []);
 
     return (
         <>
@@ -37,7 +38,7 @@ function Switch<Model>(props: SwitchProps<Model>) {
                                     <MSwitch
                                         id={`${name}-switch`}
                                         size="medium"
-                                        disabled={layout?.options?.disabled}
+                                        disabled={layout?.options?.disabled || isDisabled}
                                         required={layout?.options?.required}
                                         checked={value}
                                         onChange={(e) => onChange(e.target.checked)}
