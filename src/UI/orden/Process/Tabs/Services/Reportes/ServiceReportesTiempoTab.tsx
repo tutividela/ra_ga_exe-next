@@ -3,8 +3,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import AddIcon from '@mui/icons-material/Add';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
-import { useState } from "react";
+import {  obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
+import {  useState } from "react";
 import { useQuery } from "react-query";
 import { RegistroCargaTiempo } from "types/types";
 import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
@@ -38,8 +38,10 @@ const columnas: GridColDef[] = [
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
     const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
+    
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
-
+    
+    
     const filas = cargasDeTiempo.map((registro: RegistroCargaTiempo, index: number) => {
         const fechaDeCargaParseada = new Date(registro.fechaDeCarga).toLocaleString('es-AR');
         const fechaDeActualizacionParseada = new Date(registro.fechaDeActualizacion).toLocaleString('es-AR');
@@ -88,7 +90,7 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                 }
                 {
                     showCargarTiempo? (
-                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso}/>
+                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id}/>
                     ): null
                 }
                 <div className="flex justify-center m-2">

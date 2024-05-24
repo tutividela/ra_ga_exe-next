@@ -22,7 +22,6 @@ import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
-
     const { addError } = useContext(ErrorHandlerContext)
     const { query } = useRouter()
     const { orderId: id } = query
@@ -33,11 +32,10 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
             headers: { 'Content-Type': 'application/json', accept: 'application/json' },
             body: JSON.stringify({ orderId: id })
         })
-            .then((res) => (res.ok ? res.json() : errorHandle(res)))
-            .catch((error) => {
-                throw error;
-            });
-
+        .then((res) => (res.ok ? res.json() : errorHandle(res)))
+        .catch((error) => {
+            throw error;
+        });
 
     const { data: orderData, isFetching: isFetchingOrders } = useQuery(['order'], fetchOrder, {
         onError: () => addError('Error al traer orden'),
@@ -57,7 +55,6 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
                 <meta name="description" content="Ramiro Onate, Gaspar Garcia, Exequiel videla" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
             <HeaderBar />
             <main>
                 <Slide in={true} timeout={500} direction='up'>

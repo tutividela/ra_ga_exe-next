@@ -38,11 +38,9 @@ const Home: NextPage = () => {
         { refetchOnWindowFocus: false, onError: (error) => addError(error.error) }
     );
 
-
     const { mutateAsync: uploadFilesMutation, isLoading: isUploading } = useMutation<DriveUploadResponse, ErrorMessage, FileUploadData>(uploadFile,
         { onError: (error) => addError(error.error), }
-    )
-
+    );
 
     const { mutateAsync: createOrderMutation, isLoading: isCreatingOrder } = useMutation<{ message: string }, ErrorMessage, OrderCreationData>(createOrder, {
         onSuccess: (obj) => {
@@ -50,7 +48,7 @@ const Home: NextPage = () => {
             addError(obj.message, "info");
         },
         onError: (error) => addError(JSON.stringify(error))
-    })
+    });
 
     const { data: sessionData } = useSession()
     const [price] = useState(0)
@@ -60,7 +58,6 @@ const Home: NextPage = () => {
     const isStepOptional = () => false
     const advanceStep = () => step < 4 ? setStep(prev => prev + 1) : alert('No se puede ir mass para adelante')
     const goBackOneStep = () => step > 0 ? setStep(prev => prev - 1) : alert('No se puede ir mas para atras')
-
 
     const handleFormSubmit = async (data: OrderCreationData) => {
         const orderID = generateOrderID(data.user.name, data.tipoPrenda.name);
@@ -84,7 +81,6 @@ const Home: NextPage = () => {
     }
 
     return (
-
         <div className="bg-split-white-black">
             <Head>
                 <title>HS-Taller - Cotizador</title>

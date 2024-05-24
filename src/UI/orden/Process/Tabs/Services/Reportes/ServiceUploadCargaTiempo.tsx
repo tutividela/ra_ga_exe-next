@@ -2,14 +2,21 @@ import FormItem from "@UI/Forms/FormItem";
 import HookForm from "@UI/Forms/HookForm";
 import { LayoutElement } from "@UI/Forms/types";
 import { CargaDeTiempoType } from "@backend/schemas/CargaDeTiempoSchema";
-import { Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
+import { useContext } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { CargaDeTiempo } from "@prisma/client";
+import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
+import { useSession } from "next-auth/react";
 
 type Props = {
     open: boolean;
     onClose: () => void,
     nombreProceso: string,
+    idProcesoDesarrolloOrden: string
 }
 
 export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
@@ -47,26 +54,45 @@ export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
     ]
 }
 
-export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso}: Props) {
+export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, idProcesoDesarrolloOrden}: Props) {
+    const {data: datosDeSesion} = useSession();
+    const {addError} = useContext(ErrorHandlerContext);
+    const queryClient = useQueryClient();
+    
+    const {mutateAsync: cargarTiempoAsync} = useMutation<CargaDeTiempo & {usuarioDeCreacion: {name: string}}, any, Partial<CargaDeTiempo>>(crearCargaDeTiempoPorIdProcesoDesarrolloOrden, {
+        onError: (error) => addError(JSON.stringify(error), 'error'),
+        onSuccess: () => {
+            onClose();
+            queryClient.invalidateQueries(['cargasDeTiempo']);
+            addError("Se ha cargado el tiempo con exito!",'info');
+        }
+    });
+
+    async function handleCargaDeTiempo(data: Partial<CargaDeTiempo> & {email: string}) {
+        await cargarTiempoAsync(data);
+    }
+
     return(  
     <Dialog open={open} onClose={onClose} fullWidth={true}>
         <DialogTitle className="self-center text-2xl m">Carga de tiempo para: {nombreProceso}</DialogTitle>
         <LoadingIndicator show={false}>
-            <DialogContent>
-                <HookForm
-                    defaultValues={{
-                        horas: 0,
-                        minutos: 0,
-                        comentario: ''
-                    }}
-                    onSubmit={() => console.log('hola')}
-                >
+            <HookForm
+                defaultValues={{
+                    horas: 0,
+                    minutos: 0,
+                    comentario: '',
+                    idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
+                    email: datosDeSesion?.user?.email
+                }}
+                onSubmit={handleCargaDeTiempo}
+            >
+                <DialogContent>
                     <FormItem layout={cargaDeTiempoLayout}/>
-                </HookForm>
-            </DialogContent>
-            <div className="flex justify-center m-3">
-                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => console.log('tiempo cargado')}>Cargar</Button>
-            </div>
+                </DialogContent>
+                <DialogActions className="self-center">
+                    <Button variant="outlined" type="submit" startIcon={<AddIcon />}>Cargar</Button>
+                </DialogActions>
+            </HookForm>
         </LoadingIndicator>
     </Dialog>
     );

@@ -23,33 +23,27 @@ type Ficha = {
         contenido: ContenidoFichaTencica;
     };
 }
-
 type Props = {
     orderData: ExtendedOrdenData
     process: Ficha,
     open: boolean,
     onClose: () => void
 }
-
 type FileUploadData = { clientName: string, orderID: string, formData: FormData, fichaType: string }
 
 const ServiceUploadDialog = ({ process, open, onClose, orderData }: Props) => {
-
-    const queryClient = useQueryClient()
-
-    const { addError } = useContext(ErrorHandlerContext)
+    const queryClient = useQueryClient();
+    const { addError } = useContext(ErrorHandlerContext);
 
     const { mutateAsync: uploadFilesMutation, isLoading: isUploading } = useMutation<DriveUploadResponse, ErrorMessage, FileUploadData>(uploadFile,
         { onError: (error) => addError(error.error), }
     )
-
     const { mutateAsync: updateFicha } = useMutation<FichaTecnica, any, { data: ValidatedFichaTecnicaFileUploadSchema, fichaID: string }>(updateFichaFiles,
         {
             onError: (error) => addError(JSON.stringify(error)),
             onSuccess: () => { onClose(); queryClient.invalidateQueries(['order']) }
         }
     )
-
     const handleUploadDocuments = async (data: FichaTecnicaUploadFormData) => {
         if (data?.files?.length > 0) {
             const uploadedFiles = await (await handleUploadFile(data.files)).data

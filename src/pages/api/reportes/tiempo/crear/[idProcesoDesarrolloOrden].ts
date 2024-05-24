@@ -4,15 +4,15 @@ import { ZodError } from "zod";
 
 export default async function post(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     try {
-        const {query} = req.query;
-        const idProcesoDesarrolloOrden = Array.isArray(query) ? query[0]: query;
+        const {idProcesoDesarrolloOrden} = req.query;
+        const idProcesoDesarrolloOrdenString = Array.isArray(idProcesoDesarrolloOrden) ? idProcesoDesarrolloOrden[0]: idProcesoDesarrolloOrden;
         const {horas, minutos, comentario, idUsuario} = CargaDeTiempoSchema.parse(req.body);
-
+        
         const cargaDeTiempoCreada = await prisma.cargaDeTiempo.create({
             data: {
-                horas,
-                minutos,
-                comentario,
+                horas: horas,
+                minutos: minutos,
+                comentario: comentario,
                 usuarioDeCreacion: {
                     connect: {
                         id: idUsuario
@@ -20,7 +20,7 @@ export default async function post(req: NextApiRequest, res: NextApiResponse): P
                 },
                 procesoDesarrolloOrden: {
                     connect: {
-                        id: idProcesoDesarrolloOrden
+                        id: idProcesoDesarrolloOrdenString
                     }
                 }
             },
