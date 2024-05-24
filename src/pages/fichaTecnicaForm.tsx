@@ -55,28 +55,23 @@ const Home: NextPage = () => {
     const { data: sessionData } = useSession()
     const [price] = useState(0)
     const [step, setStep] = useState(0)
-
     const router = useRouter()
-
     const steps = ['Selección Prenda', 'Archivos', 'Especificaciones', 'Procesos', 'Confirmación']
-
     const isStepOptional = () => false
-
     const advanceStep = () => step < 4 ? setStep(prev => prev + 1) : alert('No se puede ir mass para adelante')
     const goBackOneStep = () => step > 0 ? setStep(prev => prev - 1) : alert('No se puede ir mas para atras')
 
 
     const handleFormSubmit = async (data: OrderCreationData) => {
-
         const orderID = generateOrderID(data.user.name, data.tipoPrenda.name);
+
         if (data?.files?.length > 0) {
             const uploadedFiles = (await handleUploadFile(data.files, orderID)).data;
             Array.isArray(uploadedFiles) ?
                 uploadedFiles.forEach(file => updateFileURL(data, file)) :
                 updateFileURL(data, uploadedFiles)
         }
-        await createOrderMutation(data)
-
+        await createOrderMutation(data);
     }
 
     const handleUploadFile = async (file: { file: File, section: Paths<OrderCreationData> }[], orderID: string) => {

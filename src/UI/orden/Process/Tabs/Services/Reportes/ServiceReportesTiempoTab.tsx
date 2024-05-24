@@ -37,7 +37,7 @@ const columnas: GridColDef[] = [
 
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
-    const {id} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
+    const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
 
     const filas = cargasDeTiempo.map((registro: RegistroCargaTiempo, index: number) => {
@@ -79,22 +79,21 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                                 checkboxSelection
 
                             />
-                            <div className="flex justify-center m-2">
-                                <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAbrirModalCargaTiempo}>Cargar tiempo</Button>
-                            </div>
-                            {
-                                showCargarTiempo? (
-                                    <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo}/>
-                                ): null
-                            }
                         </>
-                        
                     ): (
                         <div className="flex align-middle m-3 justify-center h-auto">
                             <p className="font-semibold text-lg">No hay tiempo cargado</p>
                         </div>
                     )
                 }
+                {
+                    showCargarTiempo? (
+                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso}/>
+                    ): null
+                }
+                <div className="flex justify-center m-2">
+                    <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAbrirModalCargaTiempo}>Cargar tiempo</Button>
+                </div>
             </div>
         </LoadingIndicator>
     )

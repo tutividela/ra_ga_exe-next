@@ -8,3 +8,11 @@ export async function obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(idProceso
         throw error
     });
 }
+
+export async function crearCargaDeTiempoPorIdProcesoDesarrolloOrden(idProcesoDesarrolloOrden: string): Promise<any> {
+    return fetch(`/api/reportes/tiempo/crear/${idProcesoDesarrolloOrden}`, {
+        method: 'POST'
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}

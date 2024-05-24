@@ -9,6 +9,7 @@ import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 type Props = {
     open: boolean;
     onClose: () => void,
+    nombreProceso: string,
 }
 
 export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
@@ -46,10 +47,10 @@ export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
     ]
 }
 
-export default function ServiceUploadCargaTiempo({open, onClose}: Props) {
+export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso}: Props) {
     return(  
     <Dialog open={open} onClose={onClose} fullWidth={true}>
-        <DialogTitle className="self-center text-2xl m">Carga de tiempo</DialogTitle>
+        <DialogTitle className="self-center text-2xl m">Carga de tiempo para: {nombreProceso}</DialogTitle>
         <LoadingIndicator show={false}>
             <DialogContent>
                 <HookForm
