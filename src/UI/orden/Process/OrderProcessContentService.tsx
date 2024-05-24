@@ -15,15 +15,16 @@ type Props = {
 
 const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) => {
     const [value, setValue] = useState(0);
-    const [slide, setSlide] = useState(true)
+    const [slide, setSlide] = useState(true);
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
     useEffect(() => {
-        setSlide(false)
-        setValue(0)
-        setTimeout(() => setSlide(true), 200)
+        setSlide(false);
+        setValue(0);
+        setTimeout(() => setSlide(true), 200);
     }, [selectedProcess]);
 
     return (
@@ -54,8 +55,6 @@ const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) 
                                     <ServiceReportesTiempoTab orderData={orderData} selectedProcess={selectedProcess}/>
                                 </div>
                         }
-
-                        
                     </div>
                 </div>
             </div>

@@ -176,7 +176,7 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
             type: 'Switch',
             className: 'mt-2',
             scope: 'procesosDesarrolloSeleccionados.Corte.selected',
-            label: "Corte Muestra",
+            label: "Corte",
             options: {
                 labelPlacement: 'end'
             },
@@ -222,7 +222,7 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
             type: 'Switch',
             className: 'mt-2',
             scope: 'procesosDesarrolloSeleccionados.Confección.selected',
-            label: "Confección Muestra",
+            label: "Confección",
             options: {
                 labelPlacement: 'end'
             },

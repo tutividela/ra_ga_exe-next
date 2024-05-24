@@ -1,10 +1,7 @@
 import { calculateOrderTotal, findPrendaPrecioByTypeAndComplexity, getAtributosPrenda, updateExpiredOrders } from '@backend/dbcalls/order';
 import { checkIfUserExists, fromToday } from '@backend/dbcalls/user';
 import { OrderCreationDataSchema } from '@backend/schemas/OrderCreationSchema';
-import { ProcesoDesarrollo, Servicio } from '@prisma/client';
 import { prisma } from '@server/db/client';
-import { generateEmailer } from '@utils/email/generateEmailer';
-import { newOrderNotificationHTML } from '@utils/email/newOrderNotification';
 import { generateOrderID } from '@utils/generateOrderID';
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from 'zod';
@@ -65,7 +62,6 @@ const handleOrderCreation = async (req: NextApiRequest, res: NextApiResponse) =>
                 idEstadoProceso: procesoDesarrollo[1].selected? 1: 3
             }
         });
-        console.log(idsProcesoDesarrolloYEstadoProcesoDesarrollo)
 
         const idOrden = generateOrderID(data.user?.name, data.tipoPrenda?.name);
 
@@ -148,20 +144,17 @@ const handleOrderCreation = async (req: NextApiRequest, res: NextApiResponse) =>
             subject: 'Orden creada'
         }) */
 
-        res.status(200).json({ message: 'Orden creada con éxito',  /* data: ordenCreada */ });
+        res.status(200).json({ message: 'Orden creada con éxito',  data: ordenCreada });
 
-    } catch (e) {
-        console.log(e)
-        if (e instanceof ZodError) {
-            e.format
-            res.status(400).json({ error: e.flatten() })
+    } catch (error: any) {
+        console.log('Error en la creacion de una orden: ', error);
+        if (error instanceof ZodError) {
+            res.status(400).json({ error: error.flatten() });
         }
         else {
-            res.status(400).json({ error: e })
+            res.status(400).json({ error: error });
         }
     }
-
-
 }
 
 export default handleOrderCreation;

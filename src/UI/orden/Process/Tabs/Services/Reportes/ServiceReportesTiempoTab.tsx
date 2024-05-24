@@ -1,11 +1,10 @@
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { CargaDeTiempo } from "@prisma/client";
 import AddIcon from '@mui/icons-material/Add';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { RegistroCargaTiempo } from "types/types";
 import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
@@ -35,8 +34,6 @@ const columnas: GridColDef[] = [
       width: 200
     },
   ];
-  
-  
 
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
@@ -63,7 +60,6 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     function handleCerrarModalCargaTiempo(): void {
         setShowCargarTiempo(false);
     }
-
 
     return(
         <LoadingIndicator show={seEstaBuscandoCagasDeTiempo} variant="blocking">

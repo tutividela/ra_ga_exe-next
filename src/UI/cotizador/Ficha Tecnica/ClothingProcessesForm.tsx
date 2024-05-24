@@ -6,6 +6,16 @@ import { OrderCreationData } from "@backend/schemas/OrderCreationSchema";
 import { useEffect } from "react";
 
 const ClothingProcessesForm = () => {
+    const {watch, setValue} = useFormContext<OrderCreationData>();
+    const valorDeProcesoDesarrolloMateriales = watch('procesosDesarrolloSeleccionados.Materiales.selected');
+    const valorDeProcesoDesarrolloImpresion = watch('procesosDesarrolloSeleccionados.Impresion.selected');
+
+    useEffect(() => {
+        if(valorDeProcesoDesarrolloMateriales) {
+            setValue('procesosDesarrolloSeleccionados.Materiales.selected', false);
+        }
+    },[valorDeProcesoDesarrolloImpresion]);
+
     return (
         <div className="flex md:w-6/12 flex-col justify-center items-baseline mt-10 md:mt-0">
             <Alert severity='info'>Seleccione los procesos que desea agregar al desarollo</Alert>

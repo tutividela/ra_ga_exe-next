@@ -124,7 +124,6 @@ const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect }: Props
                             <div className='font-bold text-lg'>{nombreProceso}</div>
                             <div className='text-gray-400 text-xs'>Estado: <span className={`${color}`}>{estado}</span></div>
                             <div className='text-gray-400 text-xs'>Plazo estimado: <span >{estimatedAt}</span></div>
-                            {/* Date.now() - lastUpdated?.getTime() < 24 * 60 * 60 * 1000 && <div className='text-gray-400 text-xs'>Actualizado hace: <span >{Math.round((Date.now() - lastUpdated?.getTime()) / 1000 / 60)} minutos</span></div> */}
                             {lastUpdated? <div className='text-gray-400 text-xs'>Actualizado el: <span >{new Date(lastUpdated).toLocaleDateString('es-AR')}</span></div> : null}
                         </li>
                     </div>

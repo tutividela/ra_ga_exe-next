@@ -11,10 +11,8 @@ type Props = {
 }
 
 const OrderProcessSidebar = ({ orderData, role, selectedProcess, onSelect }: Props) => {
-
-    const { data } = useSession()
-
-
+    const { data } = useSession();
+    
     return (
         <div className='flex flex-col mt-4'>
             <div className='flex flex-col max-h-screen overflow-y-auto'>

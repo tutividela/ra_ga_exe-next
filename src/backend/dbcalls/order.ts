@@ -98,10 +98,6 @@ export const findPrendaPrecioByTypeAndComplexity = async (tipoId: string, comple
     })
 }
 
-// export const getServicesFromOrderData = async (data: OrderCreationData) => {
-
-// }
-
 export const calculateOrderTotal = async (datosDeLaOrden: ValidatedOrderSchema, complexityId: string) => {
     try {
         const {procesosDesarrolloSeleccionados} = datosDeLaOrden;
@@ -144,28 +140,7 @@ export const calculateOrderTotal = async (datosDeLaOrden: ValidatedOrderSchema, 
             preciosIndividuales,
             precioDolar
         }
-        /* const services = await prisma.servicio.findMany({})
-        const servicesPrices = services.reduce<{ [key: string]: { precioFijo: number, factorMultiplicador: number } }>((acc, service) => {
-            acc[service.name] = { precioFijo: service.precioFijo, factorMultiplicador: service.factorMultiplicador }
-            return acc
-        }, {}); 
-
-        const factores = Object.keys(datosDeLaOrden).reduce((prev, key) => {
-            if (key in servicesPrices) {
-                if (datosDeLaOrden[key]?.selected) {
-                    prev.factorMultiplicador += servicesPrices[key].factorMultiplicador
-                    prev.precioFijo += servicesPrices[key].precioFijo
-                    prev.servicios[key] = { precioFijo: servicesPrices[key].precioFijo, factorMultiplicador: servicesPrices[key].factorMultiplicador }
-                    preciosIndividuales.push({
-                        servicio: key,
-                        precioTotal: precioDolar?.precio * (prendaPrecio.precioBase * servicesPrices[key].factorMultiplicador + servicesPrices[key].precioFijo)
-                    })
-                }
-            }
-            return prev
-        }, { precioFijo: 0, factorMultiplicador: 0, servicios: {} })
-        return { precioTotal: (precioDolar?.precio * (prendaPrecio.precioBase * factores.factorMultiplicador + factores.precioFijo)), preciosIndividuales, precioDolar }
-    */
+       
     }
     catch (e) {
         console.error(e)

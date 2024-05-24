@@ -1,7 +1,9 @@
 import FormItem from "@UI/Forms/FormItem";
 import HookForm from "@UI/Forms/HookForm";
 import { LayoutElement } from "@UI/Forms/types";
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { CargaDeTiempoType } from "@backend/schemas/CargaDeTiempoSchema";
+import { Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 
 type Props = {
@@ -9,23 +11,25 @@ type Props = {
     onClose: () => void,
 }
 
-export const cargaDeTiempoLayout: LayoutElement<{horas: number, minutos: number, comentario: string}> = {
+export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
     type: 'Horizontal',
     elements: [
         {
             type: 'Input',
-            label: 'Cantidad de Horas',
+            label: 'Horas',
             scope: 'horas',
-            width: 3,
+            className: 'mr-2 mb-2',
+            width: 2,
             options: {
                 size: 'small'
             }
         },
         {
             type: 'Input',
-            label: 'Cantidad de Minutos',
+            label: 'Minutos',
             scope: 'minutos',
-            width: 3,
+            className: 'mr-2 mb-2',
+            width: 2,
             options: {
                 size: 'small'
             }
@@ -34,9 +38,9 @@ export const cargaDeTiempoLayout: LayoutElement<{horas: number, minutos: number,
             type: 'Input',
             label: 'Comentarios',
             scope: 'comentario',
-            width: 12,
+            width: 10,
             options: {
-                multiline: 6,
+                multiline: 3,
             },
         }
     ]
@@ -45,10 +49,10 @@ export const cargaDeTiempoLayout: LayoutElement<{horas: number, minutos: number,
 export default function ServiceUploadCargaTiempo({open, onClose}: Props) {
     return(  
     <Dialog open={open} onClose={onClose} fullWidth={true}>
-        <DialogTitle>Subir carga de tiempo</DialogTitle>
+        <DialogTitle className="self-center text-2xl m">Carga de tiempo</DialogTitle>
         <LoadingIndicator show={false}>
             <DialogContent>
-                <HookForm 
+                <HookForm
                     defaultValues={{
                         horas: 0,
                         minutos: 0,
@@ -56,9 +60,12 @@ export default function ServiceUploadCargaTiempo({open, onClose}: Props) {
                     }}
                     onSubmit={() => console.log('hola')}
                 >
-                    <FormItem layout={cargaDeTiempoLayout} />
+                    <FormItem layout={cargaDeTiempoLayout}/>
                 </HookForm>
             </DialogContent>
+            <div className="flex justify-center m-3">
+                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => console.log('tiempo cargado')}>Cargar</Button>
+            </div>
         </LoadingIndicator>
     </Dialog>
     );

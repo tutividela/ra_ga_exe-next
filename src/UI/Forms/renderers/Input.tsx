@@ -11,11 +11,9 @@ export type InputProps<Model> = {
 } & Partial<TextFieldProps>
 
 function Input<Model>(props: InputProps<Model>) {
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { layout, parentScope, hasParent, ...textFieldProps } = props
-    const isDisabled = useIsDisabled(layout?.rules || [])
-
+    const { layout, parentScope, hasParent, ...textFieldProps } = props;
+    const isDisabled = useIsDisabled(layout?.rules || []);
 
     return (<Controller
         name={layout?.scope}

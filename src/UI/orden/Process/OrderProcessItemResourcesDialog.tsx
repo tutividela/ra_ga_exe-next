@@ -29,29 +29,27 @@ type Props = {
 }
 
 const OrderProcessItemResourcesDialog = (props: Props) => {
-
-    const queryClient = useQueryClient()
-
-    const { addError } = useContext(ErrorHandlerContext)
+    const queryClient = useQueryClient();
+    const { addError } = useContext(ErrorHandlerContext);
 
     const { data, isFetching: isFetchingUsers } = useQuery(['serviceUsers'], fetchServiceUsers, {
         initialData: [],
         refetchOnWindowFocus: false,
         onError: (err) => addError(JSON.stringify(err))
-    })
+    });
 
     const { mutateAsync, isLoading: isUpdatingState } = useMutation(updateProcessResources, {
         onSuccess: () => { props.onClose(); queryClient.invalidateQueries(['order']) },
         onError: (err) => addError(JSON.stringify(err))
-    })
+    });
 
-    const serviceUsers = data.map(el => ({ key: el.email, text: el.name }))
+    const serviceUsers = data.map(el => ({ key: el.email, text: el.name }));
 
     const handleSubmit = async (data: ProcesoFicha) => {
         await mutateAsync(data)
     }
 
-    const handleClose = () => props.onClose()
+    const handleClose = () => props.onClose();
 
     return <div>
         <Dialog

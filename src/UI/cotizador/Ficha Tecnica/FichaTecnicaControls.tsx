@@ -9,36 +9,33 @@ interface FichaTecnicaControlsProps {
     onForward: () => void;
     currStep: number
     numberSteps: number
-}
+};
 
 const FichaTecnicaControls = (props: FichaTecnicaControlsProps) => {
-
-
-    const { currStep, onBack, onForward, numberSteps } = props
-
-    const formContext = useFormContext<OrderCreationData>()
-    const data = formContext.watch()
-    const backDisabled = currStep <= 0
+    const { currStep, onBack, onForward, numberSteps } = props;
+    const formContext = useFormContext<OrderCreationData>();
+    const data = formContext.watch();
+    const backDisabled = currStep <= 0;
 
     const isInvalid = (stepNumer: number, data: OrderCreationData) => {
         switch (stepNumer) {
             case 0:
-                return !data.nombreProducto || !data.tipoPrenda.name || !data.complejidad || !data.atributosPrenda.material.observaciones
+                return !data.nombreProducto || !data.tipoPrenda.name || !data.complejidad || !data.atributosPrenda.material.observaciones;
             case 1:
-                return false
+                return data.orderFiles.files.length === 0;
             case 2:
-                return !data.atributosPrenda.genero.observaciones || !data.cantidad 
+                return !data.atributosPrenda.genero.observaciones || !data.cantidad ;
             case 3:
                 return !(
                     data.procesosDesarrolloSeleccionados.Diseño.selected && 
                     data.procesosDesarrolloSeleccionados.Molderia.selected && 
                     data.procesosDesarrolloSeleccionados.Digitalización.selected &&
                     data.procesosDesarrolloSeleccionados.Geometral.selected
-                )
+                );
             case 4:
-                return false
+                return false;
             default:
-                return false
+                return false;
         }
     }
 
