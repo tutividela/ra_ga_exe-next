@@ -37,7 +37,7 @@ const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) 
                                 {<Tab label="Detalles" value={0} />}
                                 {true && <Tab label="Archivos" value={1} />}
                                 {true && <Tab label="Mensajes" value={2} />}
-                                {(rol === adminRole || rol === ayudanteRole) && <Tab label="Reportes de Tiempo" value={3} />}
+                                {(rol === adminRole || rol === ayudanteRole) && <Tab label="Tiempos" value={3} />}
                             </Tabs>
                         </div>
                         <div hidden={value !== 0} className='w-full'>

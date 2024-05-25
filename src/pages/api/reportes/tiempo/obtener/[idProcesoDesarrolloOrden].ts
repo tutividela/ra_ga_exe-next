@@ -11,6 +11,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
                 idProcesoDesarrolloOrden: valorIdProcesoDesarrolloOrden
             },
             select: {
+                id: true,
                 comentario: true,
                 horas: true,
                 minutos: true,

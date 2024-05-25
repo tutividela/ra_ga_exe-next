@@ -1,4 +1,5 @@
 export type RegistroCargaTiempo = {
+    id: string;
     comentario: string;
     horas: number;
     minutos: number;
@@ -8,3 +9,9 @@ export type RegistroCargaTiempo = {
         name: string;
     }
 };
+
+export enum TipoDeAccioModal {
+    VER,
+    EDITAR,
+    CARGA,
+}

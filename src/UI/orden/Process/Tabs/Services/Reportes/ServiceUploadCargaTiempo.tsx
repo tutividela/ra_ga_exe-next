@@ -11,12 +11,14 @@ import { useMutation, useQueryClient } from "react-query";
 import { CargaDeTiempo } from "@prisma/client";
 import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
 import { useSession } from "next-auth/react";
+import { TipoDeAccioModal } from "types/types";
 
 type Props = {
     open: boolean;
-    onClose: () => void,
-    nombreProceso: string,
-    idProcesoDesarrolloOrden: string
+    onClose: () => void;
+    nombreProceso: string;
+    idProcesoDesarrolloOrden: string;
+    accion?: TipoDeAccioModal;
 }
 
 export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
@@ -54,11 +56,18 @@ export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
     ]
 }
 
-export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, idProcesoDesarrolloOrden}: Props) {
+export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, idProcesoDesarrolloOrden, accion}: Props) {
     const {data: datosDeSesion} = useSession();
     const {addError} = useContext(ErrorHandlerContext);
     const queryClient = useQueryClient();
-    
+    const defaultLayout = {
+        horas: 0,
+        minutos: 0,
+        comentario: '',
+        idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
+        email: datosDeSesion?.user?.email
+    };
+
     const {mutateAsync: cargarTiempoAsync} = useMutation<CargaDeTiempo & {usuarioDeCreacion: {name: string}}, any, Partial<CargaDeTiempo>>(crearCargaDeTiempoPorIdProcesoDesarrolloOrden, {
         onError: (error) => addError(JSON.stringify(error), 'error'),
         onSuccess: () => {
@@ -77,13 +86,7 @@ export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, 
         <DialogTitle className="self-center text-2xl m">Carga de tiempo para: {nombreProceso}</DialogTitle>
         <LoadingIndicator show={false}>
             <HookForm
-                defaultValues={{
-                    horas: 0,
-                    minutos: 0,
-                    comentario: '',
-                    idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
-                    email: datosDeSesion?.user?.email
-                }}
+                defaultValues={defaultLayout}
                 onSubmit={handleCargaDeTiempo}
             >
                 <DialogContent>

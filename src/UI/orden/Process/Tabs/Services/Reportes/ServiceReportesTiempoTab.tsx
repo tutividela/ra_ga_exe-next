@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import AddIcon from '@mui/icons-material/Add';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
@@ -6,7 +7,7 @@ import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import {  obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
 import {  useState } from "react";
 import { useQuery } from "react-query";
-import { RegistroCargaTiempo } from "types/types";
+import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
 import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
 
 type Props = {
@@ -33,10 +34,15 @@ const columnas: GridColDef[] = [
       sortable: false,
       width: 200
     },
+    {
+        field: 'editar', headerName: 'Editar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
+            <ModeEditIcon />
+    }
   ];
 
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
+    const [showVerTiempo, setShowVerTiempo] = useState(false);
     const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
     
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
@@ -78,8 +84,6 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                                         pageSize: 4,
                                     },
                                 }}
-                                checkboxSelection
-
                             />
                         </>
                     ): (
@@ -90,7 +94,7 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                 }
                 {
                     showCargarTiempo? (
-                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id}/>
+                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={TipoDeAccioModal.EDITAR}/>
                     ): null
                 }
                 <div className="flex justify-center m-2">
