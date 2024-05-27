@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { CargaDeTiempo } from "@prisma/client";
 import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
 import { useSession } from "next-auth/react";
-import { TipoDeAccioModal } from "types/types";
+import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
 
 type Props = {
     open: boolean;
@@ -19,6 +19,7 @@ type Props = {
     nombreProceso: string;
     idProcesoDesarrolloOrden: string;
     accion?: TipoDeAccioModal;
+    cargaDeTiempo?: RegistroCargaTiempo
 }
 
 export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
@@ -56,14 +57,20 @@ export const cargaDeTiempoLayout: LayoutElement<CargaDeTiempoType> = {
     ]
 }
 
-export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, idProcesoDesarrolloOrden, accion}: Props) {
+export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, idProcesoDesarrolloOrden, accion, cargaDeTiempo}: Props) {
     const {data: datosDeSesion} = useSession();
     const {addError} = useContext(ErrorHandlerContext);
     const queryClient = useQueryClient();
-    const defaultLayout = {
+    const defaultLayout = accion === TipoDeAccioModal.CARGA ? {
         horas: 0,
         minutos: 0,
         comentario: '',
+        idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
+        email: datosDeSesion?.user?.email
+    }: {
+        horas: cargaDeTiempo.horas,
+        minutos: cargaDeTiempo.minutos,
+        comentario: cargaDeTiempo.comentario,
         idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
         email: datosDeSesion?.user?.email
     };

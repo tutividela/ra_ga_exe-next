@@ -15,44 +15,47 @@ type Props = {
     selectedProcess: string
 }
 
-const columnas: GridColDef[] = [
-    { field: 'name', headerName: 'Usuario',  description: 'El nombre del usuario', sortable: true, width: 160 },
-    { field: 'comentario', headerName: 'Comentario',  description: 'Un comentario sobre lo que se realizo', sortable: true, width: 160 },
-    { field: 'horas', headerName: 'Horas', description: 'La cantidad de horas de la carga', width: 80 },
-    { field: 'minutos', headerName: 'Minutos', description: 'La cantidad de minutos de la carga', width: 80 },
-    {
-      field: 'fechaDeCarga',
-      headerName: 'Fecha de Carga',
-      description: 'La fecha de la carga',
-      sortable: true,
-      width: 200
-    },
-    {
-      field: 'fechaDeActualizacion',
-      headerName: 'Fecha de Actualizacion',
-      description: 'La fecha de la actualizacion',
-      sortable: false,
-      width: 200
-    },
-    {
-        field: 'editar', headerName: 'Editar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
-            <ModeEditIcon />
-    }
-  ];
-
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
     const [showVerTiempo, setShowVerTiempo] = useState(false);
+    const [tipoDeAccion, setTipoDeAccion] = useState(TipoDeAccioModal.CARGA);
+    const [cargaDeTiempo, setCargaDeTiempo] = useState<RegistroCargaTiempo>(null);
     const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
     
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
     
+    const columnas: GridColDef[] = [
+        { field: 'name', headerName: 'Usuario',  description: 'El nombre del usuario', sortable: true, width: 160 },
+        { field: 'comentario', headerName: 'Comentario',  description: 'Un comentario sobre lo que se realizo', sortable: true, width: 160 },
+        { field: 'horas', headerName: 'Horas', description: 'La cantidad de horas de la carga', width: 80 },
+        { field: 'minutos', headerName: 'Minutos', description: 'La cantidad de minutos de la carga', width: 80 },
+        {
+          field: 'fechaDeCarga',
+          headerName: 'Fecha de Carga',
+          description: 'La fecha de la carga',
+          sortable: true,
+          width: 200
+        },
+        {
+          field: 'fechaDeActualizacion',
+          headerName: 'Fecha de Actualizacion',
+          description: 'La fecha de la actualizacion',
+          sortable: false,
+          width: 200
+        },
+        {
+            field: 'editar', headerName: 'Editar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
+                <div onClick={() => handleEditarModalCargaTiempo(params.row.id)}>
+                    <ModeEditIcon />
+                </div>
+        }
+      ];
     
     const filas = cargasDeTiempo.map((registro: RegistroCargaTiempo, index: number) => {
-        const fechaDeCargaParseada = new Date(registro.fechaDeCarga).toLocaleString('es-AR');
-        const fechaDeActualizacionParseada = new Date(registro.fechaDeActualizacion).toLocaleString('es-AR');
+    const fechaDeCargaParseada = new Date(registro.fechaDeCarga).toLocaleString('es-AR');
+    const fechaDeActualizacionParseada = new Date(registro.fechaDeActualizacion).toLocaleString('es-AR');
         return {
-            id: index,
+            id: registro.id,
             name: registro.usuarioDeCreacion.name,
             comentario: registro.comentario,
             horas: registro.horas,
@@ -62,7 +65,14 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
         }
     });
 
+    function handleEditarModalCargaTiempo(id: string): void {
+        const cargaDeTiempo = cargasDeTiempo.find((carga: RegistroCargaTiempo) => carga.id === id);
+        setCargaDeTiempo(cargaDeTiempo);
+        setTipoDeAccion(TipoDeAccioModal.EDITAR);
+        setShowCargarTiempo(true);
+    }
     function handleAbrirModalCargaTiempo(): void {
+        setTipoDeAccion(TipoDeAccioModal.CARGA);
         setShowCargarTiempo(true);
     }
     function handleCerrarModalCargaTiempo(): void {
@@ -94,7 +104,7 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                 }
                 {
                     showCargarTiempo? (
-                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={TipoDeAccioModal.EDITAR}/>
+                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={tipoDeAccion} cargaDeTiempo={cargaDeTiempo}/>
                     ): null
                 }
                 <div className="flex justify-center m-2">

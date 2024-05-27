@@ -26,3 +26,14 @@ export async function crearCargaDeTiempoPorIdProcesoDesarrolloOrden(cargaDeTiemp
         throw error
     });
 }
+
+export async function obtenerCargaDeTiempoPorId(id:  string): Promise<CargaDeTiempo & {usuarioDeCreacion: {name: string}}> {
+    return fetch(`/api/reportes/tiempo/obtener/id/${id}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'GET',
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}
