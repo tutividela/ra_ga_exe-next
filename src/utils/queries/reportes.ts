@@ -37,3 +37,19 @@ export async function obtenerCargaDeTiempoPorId(id:  string): Promise<CargaDeTie
         throw error
     });
 }
+
+export async function actualizarCargaDeTiempoPorId(cargaDeTiempo: Partial<CargaDeTiempo> & {email: string}): Promise<CargaDeTiempo> {
+    const {id, horas, minutos, comentario, email, idProcesoDesarrolloOrden} = cargaDeTiempo;
+    const informacionReducidaDeUsuario = await getReducedUser({email});
+    const body = {horas: Number(horas), minutos: Number(minutos), comentario, idUsuario: informacionReducidaDeUsuario?.user?.id, idProcesoDesarrolloOrden}
+
+    return fetch(`/api/reportes/tiempo/editar/${id}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'PATCH',
+        body: JSON.stringify(body)
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}

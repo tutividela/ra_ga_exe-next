@@ -9,7 +9,7 @@ import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { useContext } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { CargaDeTiempo } from "@prisma/client";
-import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
+import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden, actualizarCargaDeTiempoPorId } from "@utils/queries/reportes";
 import { useSession } from "next-auth/react";
 import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
 
@@ -68,6 +68,7 @@ export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, 
         idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
         email: datosDeSesion?.user?.email
     }: {
+        id: cargaDeTiempo.id,
         horas: cargaDeTiempo.horas,
         minutos: cargaDeTiempo.minutos,
         comentario: cargaDeTiempo.comentario,
@@ -75,7 +76,7 @@ export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, 
         email: datosDeSesion?.user?.email
     };
 
-    const {mutateAsync: cargarTiempoAsync} = useMutation<CargaDeTiempo & {usuarioDeCreacion: {name: string}}, any, Partial<CargaDeTiempo>>(crearCargaDeTiempoPorIdProcesoDesarrolloOrden, {
+    const {mutateAsync: cargarTiempoAsync, isLoading: seEstaCreandoUnaCargaDeTiempo} = useMutation<CargaDeTiempo & {usuarioDeCreacion: {name: string}}, any, Partial<CargaDeTiempo>>(crearCargaDeTiempoPorIdProcesoDesarrolloOrden, {
         onError: (error) => addError(JSON.stringify(error), 'error'),
         onSuccess: () => {
             onClose();
@@ -84,23 +85,40 @@ export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, 
         }
     });
 
+    const {mutateAsync: editarTiempoAsync, isLoading: seEstaEditandoUnaCargaDeTiempo} = useMutation(actualizarCargaDeTiempoPorId, {
+        onError: (error) => addError(JSON.stringify(error), 'error'),
+        onSuccess: () => {
+            onClose();
+            queryClient.invalidateQueries(['cargasDeTiempo']);
+            addError("Se ha editado el tiempo con exito!",'info');
+        }
+    });
+
     async function handleCargaDeTiempo(data: Partial<CargaDeTiempo> & {email: string}) {
         await cargarTiempoAsync(data);
+    }
+
+    async function handleEditarDeTiempo(data: Partial<CargaDeTiempo> & {email: string}) {
+        await editarTiempoAsync(data);
     }
 
     return(  
     <Dialog open={open} onClose={onClose} fullWidth={true}>
         <DialogTitle className="self-center text-2xl m">Carga de tiempo para: {nombreProceso}</DialogTitle>
-        <LoadingIndicator show={false}>
+        <LoadingIndicator show={seEstaCreandoUnaCargaDeTiempo || seEstaEditandoUnaCargaDeTiempo}>
             <HookForm
                 defaultValues={defaultLayout}
-                onSubmit={handleCargaDeTiempo}
+                onSubmit={TipoDeAccioModal.EDITAR === accion ? handleEditarDeTiempo :handleCargaDeTiempo}
             >
                 <DialogContent>
                     <FormItem layout={cargaDeTiempoLayout}/>
                 </DialogContent>
                 <DialogActions className="self-center">
-                    <Button variant="outlined" type="submit" startIcon={<AddIcon />}>Cargar</Button>
+                    {
+                        TipoDeAccioModal.EDITAR === accion ? 
+                            <Button variant="outlined" type= "submit" startIcon={<AddIcon />}>Editar</Button>
+                            : <Button variant="outlined" type="submit" startIcon={<AddIcon />}>Cargar</Button> 
+                    }
                 </DialogActions>
             </HookForm>
         </LoadingIndicator>
