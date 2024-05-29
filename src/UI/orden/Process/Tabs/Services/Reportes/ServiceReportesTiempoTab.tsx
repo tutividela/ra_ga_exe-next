@@ -1,14 +1,17 @@
 import { Button } from "@mui/material";
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import AddIcon from '@mui/icons-material/Add';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import {  obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
-import {  useState } from "react";
-import { useQuery } from "react-query";
+import { eliminarCargaDeTiempoPorId, obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
+import { useContext, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
 import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
+import DialogEliminarCargaTiempo from "./DialogEliminarCargaTiempo";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 
 type Props = {
     orderData: ExtendedOrdenData
@@ -17,10 +20,13 @@ type Props = {
 
 export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
     const [showCargarTiempo, setShowCargarTiempo] = useState(false);
-    const [showVerTiempo, setShowVerTiempo] = useState(false);
+    const [showAlertEliminarTiempo, setShowAlertEliminarTiempo] = useState(false);
     const [tipoDeAccion, setTipoDeAccion] = useState(TipoDeAccioModal.CARGA);
     const [cargaDeTiempo, setCargaDeTiempo] = useState<RegistroCargaTiempo>(null);
+    const [idCargaTiempo, setIdCargaTiempo] = useState<string>('');
     const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
+    const {addError} = useContext(ErrorHandlerContext);
+    const queryClient = useQueryClient();
     
     const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
     
@@ -48,6 +54,12 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                 <div onClick={() => handleEditarModalCargaTiempo(params.row.id)}>
                     <ModeEditIcon />
                 </div>
+        },
+        {
+            field: 'eliminar', headerName: 'Eliminar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
+                <div onClick={() => handleAbrirModalEliminarCargaTiempo(params.row.id)}>
+                    <DeleteIcon />
+                </div>
         }
       ];
     
@@ -71,13 +83,23 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
         setTipoDeAccion(TipoDeAccioModal.EDITAR);
         setShowCargarTiempo(true);
     }
-    function handleAbrirModalCargaTiempo(): void {
+    function handleCargarModalCargaTiempo(): void {
         setTipoDeAccion(TipoDeAccioModal.CARGA);
         setShowCargarTiempo(true);
     }
+
+    function handleAbrirModalEliminarCargaTiempo(id: string): void {
+        setIdCargaTiempo(id);
+        setShowAlertEliminarTiempo(true);
+    }
+    function handleCerrarModalEliminarCargaTiempo(): void {
+        setShowAlertEliminarTiempo(false);
+    }
+
     function handleCerrarModalCargaTiempo(): void {
         setShowCargarTiempo(false);
     }
+    
 
     return(
         <LoadingIndicator show={seEstaBuscandoCagasDeTiempo} variant="blocking">
@@ -102,13 +124,10 @@ export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
                         </div>
                     )
                 }
-                {
-                    showCargarTiempo? (
-                        <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={tipoDeAccion} cargaDeTiempo={cargaDeTiempo}/>
-                    ): null
-                }
+                {showCargarTiempo && <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={tipoDeAccion} cargaDeTiempo={cargaDeTiempo}/>}
+                {showAlertEliminarTiempo && <DialogEliminarCargaTiempo onClose={handleCerrarModalEliminarCargaTiempo} open={showAlertEliminarTiempo} idCargaTiempo={idCargaTiempo} />}
                 <div className="flex justify-center m-2">
-                    <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAbrirModalCargaTiempo}>Cargar tiempo</Button>
+                    <Button variant="outlined" startIcon={<AddIcon />} onClick={handleCargarModalCargaTiempo}>Cargar tiempo</Button>
                 </div>
             </div>
         </LoadingIndicator>

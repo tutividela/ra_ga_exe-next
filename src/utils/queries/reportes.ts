@@ -53,3 +53,14 @@ export async function actualizarCargaDeTiempoPorId(cargaDeTiempo: Partial<CargaD
         throw error
     });
 }
+
+export async function eliminarCargaDeTiempoPorId(id: string): Promise<CargaDeTiempo> {
+    return fetch(`/api/reportes/tiempo/eliminar/${id}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'DELETE',
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}

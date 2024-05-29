@@ -31,7 +31,7 @@ export default async function patch(req: NextApiRequest, res: NextApiResponse): 
 
         res.status(200).json(cargaDeTiempoActualizada);
     }catch(error: any) {
-        console.log("Erro en la carga del tiempo: ", error);
+        console.log("Erro en la edicion del tiempo: ", error);
 
         if(error instanceof ZodError) {
             res.status(400).json(error.flatten());

@@ -11,7 +11,7 @@ export type RegistroCargaTiempo = {
 };
 
 export enum TipoDeAccioModal {
-    VER,
+    ELIMINAR,
     EDITAR,
     CARGA,
 }

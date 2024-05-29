@@ -4,12 +4,14 @@ import { LayoutElement } from "@UI/Forms/types";
 import { CargaDeTiempoType } from "@backend/schemas/CargaDeTiempoSchema";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { useContext } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { CargaDeTiempo } from "@prisma/client";
-import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden, actualizarCargaDeTiempoPorId } from "@utils/queries/reportes";
+import { crearCargaDeTiempoPorIdProcesoDesarrolloOrden, actualizarCargaDeTiempoPorId, eliminarCargaDeTiempoPorId } from "@utils/queries/reportes";
 import { useSession } from "next-auth/react";
 import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
 
@@ -113,12 +115,9 @@ export default function ServiceUploadCargaTiempo({open, onClose, nombreProceso, 
                 <DialogContent>
                     <FormItem layout={cargaDeTiempoLayout}/>
                 </DialogContent>
-                <DialogActions className="self-center">
-                    {
-                        TipoDeAccioModal.EDITAR === accion ? 
-                            <Button variant="outlined" type= "submit" startIcon={<AddIcon />}>Editar</Button>
-                            : <Button variant="outlined" type="submit" startIcon={<AddIcon />}>Cargar</Button> 
-                    }
+                <DialogActions className="flex justify-center">
+                        {TipoDeAccioModal.EDITAR === accion && <Button variant="outlined" type= "submit" startIcon={<ModeEditIcon />}>Editar</Button>}
+                        {TipoDeAccioModal.CARGA === accion && <Button variant="outlined" type="submit" startIcon={<AddIcon />}>Cargar</Button>}
                 </DialogActions>
             </HookForm>
         </LoadingIndicator>

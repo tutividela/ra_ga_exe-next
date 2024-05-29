@@ -135,12 +135,12 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
                     type: 'validate'
                 }
             ]
-        },
+        }, 
         {
             type: 'Switch',
             className: 'mt-2',
-            scope: 'procesosDesarrolloSeleccionados.Tizado.selected',
-            label: "Tizado",
+            scope: 'procesosDesarrolloSeleccionados.Corte.selected',
+            label: "Corte",
             options: {
                 labelPlacement: 'end'
             },
@@ -175,8 +175,8 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
         {
             type: 'Switch',
             className: 'mt-2',
-            scope: 'procesosDesarrolloSeleccionados.Corte.selected',
-            label: "Corte",
+            scope: 'procesosDesarrolloSeleccionados.Tizado.selected',
+            label: "Tizado",
             options: {
                 labelPlacement: 'end'
             },
