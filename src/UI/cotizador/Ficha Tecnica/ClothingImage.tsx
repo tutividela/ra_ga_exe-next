@@ -27,11 +27,15 @@ const ClothingImage = ({ clothesData, currStep }: ClothingImageProps) => {
                 </div>
                 {currStep === 4 && <div className='flex flex-col space-y-2'>
                     <div className="flex flex-col list-disc" >
-                        {data?.preciosIndividuales?.map(el =>
-                            <>
-                                <li className="text-xs mt-1" key={el.servicio}> {el.servicio}: </li>
-                                <div className="text-xs">${el.precioTotal?.toFixed(0)}</div>
-                            </>
+                        {data?.preciosIndividuales?.map((precioIndividual) =>
+                            precioIndividual.precioTotal > 0 ?
+                            (
+                                <>
+                                    <li className="text-xs mt-1" key={precioIndividual.servicio}> {precioIndividual.servicio}: </li>
+                                    <div className="text-xs">${precioIndividual.precioTotal?.toFixed(0)}</div>
+                                </>
+                            )
+                            :null
                         )}
                         <li className="text-xs font-bold mt-1">Terminaciones y otros procesos se cotizan durante el desarrollo</li>
                     </div>
