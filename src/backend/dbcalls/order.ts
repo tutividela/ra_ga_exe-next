@@ -111,14 +111,42 @@ export const calculateOrderTotal = async (datosDeLaOrden: ValidatedOrderSchema, 
                 servicio: true
             }
         });
-        const preciosDeServiciosSeleccionados = Object.entries(procesosDesarrolloSeleccionados).map((procesoDesarrollo) => {
+        Object.entries(procesosDesarrolloSeleccionados).map((procesoDesarrollo) => {
             let precioFijoYFactorMultiplicador = {
                 precioFijo: 0,
                 factorMultiplicador: 0
             }
-            const [nombre, {selected: seleccionado}] = procesoDesarrollo; 
+            const [nombre, {selected: seleccionado}] = procesoDesarrollo;
 
             if(seleccionado) {
+                if(nombre === 'Corte') {
+                    const procesoServicioSeleccionado = todosProcesoDesarrolloConServicio.find((procesoDesarrolloConServicios) => procesoDesarrolloConServicios.nombre === nombre);
+                    const corteMuestra = procesoServicioSeleccionado.servicio.find((servicio) => servicio.name === 'Corte Muestra');
+                    
+                    precioFijoYFactorMultiplicador.precioFijo += corteMuestra.precioFijo;
+                    precioFijoYFactorMultiplicador.factorMultiplicador += corteMuestra.factorMultiplicador;
+    
+                    preciosIndividuales.push({
+                        servicio: nombre,
+                        precioTotal: precioDolar?.precio * (prendaPrecio.precioBase * precioFijoYFactorMultiplicador.factorMultiplicador + precioFijoYFactorMultiplicador.precioFijo)
+                    });
+                    return;
+                }
+    
+                if(nombre === 'Confección') {
+                    const procesoServicioSeleccionado = todosProcesoDesarrolloConServicio.find((procesoDesarrolloConServicios) => procesoDesarrolloConServicios.nombre === nombre);
+                    const confeccionMuestra = procesoServicioSeleccionado.servicio.find((servicio) => servicio.name === 'Confección Muestra');
+                    
+                    precioFijoYFactorMultiplicador.precioFijo += confeccionMuestra.precioFijo;
+                    precioFijoYFactorMultiplicador.factorMultiplicador += confeccionMuestra.factorMultiplicador;
+    
+                    preciosIndividuales.push({
+                        servicio: nombre,
+                        precioTotal: precioDolar?.precio * (prendaPrecio.precioBase * precioFijoYFactorMultiplicador.factorMultiplicador + precioFijoYFactorMultiplicador.precioFijo)
+                    });
+                    return;
+                }
+
                 const servicios = todosProcesoDesarrolloConServicio.filter(
                     (procesoDesarrolloConServicio) => procesoDesarrolloConServicio.nombre === nombre
                 )[0].servicio;
@@ -140,10 +168,9 @@ export const calculateOrderTotal = async (datosDeLaOrden: ValidatedOrderSchema, 
             preciosIndividuales,
             precioDolar
         }
-       
     }
     catch (e) {
-        console.error(e)
+        console.error("Error en el calculo del precio: ", e);
     }
 }
 

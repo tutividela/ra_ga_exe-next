@@ -42,6 +42,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const formattedProcesses = orders.procesos.map(proc => ({
             estado: proc.estado.descripcion,
+            idEstado: proc.estado.id,
             proceso: proc.proceso.nombre,
             icon: proc.proceso.icono,
             id: proc.id,

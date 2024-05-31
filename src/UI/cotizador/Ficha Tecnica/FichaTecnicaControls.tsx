@@ -29,8 +29,7 @@ const FichaTecnicaControls = (props: FichaTecnicaControlsProps) => {
                 return !(
                     data.procesosDesarrolloSeleccionados.Diseño.selected && 
                     data.procesosDesarrolloSeleccionados.Molderia.selected && 
-                    data.procesosDesarrolloSeleccionados.Digitalización.selected &&
-                    data.procesosDesarrolloSeleccionados.Geometral.selected
+                    data.procesosDesarrolloSeleccionados.Digitalización.selected
                 );
             case 4:
                 return false;

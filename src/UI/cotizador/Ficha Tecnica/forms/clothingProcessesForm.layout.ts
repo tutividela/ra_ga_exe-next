@@ -140,7 +140,7 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
             type: 'Switch',
             className: 'mt-2',
             scope: 'procesosDesarrolloSeleccionados.Corte.selected',
-            label: "Corte",
+            label: "Corte Muestra",
             options: {
                 labelPlacement: 'end'
             },
@@ -216,17 +216,29 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
             options: {
                 labelPlacement: 'end'
             },
-            width: 12
+            width: 12,
+            rules: [
+                {
+                    scope: 'procesosDesarrolloSeleccionados.Corte.selected',
+                    type: 'validate'
+                }
+            ]
         },
         {
             type: 'Switch',
             className: 'mt-2',
             scope: 'procesosDesarrolloSeleccionados.Confección.selected',
-            label: "Confección",
+            label: "Confección Muestra",
             options: {
                 labelPlacement: 'end'
             },
-            width: 12
+            width: 12,
+            rules: [
+                {
+                    scope: 'procesosDesarrolloSeleccionados.Corte.selected',
+                    type: 'validate'
+                }
+            ]
         },
         {
             type: 'Switch',
@@ -236,7 +248,13 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
             options: {
                 labelPlacement: 'end'
             },
-            width: 12
+            width: 12,
+            rules: [
+                {
+                    scope: 'procesosDesarrolloSeleccionados.Corte.selected',
+                    type: 'validate'
+                }
+            ]
         }
     ]
 }

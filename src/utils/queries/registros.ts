@@ -1,6 +1,6 @@
 import { RegistroCargaTiempo } from "types/types";
 import { errorHandle } from "./cotizador";
-import { CargaDeTiempo } from "@prisma/client";
+import { CargaDeTiempo, RegistroCambioEstadoProcesoDesarrolloOrden } from "@prisma/client";
 import { getReducedUser } from "./user";
 
 export async function obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(idProcesoDesarrolloOrden: string): Promise<RegistroCargaTiempo[]> {
@@ -60,6 +60,26 @@ export async function eliminarCargaDeTiempoPorId(id: string): Promise<CargaDeTie
             'Content-Type': 'application/json'
         },
         method: 'DELETE',
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}
+
+export async function obtenerRegistrosDeEstadoProcesoDesarrolloOrdenPorIdProcesoDesarrolloOrden(idProcesoDesarrolloOrden: string) {
+    return fetch(`/api/reportes/registro/obtener/proceso-desarrollo-orden/${idProcesoDesarrolloOrden}`, {
+        method: 'GET'
+    }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
+        throw error
+    });
+}
+
+export async function crearRegistrosDeEstadoProcesoDesarrolloOrdenPorIdProcesoDesarrolloOrden(registroDeEstadoProcesoDesarrolloOrden: Partial<RegistroCambioEstadoProcesoDesarrolloOrden> & {email: string}) {
+    const {idProcesoDesarrolloOrden, idEstadoProcesoDesarrolloOrden, email} = registroDeEstadoProcesoDesarrolloOrden;
+    const informacionReducidaDeUsuario = await getReducedUser({email});
+    const body = {idProcesoDesarrolloOrden: idProcesoDesarrolloOrden, idEstadoProcesoDesarrolloOrden: idEstadoProcesoDesarrolloOrden, idUsuario: informacionReducidaDeUsuario?.user?.id}
+
+    return fetch(`/api/reportes/registro/crear/proceso-desarrollo-orden/${idProcesoDesarrolloOrden}`, {
+        method: 'POST'
     }).then((response: Response) => response.ok? response.json(): errorHandle(response)).catch((error: any) => {
         throw error
     });

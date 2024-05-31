@@ -12,11 +12,9 @@ interface ClothingImageProps {
 }
 
 const ClothingImage = ({ clothesData, currStep }: ClothingImageProps) => {
-
-    const formContext = useFormContext<OrderCreationData>()
-
-    const clothesName = formContext.watch('tipoPrenda.name')
-    const formData = formContext.watch()
+    const {watch} = useFormContext<OrderCreationData>();
+    const clothesName = watch('tipoPrenda.name');
+    const formData = watch();
     const image = useMemo(() => clothesData?.find(el => el.name === clothesName), [clothesData, clothesName])?.picture
 
     const { data } = useQuery([formData, currStep], () => currStep === 4 ? fetchPrice(formData) : null, { refetchOnWindowFocus: false })

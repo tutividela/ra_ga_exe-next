@@ -6,6 +6,7 @@ import { useFormContext } from "react-hook-form";
 import { useQuery } from "react-query";
 import FormItem from "../../Forms/FormItem";
 import { clothingSelectionLayout } from "./forms/clothingSelection.layout";
+import { Alert } from "@mui/material";
 
 interface ModelFormProps {
     clothesData: TipoPrenda[],
@@ -32,8 +33,11 @@ const ClothingSelectionForm = (props: ModelFormProps) => {
     }, [prendaSelected, setValue]);
 
     return (
-        <div className="flex md:w-6/12 flex-col justify-center items-center md:mt-0">
+        <div className="flex md:w-6/12 flex-col justify-center items-center mt-10 md:mt-0 ">
             <div className="mt-7 md:w-4/6">
+                <div className="flex self-start mb-10">
+                    <Alert severity='info'>Estime la complejidad a la hora de seleccionarla</Alert>
+                </div>
                 <FormItem layout={clothingSelectionLayout} selectOptions={{ 'clothesData': clothes, complexities }} />
             </div>
         </div>

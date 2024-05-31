@@ -1,6 +1,6 @@
 import { verifyUserOrder } from '@backend/dbcalls/order';
 import { obtainRole } from '@backend/dbcalls/user';
-import { Slide } from "@mui/material";
+import { Button, Slide } from "@mui/material";
 import { Session } from '@prisma/client';
 import Footer from "@UI/Generic/Footer";
 import HeaderBar from "@UI/Generic/HeaderBar";
@@ -18,12 +18,13 @@ import type { GetServerSideProps, NextPage } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
     const { addError } = useContext(ErrorHandlerContext)
-    const { query } = useRouter()
+    const { query } = useRouter();
+    const [showReporteTiempo, setShowReporteTiempo] = useState(false);
     const { orderId: id } = query
 
     const fetchOrder = (): Promise<ExtendedOrdenData> =>
@@ -41,6 +42,12 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
         onError: () => addError('Error al traer orden'),
         refetchOnWindowFocus: false
     });
+
+    useEffect(() => {
+        const {procesos} = orderData;
+        const desarrolloFinalizado = procesos.filter((proceso) => proceso.idEstado !== 3 ).every((procesoPedido) => procesoPedido.idEstado === 6);
+        setShowReporteTiempo(desarrolloFinalizado)
+    }, [orderData]);
 
     const [selectedProcess, setSelectedProcess] = useState('general')
     const handleSelectProcess = (processID: string) => {
@@ -66,6 +73,10 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
                                 {orderData?.id &&
                                     <OrderViewProvider orderData={orderData}>
                                         <OrderHeader orderData={orderData} />
+                                        <div>
+                                            {showReporteTiempo? <Button variant="outlined" onClick={() => console.log("se finalizo el desarrollo")}>Mostrar Tiempos</Button>: null}
+                                            
+                                        </div>
                                         <div className='m-6 p-4 border-2 min-h-screen flex flex-row'>
                                             <div className='w-full md:w-1/3'>
                                                 <OrderProcessSidebar orderData={orderData} onSelect={handleSelectProcess} role={role} selectedProcess={selectedProcess} />

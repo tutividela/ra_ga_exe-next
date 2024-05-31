@@ -2,7 +2,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { IconButton } from '@mui/material';
 import { ArchivoFichaTecnica, ContenidoFichaTencica, FichaTecnica } from '@prisma/client';
-import { adminRole, prestadorDeServiciosRole } from '@utils/roles/SiteRoles';
+import { adminRole, ayudanteRole, prestadorDeServiciosRole } from '@utils/roles/SiteRoles';
 import Image from 'next/image';
 import { useState } from 'react';
 import OrderGeneralChangeDialog from './Process/OrderGeneralChangeDialog';
@@ -110,7 +110,7 @@ const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect }: Props
             </div>
         </>
     )
-    if (role === adminRole || role === prestadorDeServiciosRole) return (
+    if (role === adminRole || role === prestadorDeServiciosRole || role === ayudanteRole) return (
         <>
             <OrderProcessItemChangeDialog process={proceso} open={statusDialogOpen} onClose={handleStatusDialogClose} />
             <OrderProcessItemResourcesDialog process={proceso} open={resourceDialogOpen} onClose={handleResourceDialogClose} />
