@@ -5,7 +5,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { eliminarCargaDeTiempoPorId, obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/reportes";
+import { eliminarCargaDeTiempoPorId, obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/registros";
 import { useContext, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";

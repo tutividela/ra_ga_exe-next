@@ -46,6 +46,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
             proceso: proc.proceso.nombre,
             icon: proc.proceso.icono,
             id: proc.id,
+            idProceso: proc.idProceso,
             lastUpdated: proc.lastUpdated,
             ficha: proc.FichaTecnica,
             recursos: proc.usuarioDeServicio.map(el => ({ key: el.email, text: el.name }))
