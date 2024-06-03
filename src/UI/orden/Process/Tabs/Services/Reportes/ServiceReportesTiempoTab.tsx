@@ -1,134 +1,99 @@
-import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import AddIcon from '@mui/icons-material/Add';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { eliminarCargaDeTiempoPorId, obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden } from "@utils/queries/registros";
-import { useContext, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { RegistroCargaTiempo, TipoDeAccioModal } from "types/types";
-import ServiceUploadCargaTiempo from "./ServiceUploadCargaTiempo";
-import DialogEliminarCargaTiempo from "./DialogEliminarCargaTiempo";
-import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Props = {
     orderData: ExtendedOrdenData
-    selectedProcess: string
 }
 
-export function ServiceReportesTiempoTab({orderData, selectedProcess}: Props) {
-    const [showCargarTiempo, setShowCargarTiempo] = useState(false);
-    const [showAlertEliminarTiempo, setShowAlertEliminarTiempo] = useState(false);
-    const [tipoDeAccion, setTipoDeAccion] = useState(TipoDeAccioModal.CARGA);
-    const [cargaDeTiempo, setCargaDeTiempo] = useState<RegistroCargaTiempo>(null);
-    const [idCargaTiempo, setIdCargaTiempo] = useState<string>('');
-    const {id, proceso} = orderData.procesos.find((procesoDesarrolloOrden) => procesoDesarrolloOrden.id === selectedProcess);
-    const {addError} = useContext(ErrorHandlerContext);
-    const queryClient = useQueryClient();
+export function ServiceReportesTiempoTab({orderData}: Props) {
+    const [showReporteTiempo, setShowReporteTiempo] = useState(false);
+
+    useEffect(() => {
+        const ordenDesarrolloFinalizada = orderData?.procesos?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3).every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
+        setShowReporteTiempo(ordenDesarrolloFinalizada);
+    }, [orderData]);
     
-    const {data: cargasDeTiempo, isLoading: seEstaBuscandoCagasDeTiempo} = useQuery(['cargasDeTiempo', id], () => obtenerCargasDeTiempoPorIdProcesoDesarrolloOrden(id), {initialData: []});
-    
-    const columnas: GridColDef[] = [
-        { field: 'name', headerName: 'Usuario',  description: 'El nombre del usuario', sortable: true, width: 160 },
-        { field: 'comentario', headerName: 'Comentario',  description: 'Un comentario sobre lo que se realizo', sortable: true, width: 160 },
-        { field: 'horas', headerName: 'Horas', description: 'La cantidad de horas de la carga', width: 80 },
-        { field: 'minutos', headerName: 'Minutos', description: 'La cantidad de minutos de la carga', width: 80 },
-        {
-          field: 'fechaDeCarga',
-          headerName: 'Fecha de Carga',
-          description: 'La fecha de la carga',
-          sortable: true,
-          width: 200
-        },
-        {
-          field: 'fechaDeActualizacion',
-          headerName: 'Fecha de Actualizacion',
-          description: 'La fecha de la actualizacion',
-          sortable: false,
-          width: 200
-        },
-        {
-            field: 'editar', headerName: 'Editar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
-                <div onClick={() => handleEditarModalCargaTiempo(params.row.id)}>
-                    <ModeEditIcon />
-                </div>
-        },
-        {
-            field: 'eliminar', headerName: 'Eliminar', maxWidth: 75, align: "center", disableColumnMenu: true, headerAlign: "center", filterable: false, sortable: false, renderCell: (params) =>
-                <div onClick={() => handleAbrirModalEliminarCargaTiempo(params.row.id)}>
-                    <DeleteIcon />
-                </div>
+    function calcularDiasHorasMinutos(datoReporteTiempo) {
+        const dias = Math.floor(datoReporteTiempo.duracion / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((datoReporteTiempo.duracion % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((datoReporteTiempo.duracion % (1000 * 60 * 60)) / (1000 * 60));
+
+        return{
+            dias: `${dias} Dias`,
+            horas: `${horas} Horas`,
+            minutos: `${minutos} Minutos`
         }
-      ];
-    
-    const filas = cargasDeTiempo.map((registro: RegistroCargaTiempo, index: number) => {
-    const fechaDeCargaParseada = new Date(registro.fechaDeCarga).toLocaleString('es-AR');
-    const fechaDeActualizacionParseada = new Date(registro.fechaDeActualizacion).toLocaleString('es-AR');
-        return {
-            id: registro.id,
-            name: registro.usuarioDeCreacion.name,
-            comentario: registro.comentario,
-            horas: registro.horas,
-            minutos: registro.minutos,
-            fechaDeCarga: fechaDeCargaParseada,
-            fechaDeActualizacion: fechaDeActualizacionParseada
-        }
-    });
-
-    function handleEditarModalCargaTiempo(id: string): void {
-        const cargaDeTiempo = cargasDeTiempo.find((carga: RegistroCargaTiempo) => carga.id === id);
-        setCargaDeTiempo(cargaDeTiempo);
-        setTipoDeAccion(TipoDeAccioModal.EDITAR);
-        setShowCargarTiempo(true);
-    }
-    function handleCargarModalCargaTiempo(): void {
-        setTipoDeAccion(TipoDeAccioModal.CARGA);
-        setShowCargarTiempo(true);
     }
 
-    function handleAbrirModalEliminarCargaTiempo(id: string): void {
-        setIdCargaTiempo(id);
-        setShowAlertEliminarTiempo(true);
-    }
-    function handleCerrarModalEliminarCargaTiempo(): void {
-        setShowAlertEliminarTiempo(false);
+    function generarDatoReporteDeTiempo() {
+        const procesosTerminados = orderData?.procesos
+            .filter((procesoTerminado) => procesoTerminado.idEstado === 6)
+            .sort((procesoAnterior, procesoPosterior) => procesoAnterior.idProceso - procesoPosterior.idProceso) || [];
+        const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+
+        const datosReporteDeTiempo = procesosTerminados.map((procesoTerminado, index) => {
+            if(procesoTerminado.idProceso === 1) {
+                const fechaUltimaActualizacion = new Date(procesoTerminado?.lastUpdated);
+                return {
+                    idProceso: procesoTerminado.idProceso,
+                    proceso: procesoTerminado.proceso,
+                    duracion: fechaUltimaActualizacion.getTime() - fechaDeCreacionOrden.getTime()
+                }
+            }else {
+                const fechaActualizacionProcesoAnterior = new Date(procesosTerminados[index -1].lastUpdated);
+                const fechaActualizacionProcesoActual = new Date(procesoTerminado.lastUpdated);
+                return {
+                    idProceso: procesoTerminado.idProceso,
+                    proceso: procesoTerminado.proceso,
+                    duracion: fechaActualizacionProcesoActual.getTime() - fechaActualizacionProcesoAnterior.getTime()
+                }
+            }
+        });
+        return datosReporteDeTiempo.map((datoReporteTiempo) => ({
+            id: datoReporteTiempo.idProceso,
+            proceso: datoReporteTiempo.proceso,
+            ...calcularDiasHorasMinutos(datoReporteTiempo)
+        }));
     }
 
-    function handleCerrarModalCargaTiempo(): void {
-        setShowCargarTiempo(false);
-    }
+    const columnas: GridColDef[] = useMemo(() => (
+        [
+            { field: 'proceso', headerName: 'Proceso',  description: 'Proceso de desarrollo', width: 160 },
+            { field: 'dias', headerName: 'Dias',  description: 'La cantidad de dias demorados', width: 100 },
+            { field: 'horas', headerName: 'Horas', description: 'La cantidad de horas demorados', width: 100 },
+            { field: 'minutos', headerName: 'Minutos', description: 'La cantidad de minutos demorados', width: 100 },
+        ]
+    ), [orderData.procesos]);
+
+    const filas = useMemo(() => generarDatoReporteDeTiempo(), [orderData.procesos]);
     
 
     return(
-        <LoadingIndicator show={seEstaBuscandoCagasDeTiempo} variant="blocking">
+        <LoadingIndicator show={false} variant="blocking">
             <div style={{ height: 400, display: 'flex', flexDirection: 'column', width: '100%'}}>
-                {
-                    cargasDeTiempo.length > 0? (
-                        <>
-                            <DataGrid
-                                rows={filas}
-                                columns={columnas}
-                                initialState={{
-                                    pagination: {
-                                        page: 0,
-                                        pageSize: 4,
-                                    },
-                                }}
-                            />
-                        </>
-                    ): (
-                        <div className="flex align-middle m-3 justify-center h-auto">
-                            <p className="font-semibold text-lg">No hay tiempo cargado</p>
-                        </div>
-                    )
-                }
-                {showCargarTiempo && <ServiceUploadCargaTiempo open={showCargarTiempo} onClose={handleCerrarModalCargaTiempo} nombreProceso={proceso} idProcesoDesarrolloOrden={id} accion={tipoDeAccion} cargaDeTiempo={cargaDeTiempo}/>}
-                {showAlertEliminarTiempo && <DialogEliminarCargaTiempo onClose={handleCerrarModalEliminarCargaTiempo} open={showAlertEliminarTiempo} idCargaTiempo={idCargaTiempo} />}
-                <div className="flex justify-center m-2">
-                    <Button variant="outlined" startIcon={<AddIcon />} onClick={handleCargarModalCargaTiempo}>Cargar tiempo</Button>
-                </div>
+                
+            {
+                showReporteTiempo? (
+                    <>
+                        <DataGrid
+                            rows={filas}
+                            columns={columnas}
+                            initialState={{
+                                pagination: {
+                                    page: 0,
+                                    pageSize: 5,
+                                },
+                            }}
+                        />
+                    </>
+                ): (
+                    <div className="flex align-middle m-3 justify-center h-auto">
+                        <p className="font-semibold text-lg">La orden no esta actualmente finalizada</p>
+                    </div>
+                )
+            }
             </div>
         </LoadingIndicator>
     )

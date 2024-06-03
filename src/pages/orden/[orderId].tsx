@@ -25,7 +25,6 @@ import { useQuery } from "react-query";
 const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
     const { addError } = useContext(ErrorHandlerContext)
     const { query } = useRouter();
-    const [showReporteTiempo, setShowReporteTiempo] = useState(false);
     const { orderId: id } = query;
 
     const fetchOrder = (): Promise<ExtendedOrdenData> =>
@@ -49,38 +48,6 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
         setSelectedProcess(processID)
     }
 
-    function generarDatoReporteDeTiempo(): void {
-        const procesosTerminados = orderData?.procesos
-            .filter((procesoTerminado) => procesoTerminado.idEstado === 6)
-            .sort((procesoAnterior, procesoPosterior) => procesoAnterior.idProceso - procesoPosterior.idProceso) || [];
-        const fechaDeCreacionOrden = new Date(orderData?.createdAt);
-
-        const datosReporteDeTiempo = procesosTerminados.map((procesoTerminado, index) => {
-            if(procesoTerminado.idProceso === 1) {
-                const fechaUltimaActualizacion = new Date(procesoTerminado?.lastUpdated);
-                return {
-                    proceso: procesoTerminado.proceso,
-                    duracion: fechaUltimaActualizacion.getMilliseconds()-fechaDeCreacionOrden.getMilliseconds()
-                }
-            }else {
-                const fechaActualizacionProcesoAnterior = new Date(procesosTerminados[index -1].lastUpdated);
-                const fechaActualizacionProcesoActual = new Date(procesoTerminado.lastUpdated);
-                console.log("Fecha Anterior: ",fechaActualizacionProcesoAnterior.toISOString(), " Fecha Posterior: ",fechaActualizacionProcesoActual.toISOString());
-                console.log("Proceso Posterior: ",procesoTerminado.proceso, " Proceso Anterior: ",procesosTerminados[index -1].proceso);
-                return {
-                    proceso: procesoTerminado.proceso,
-                    duracion: fechaActualizacionProcesoActual.getMilliseconds() - fechaActualizacionProcesoAnterior.getMilliseconds()
-                }
-            }
-        });
-        console.log(datosReporteDeTiempo);
-    }
-
-    useEffect(() => {
-        const ordenDesarrolloFinalizada = orderData?.procesos?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3).every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
-        setShowReporteTiempo(ordenDesarrolloFinalizada);
-    }, [orderData]);
-
     return (
         <div className="bg-split-white-black">
             <Head>
@@ -99,8 +66,7 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
                                 {orderData?.id &&
                                     <OrderViewProvider orderData={orderData}>
                                         <OrderHeader orderData={orderData} />
-                                        {showReporteTiempo? <Button variant="outlined" startIcon={<Done />} onClick={() => generarDatoReporteDeTiempo()}>Ver Reporte de Tiempo</Button>: null}
-                                        <div className='m-6 p-4 border-2 min-h-screen flex flex-row'>
+                                         <div className='m-6 p-4 border-2 min-h-screen flex flex-row'>
                                             <div className='w-full md:w-1/3'>
                                                 <OrderProcessSidebar orderData={orderData} onSelect={handleSelectProcess} role={role} selectedProcess={selectedProcess} />
                                             </div>

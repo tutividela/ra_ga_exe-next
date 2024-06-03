@@ -17,7 +17,7 @@ const OrderProcessContent = ({ orderData, selectedProcess, rol }: Props) => {
             <div className='text-4xl mb-20'>
                 {selectedProcess !== 'general' ? `Ficha de proceso de ${currProcess?.proceso || 'N/A'}` : 'Detalles de la orden'}
             </div>
-            {selectedProcess === 'general' && <OrderProcessContentGeneral orderData={orderData} selectedProcess={selectedProcess} />}
+            {selectedProcess === 'general' && <OrderProcessContentGeneral orderData={orderData} selectedProcess={selectedProcess} rol={rol}/>}
             {selectedProcess !== 'general' && <OrderProcessContentService orderData={orderData} selectedProcess={selectedProcess} rol={rol} />}
         </>
     )
