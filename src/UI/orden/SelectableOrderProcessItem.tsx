@@ -28,7 +28,8 @@ type Props = {
     proceso: ProcesoFicha
     role: string,
     selected?: boolean,
-    onSelect?: (processID: string) => void
+    onSelect?: (processID: string) => void;
+    habilitarCambioEstado: boolean;
 }
 
 
@@ -55,7 +56,7 @@ export const ProcessStateTextColors = (estado: string) => {
     }
 }
 
-const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect }: Props) => {
+const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect, habilitarCambioEstado }: Props) => {
 
     const { estado, proceso: nombreProceso,lastUpdated, icon, id, ficha } = proceso
     const [statusDialogOpen, setStatusDialogOpen] = useState(false)
@@ -135,7 +136,7 @@ const SelectableOrderProcessItem = ({ proceso, role, selected, onSelect }: Props
                         </IconButton>
                     </div>}
                     <div>
-                        <IconButton type='button' onClick={handleStatusDialogOpen}>
+                        <IconButton type='button' onClick={handleStatusDialogOpen} disabled={!habilitarCambioEstado}>
                             <EditIcon />
                         </IconButton>
                     </div>
