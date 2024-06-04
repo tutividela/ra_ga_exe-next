@@ -19,11 +19,11 @@ import type { GetServerSideProps, NextPage } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
-    const { addError } = useContext(ErrorHandlerContext)
+    const { addError } = useContext(ErrorHandlerContext);
     const { query } = useRouter();
     const { orderId: id } = query;
 
@@ -43,9 +43,9 @@ const Home: NextPage<{ session: Session, role: string }> = ({ role }) => {
         refetchOnWindowFocus: false
     });
 
-    const [selectedProcess, setSelectedProcess] = useState('general')
+    const [selectedProcess, setSelectedProcess] = useState('general');
     const handleSelectProcess = (processID: string) => {
-        setSelectedProcess(processID)
+        setSelectedProcess(processID);
     }
 
     return (

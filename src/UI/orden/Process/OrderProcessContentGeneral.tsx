@@ -39,10 +39,10 @@ const OrderProcessContentGeneral = ({ orderData, selectedProcess, rol }: Props) 
                     <div className='w-full flex flex-col items-start border-2 p-4 shadow-lg max-h-[75vh] overflow-y-auto'>
                         <div className='border-b-2 w-full'>
                             <Tabs value={value} onChange={handleChange} variant='scrollable'>
-                                {<Tab label="Detalles" value={0} />}
+                                <Tab label="Detalles" value={0} />
                                 {orderData?.archivos?.length > 0 && <Tab label="Archivos" value={1} />}
-                                {true && <Tab label="Mensajes" value={2} />}
-                                {([adminRole, ayudanteRole].includes(rol) && validarOrdenDesarrolloFinalizada()) && <Tab label="Tiempos" value={3} />}
+                                <Tab label="Mensajes" value={2} />
+                                {([adminRole, ayudanteRole].includes(rol) && validarOrdenDesarrolloFinalizada()) && <Tab label="Tiempos por Proceso" value={3} />}
                             </Tabs>
                         </div>
                         <div hidden={value !== 0} className='w-full'>

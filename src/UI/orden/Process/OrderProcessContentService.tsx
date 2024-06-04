@@ -38,7 +38,7 @@ const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) 
                                 {<Tab label="Detalles" value={0} />}
                                 {true && <Tab label="Archivos" value={1} />}
                                 {true && <Tab label="Mensajes" value={2} />}
-                                {(rol === adminRole || rol === ayudanteRole) && <Tab label="Registro de Estados" value={3} />}
+                                {/* {(rol === adminRole || rol === ayudanteRole) && <Tab label="Registro de Estados" value={3} />} */}
                             </Tabs>
                         </div>
                         <div hidden={value !== 0} className='w-full'>
@@ -50,12 +50,12 @@ const OrderProcessContentService = ({ orderData, selectedProcess, rol }: Props) 
                         <div hidden={value !== 2} className='w-full'>
                             <OrderMessagesTab orderData={orderData} selectedProcess={selectedProcess} />
                         </div>
-                        {
+                        {/* {
                             (rol === adminRole || rol === ayudanteRole) && 
                                 <div hidden={value !== 3} className='w-full'>
                                     <ServiceRegistroEstadoTiempo/>
                                 </div>
-                        }
+                        } */}
                     </div>
                 </div>
             </div>
