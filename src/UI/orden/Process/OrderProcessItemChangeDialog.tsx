@@ -6,8 +6,17 @@ import { fetchProcessStates, updateProcessState } from '@utils/queries/cotizador
 import React, { useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import DialogCambioEstadoProceso from './DialogCambioEstadoProceso';
+import { Dialog, Slide } from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
 
-
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 type Process = {
     estado: string;
@@ -53,15 +62,22 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     }
     const handleClose = () => props.onClose();
 
-    return <div>
-        
-            <HookForm defaultValues={props.process} onSubmit={handleSubmit} >
-                <LoadingIndicator show={isUpdatingState}>
-                    <DialogCambioEstadoProceso onClose={handleClose} open={props.open} states={states} habilitarCambioEstado={sePuedeHabilitarCambioEstado}/>
-                </LoadingIndicator>
-            </HookForm>
-        
-    </div >
+    return(
+        <div>
+            <Dialog
+                open={props.open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClose}
+            >
+                <HookForm defaultValues={props.process} onSubmit={handleSubmit} >
+                    <LoadingIndicator show={isUpdatingState}>
+                        <DialogCambioEstadoProceso onClose={handleClose} open={props.open} states={states} habilitarCambioEstado={sePuedeHabilitarCambioEstado}/>
+                    </LoadingIndicator>
+                </HookForm>
+            </Dialog>
+        </div >
+    );
 }
 
 export default OrderProcessItemChangeDialog;
