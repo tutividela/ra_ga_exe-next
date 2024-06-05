@@ -1,7 +1,9 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
+import { DataGrid, GridColDef, GridToolbar, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 type Props = {
     orderData: ExtendedOrdenData
@@ -15,25 +17,38 @@ export function ServiceReportesTiempoTab({orderData}: Props) {
         setShowReporteTiempo(ordenDesarrolloFinalizada);
     }, [orderData]);
     
-    function calcularDiasHorasMinutos(datoReporteTiempo) {
-        const dias = Math.floor(datoReporteTiempo.duracion / (1000 * 60 * 60 * 24));
-        const horas = Math.floor((datoReporteTiempo.duracion % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutos = Math.floor((datoReporteTiempo.duracion % (1000 * 60 * 60)) / (1000 * 60));
+    function calcularDiasHorasMinutos(duracion: number) {
+        const dias = Math.floor(duracion / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((duracion % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((duracion % (1000 * 60 * 60)) / (1000 * 60));
 
-        return{
+        return {
             dias: `${dias} Dias`,
             horas: `${horas} Horas`,
             minutos: `${minutos} Minutos`
-        }
+        };
     }
 
     function generarDatoReporteDeTiempo() {
-        const procesosTerminados = orderData?.procesos
-            .filter((procesoTerminado) => procesoTerminado.idEstado === 6)
-            .sort((procesoAnterior, procesoPosterior) => procesoAnterior.idProceso - procesoPosterior.idProceso) || [];
+        const procesosTerminados = obtenerProcesosTerminados();
         const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+        const datosReporteDeTiempo = calcularDuracionesPorProcesoDesarrollo(procesosTerminados, fechaDeCreacionOrden);
+        
+        return datosReporteDeTiempo.map((datoReporteTiempo) => ({
+            id: datoReporteTiempo.idProceso,
+            proceso: datoReporteTiempo.proceso,
+            ...calcularDiasHorasMinutos(datoReporteTiempo.duracion)
+        }));
+    }
 
-        const datosReporteDeTiempo = procesosTerminados.map((procesoTerminado, index) => {
+    function obtenerProcesosTerminados() {
+        return orderData?.procesos
+        .filter((procesoTerminado) => procesoTerminado.idEstado === 6)
+        .sort((procesoAnterior, procesoPosterior) => procesoAnterior.idProceso - procesoPosterior.idProceso) || [];
+    }
+
+    function calcularDuracionesPorProcesoDesarrollo(procesosTerminados, fechaDeCreacionOrden: Date): any[] {
+        return procesosTerminados.map((procesoTerminado, index) => {
             if(procesoTerminado.idProceso === 1) {
                 const fechaUltimaActualizacion = new Date(procesoTerminado?.lastUpdated);
                 return {
@@ -51,11 +66,15 @@ export function ServiceReportesTiempoTab({orderData}: Props) {
                 }
             }
         });
-        return datosReporteDeTiempo.map((datoReporteTiempo) => ({
-            id: datoReporteTiempo.idProceso,
-            proceso: datoReporteTiempo.proceso,
-            ...calcularDiasHorasMinutos(datoReporteTiempo)
-        }));
+    }
+
+    function calcularTiempoTotal(): {dias: string, horas: string, minutos: string} {
+        const procesosTerminados = obtenerProcesosTerminados();
+        const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+        const duracionTotal: number = calcularDuracionesPorProcesoDesarrollo(procesosTerminados, fechaDeCreacionOrden).
+            map((duracionDeProceso) => duracionDeProceso.duracion).
+            reduce((total, duracion) => total + duracion, 0);
+        return calcularDiasHorasMinutos(duracionTotal);
     }
 
     const columnas: GridColDef[] = useMemo(() => (
@@ -65,35 +84,42 @@ export function ServiceReportesTiempoTab({orderData}: Props) {
             { field: 'horas', headerName: 'Horas', description: 'La cantidad de horas demorados', width: 100 },
             { field: 'minutos', headerName: 'Minutos', description: 'La cantidad de minutos demorados', width: 100 },
         ]
-    ), [orderData.procesos]);
+    ), [showReporteTiempo]);
 
-    const filas = useMemo(() => generarDatoReporteDeTiempo(), [orderData.procesos]);
-    
+    const filas = useMemo(() => generarDatoReporteDeTiempo(), [showReporteTiempo]);
+    const duracionTotal = useMemo(() => calcularTiempoTotal(), [showReporteTiempo]);
 
     return(
         <LoadingIndicator show={false} variant="blocking">
             <div style={{ height: 400, display: 'flex', flexDirection: 'column', width: '100%'}}>
-                
-            {
-                showReporteTiempo? (
-                    <>
-                        <DataGrid
-                            rows={filas}
-                            columns={columnas}
-                            initialState={{
-                                pagination: {
-                                    page: 0,
-                                    pageSize: 5,
-                                },
-                            }}
-                        />
-                    </>
-                ): (
-                    <div className="flex align-middle m-3 justify-center h-auto">
-                        <p className="font-semibold text-lg">La orden no esta actualmente finalizada</p>
-                    </div>
-                )
-            }
+                {
+                    showReporteTiempo? (
+                        <>
+                            <DataGrid
+                                rows={filas}
+                                columns={columnas}
+                                initialState={{
+                                    pagination: {
+                                        page: 0,
+                                        pageSize: 5,
+                                    },
+                                }}
+                                components={{Toolbar: () => (
+                                    <GridToolbarContainer>
+                                        <GridToolbarExport  />
+                                    </GridToolbarContainer>
+                                )}}
+                            />
+                            <div className="m-3">
+                                <p className="text-l"><label className="font-bold">Tiempo total:</label> {duracionTotal.dias} {duracionTotal.horas} {duracionTotal.minutos}</p>
+                            </div>
+                        </>
+                    ): (
+                        <div className="flex align-middle m-3 justify-center h-auto">
+                            <p className="font-semibold text-lg">La orden no esta actualmente finalizada</p>
+                        </div>
+                    )
+                }
             </div>
         </LoadingIndicator>
     )

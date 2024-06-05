@@ -22,7 +22,6 @@ const OrderProcessSidebar = ({ orderData, role, selectedProcess, onSelect }: Pro
             .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
             .sort((procesoAnterior, procesoPosterior) => procesoAnterior.idProceso - procesoPosterior.idProceso);
         const posicionEnProcesosPedidosYOrdenados = procesosPedidosYOrdenados.findIndex((procesoDesarrollo) => procesoDesarrollo.idProceso === idProceso);
-        console.log(posicionEnProcesosPedidosYOrdenados);
 
         return posicionEnProcesosPedidosYOrdenados !== -1? procesosPedidosYOrdenados[posicionEnProcesosPedidosYOrdenados - 1].idEstado === 6: true;
     }
@@ -59,7 +58,7 @@ const OrderProcessSidebar = ({ orderData, role, selectedProcess, onSelect }: Pro
                         role={role || 'Cliente'}
                         onSelect={onSelect}
                         selected={selectedProcess === proceso.id}
-                        habilitarCambioEstado={index > 0 ? validarHabilitacionCambioEstado(proceso.idProceso)/* (orderData?.procesos[index-1].idEstado === 6 || orderData?.procesos[index-1].idEstado === 3) */ :true || false}
+                        habilitarCambioEstado={index > 0 ? validarHabilitacionCambioEstado(proceso.idProceso):true || false}
                     />)}
             </div>
         </div>
