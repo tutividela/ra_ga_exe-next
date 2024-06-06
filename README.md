@@ -45,23 +45,23 @@ Las funcionalidades principales brindadas por la aplicación son las siguientes:
 
 Uno de los puntos más importantes a la hora de determinar el precio de las prendas a producir es poder determinar su complejidad. Según que tan compleja sea una prenda, su precio va a variar y el estimado que el cotizador arroje se verá modificado. Se establecieron seis distintas complejidades:
 
-*	Básico.
-*	Medio.
-*	Complejo.
-*	Muy Complejo.
-*	Ultra Complejo.
-*	Extremadamente Complejo.
+- Básico.
+- Medio.
+- Complejo.
+- Muy Complejo.
+- Ultra Complejo.
+- Extremadamente Complejo.
 
-Para que el cotizador pueda funcionar de manera precisa indicando el precio, es necesario que tenga en cuenta cuál es la complejidad de la prenda. 
+Para que el cotizador pueda funcionar de manera precisa indicando el precio, es necesario que tenga en cuenta cuál es la complejidad de la prenda.
 
 <a name="flujo"/>
 
 ## Flujo de ordenes
 
-Una vez que el cliente crea su cotización, estas estarán disponibles en su pantalla principal. En esta podrá ver un historial de sus cotizaciones, información del usuario y el botón de creación de nuevas cotizaciones. 
+Una vez que el cliente crea su cotización, estas estarán disponibles en su pantalla principal. En esta podrá ver un historial de sus cotizaciones, información del usuario y el botón de creación de nuevas cotizaciones.
 
 <p align="center"><img src='https://i.imgur.com/yJq2JX8.png'/></p>
 
-Una vez que el cliente hace click en el botón señalado con un círculo rojo en la imagen puede visualizar su orden y ver el estado en el que se encuentra. 
+Una vez que el cliente hace click en el botón señalado con un círculo rojo en la imagen puede visualizar su orden y ver el estado en el que se encuentra.
 
 En esta pantalla se incluirán los datos de la cotización, junto con el estado en que se encuentra.

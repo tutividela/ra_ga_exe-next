@@ -1,9 +1,3 @@
-type Props = {
-
-};
-
-export default function ServiceRegistroEstadoTiempo({}: Props) {
- return(
-    <p>Hola</p>
- );
+export default function ServiceRegistroEstadoTiempo() {
+  return <p>Hola</p>;
 }

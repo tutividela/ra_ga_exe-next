@@ -10,12 +10,9 @@ import { StyledEngineProvider, ThemeProvider } from "@mui/material";
 import ErrorHandlerProvider from "../utils/ErrorHandler/error";
 import { defaultTheme } from "@styles/defaultTheme";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-
-
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <StyledEngineProvider injectFirst>
@@ -34,7 +31,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         </SessionProvider>
       </StyledEngineProvider>
     </ThemeProvider>
-  )
+  );
 };
 
 export default MyApp;

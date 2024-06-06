@@ -1,55 +1,62 @@
-import { EstadoOrden } from '@prisma/client';
-import FormItem from '@UI/Forms/FormItem';
-import { ErrorHandlerContext } from '@utils/ErrorHandler/error';
+import { EstadoOrden } from "@prisma/client";
+import FormItem from "@UI/Forms/FormItem";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
-import { errorHandle } from '@utils/queries/cotizador';
-import React, { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useQuery } from 'react-query';
+import { errorHandle } from "@utils/queries/cotizador";
+import React, { useEffect } from "react";
+import { useFormContext } from "react-hook-form";
+import { useQuery } from "react-query";
 
 interface OrderStateChangeProps {
-    order: ExtendedOrdenData
+  order: ExtendedOrdenData;
 }
 
 const OrderStateChange = ({ order }: OrderStateChangeProps) => {
-    const { addError } = React.useContext(ErrorHandlerContext)
+  const { addError } = React.useContext(ErrorHandlerContext);
 
-    const { setValue } = useFormContext<{ orderState: number }>()
+  const { setValue } = useFormContext<{ orderState: number }>();
 
-    const fetchOrderStates = (): Promise<EstadoOrden[]> =>
-        fetch(`/api/orders/states`, {})
-            .then((res) => (res.ok ? res.json() : errorHandle(res)))
-            .catch((error) => {
-                throw error;
-            });
+  const fetchOrderStates = (): Promise<EstadoOrden[]> =>
+    fetch(`/api/orders/states`, {})
+      .then((res) => (res.ok ? res.json() : errorHandle(res)))
+      .catch((error) => {
+        throw error;
+      });
 
+  const { data: orderStateData } = useQuery(
+    ["orderStates"],
+    () => fetchOrderStates(),
+    {
+      onError: () => addError("Error al traer estados de ordenes"),
+      refetchOnWindowFocus: false,
+      initialData: [],
+    }
+  );
 
-    const { data: orderStateData } = useQuery(
-        ['orderStates'],
-        () => fetchOrderStates(), {
-        onError: () => addError('Error al traer estados de ordenes'),
-        refetchOnWindowFocus: false,
-        initialData: []
-    });
+  const estados = orderStateData?.map((el) => ({
+    key: el.id,
+    text: el.nombre,
+  }));
 
-    const estados = orderStateData?.map(el => ({ key: el.id, text: el.nombre }))
+  useEffect(() => {
+    setValue("orderState", order?.idEstado);
+  }, [order?.idEstado, setValue]);
 
-    useEffect(() => {
-        setValue('orderState', order?.idEstado)
-    }, [order?.idEstado, setValue]);
+  return (
+    <div className="mt-10 w-64">
+      <FormItem
+        layout={{
+          type: "Select",
+          scope: "orderState",
+          options: {
+            optionsName: "estados",
+            helperText: "Modifique el estado de la orden",
+          },
+        }}
+        selectOptions={{ estados: estados }}
+      />
+    </div>
+  );
+};
 
-
-    return (
-        <div className="mt-10 w-64">
-            <FormItem layout={{
-                type: 'Select',
-                scope: 'orderState',
-                options: { optionsName: 'estados', helperText: "Modifique el estado de la orden" }
-            }}
-                selectOptions={{ 'estados': estados }}
-            />
-        </div>
-    )
-}
-
-export default OrderStateChange
+export default OrderStateChange;
