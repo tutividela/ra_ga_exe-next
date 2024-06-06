@@ -66,7 +66,6 @@ model User {
   available                                  Boolean?                                     @default(true)
   userPersonalDataId                         String?                                      @unique
   userPersonalData                           UserPersonalData?                            @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
-  CargaDeTiempo                              CargaDeTiempo[]
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
 
   @@index([roleId])
@@ -226,7 +225,6 @@ model ProcesoDesarrolloOrden {
   idFichaTecnica                             String?
   usuarioDeServicio                          User[]
   lastUpdated                                DateTime                                     @default(now())
-  cargasDeTiempo                             CargaDeTiempo[]
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
 
   @@index([idOrden])
@@ -304,22 +302,6 @@ model ArchivoFichaTecnica {
   type           String?
 
   @@index([fichaTecnicaId])
-}
-
-model CargaDeTiempo {
-  id                       String                 @id @default(cuid())
-  horas                    Int                    @default(0)
-  minutos                  Int                    @default(0)
-  comentario               String
-  idProcesoDesarrolloOrden String
-  idUsuario                String
-  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
-  usuarioDeCreacion        User                   @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  fechaDeCarga             DateTime               @default(now())
-  fechaDeActualizacion     DateTime               @default(now())
-
-  @@index([idProcesoDesarrolloOrden])
-  @@index([idUsuario])
 }
 
 model RegistroCambioEstadoProcesoDesarrolloOrden {

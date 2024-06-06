@@ -67,7 +67,7 @@ const OrderProcessSidebar = ({
           habilitarCambioEstado={true}
         />
       </div>
-      <div className="m-2 font-bold text-lg">Procesos</div>
+      <div className="m-2 font-bold text-lg">Procesos de Diseño/Desarrollo</div>
       <div className="flex flex-col max-h-screen overflow-y-auto">
         {orderData?.procesos
           .filter((proceso) => {
