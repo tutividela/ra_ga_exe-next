@@ -5,7 +5,7 @@ import OrderDetailsTab from "./Tabs/General/Details/OrderDetailsTab";
 import OrderFilesTab from "./Tabs/General/Files/OrderFilesTab";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
-import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/ServiceReportesTiempoTab";
+import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/Tiempo/ServiceReportesTiempoTab";
 
 type Props = {
   orderData: ExtendedOrdenData;

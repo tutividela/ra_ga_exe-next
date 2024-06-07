@@ -226,6 +226,7 @@ model ProcesoDesarrolloOrden {
   usuarioDeServicio                          User[]
   lastUpdated                                DateTime                                     @default(now())
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
+  ReportesDeDisenio                          ReporteDeDisenio?
 
   @@index([idOrden])
   @@index([idProceso])
@@ -318,6 +319,16 @@ model RegistroCambioEstadoProcesoDesarrolloOrden {
   @@index([idProcesoDesarrolloOrden])
   @@index([idUsuario])
   @@index([idEstadoProcesoDesarrolloOrden])
+}
+
+model ReporteDeDisenio {
+  id                       String                 @id @default(cuid())
+  idProcesoDesarrolloOrden String
+  comentario               String
+  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
+
+  @@unique([idProcesoDesarrolloOrden])
+  @@index([idProcesoDesarrolloOrden])
 }
 
 model OrdenToServicio {

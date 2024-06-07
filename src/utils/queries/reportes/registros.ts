@@ -1,4 +1,4 @@
-import { errorHandle } from "./cotizador";
+import { errorHandle } from "../cotizador";
 import { RegistroCambioEstadoProcesoDesarrolloOrden } from "@prisma/client";
 
 export async function obtenerRegistrosDeEstadoProcesoDesarrolloOrdenPorIdProcesoDesarrolloOrden(

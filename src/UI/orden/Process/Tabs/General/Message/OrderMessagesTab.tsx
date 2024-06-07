@@ -102,8 +102,6 @@ const OrderMessagesTab = ({ orderData, selectedProcess }: Props) => {
       });
   }, [creatingMessage]);
 
-  console.log(selectedProcess);
-
   return (
     <div className="flex flex-col mt-4">
       <div className="m-4 border-4 shadow-lg min-h-[16rem] max-h-[20rem] overflow-y-scroll flex p-4 flex-col space-y-2">
