@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ProcesoDisenioSchema = z.object({
   id: z.string().optional(),
-  idProcesoDesarrollo: z.string(),
+  idProcesoDesarrolloOrden: z.string(),
   comentario: z.string(),
 });
 

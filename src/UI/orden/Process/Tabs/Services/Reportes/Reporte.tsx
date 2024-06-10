@@ -18,15 +18,9 @@ export default function Reporte({ idProceso, idProcesoDesarrollo }: Props) {
   }
 
   return (
-    <HookForm
-      defaultValues={setearLayout()}
-      onSubmit={function (data: unknown): void {
-        throw new Error("Function not implemented.");
-      }}
-    >
-      {idProceso === 1 && (
+    <></>
+    /* {idProceso === 1 && (
         <ReporteDeDisenio idProcesoDesarrollo={idProcesoDesarrollo} />
-      )}
-    </HookForm>
+      )} */
   );
 }

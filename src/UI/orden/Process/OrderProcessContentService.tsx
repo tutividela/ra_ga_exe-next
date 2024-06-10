@@ -6,6 +6,7 @@ import ServiceDetailsTab from "./Tabs/Services/Details/ServiceDetailsTab";
 import ServiceFilesTab from "./Tabs/Services/Files/ServiceFilesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import Reporte from "@UI/orden/Process/Tabs/Services/Reportes/Reporte";
+import ReporteDeDisenio from "./Tabs/Services/Reportes/Procesos/ReporteDeDisenio";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -73,10 +74,9 @@ const OrderProcessContentService = ({
             </div>
             {(rol === adminRole || rol === ayudanteRole) && (
               <div hidden={value !== 3} className="w-full">
-                <Reporte
-                  idProceso={idProceso}
-                  idProcesoDesarrollo={selectedProcess}
-                />
+                {idProceso === 1 && (
+                  <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
+                )}
               </div>
             )}
           </div>

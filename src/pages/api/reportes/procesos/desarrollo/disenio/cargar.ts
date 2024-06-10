@@ -4,11 +4,11 @@ import { ZodError } from "zod";
 
 export default async function post(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const cargaDeReporte = ProcesoDisenioSchema.parse(req.body);
+    const cargaDeReporte = ProcesoDisenioSchema.parse(JSON.parse(req.body));
 
     const reporte = await prisma.reporteDeDisenio.findFirst({
       where: {
-        idProcesoDesarrolloOrden: cargaDeReporte.idProcesoDesarrollo,
+        idProcesoDesarrolloOrden: cargaDeReporte.idProcesoDesarrolloOrden,
       },
     });
 
@@ -16,7 +16,7 @@ export default async function post(req: NextApiRequest, res: NextApiResponse) {
       const reporteNuevo = await prisma.reporteDeDisenio.create({
         data: {
           comentario: cargaDeReporte.comentario,
-          idProcesoDesarrolloOrden: cargaDeReporte.idProcesoDesarrollo,
+          idProcesoDesarrolloOrden: cargaDeReporte.idProcesoDesarrolloOrden,
         },
       });
       res.status(201).json(reporteNuevo);

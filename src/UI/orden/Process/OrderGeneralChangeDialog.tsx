@@ -75,12 +75,12 @@ const OrderGeneralChangeDialog = (props: Props) => {
         keepMounted
         onClose={handleClose}
       >
-        <HookForm
-          defaultValues={{ prendaID: orderData.prenda.id }}
-          onSubmit={handleSubmit}
-          resetOnDialogClose={{ dialogStatus: props.open }}
-        >
-          <LoadingIndicator show={isUpdatingState}>
+        <LoadingIndicator show={isUpdatingState}>
+          <HookForm
+            defaultValues={{ prendaID: orderData.prenda.id }}
+            onSubmit={handleSubmit}
+            resetOnDialogClose={{ dialogStatus: props.open }}
+          >
             <div className="p-4">
               <DialogTitle>
                 {"Editar detalles generales de la orden"}
@@ -101,8 +101,8 @@ const OrderGeneralChangeDialog = (props: Props) => {
                 <Button type="submit">Confirmar</Button>
               </DialogActions>
             </div>
-          </LoadingIndicator>
-        </HookForm>
+          </HookForm>
+        </LoadingIndicator>
       </Dialog>
     </div>
   );
