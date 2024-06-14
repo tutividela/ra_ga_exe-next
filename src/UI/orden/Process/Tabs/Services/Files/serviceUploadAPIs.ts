@@ -50,3 +50,39 @@ export const updateFichaFiles = ({
     .catch((error) => {
       throw error;
     });
+
+export async function cargarReporteDeArchivoPorProcesoDesarrollo({
+  idProcesoDesarrollo,
+  data,
+}: {
+  idProcesoDesarrollo: string;
+  data: ValidatedFichaTecnicaFileUploadSchema;
+}): Promise<any> {
+  fetch(
+    `/api/reportes/procesos/desarrollo/archivos/actualizar-archivos-reportes?idProcesoDesarrolloOrden=${idProcesoDesarrollo}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => (response.ok ? response.json() : errorHandle(response)))
+    .catch((error: any) => {
+      throw error;
+    });
+}
+
+export async function subirArchivoDeReporte(
+  data: FileUploadData
+): Promise<DriveUploadResponse> {
+  return fetch(
+    `/api/drive/subir-a-reporte?nombreDeUsuario=${data.clientName}&idOrden=${data.orderID}&procesoDesarrollo=${data.fichaType}`,
+    { method: "POST", body: data.formData }
+  )
+    .then((res) => (res.ok ? res.json() : errorHandle(res)))
+    .catch((error) => {
+      throw error;
+    });
+}

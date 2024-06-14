@@ -227,6 +227,7 @@ model ProcesoDesarrolloOrden {
   lastUpdated                                DateTime                                     @default(now())
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
   ReportesDeDisenio                          ReporteDeDisenio?
+  ReportesArchivo                            ReporteArchivo[]
 
   @@index([idOrden])
   @@index([idProceso])
@@ -328,6 +329,17 @@ model ReporteDeDisenio {
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@unique([idProcesoDesarrolloOrden])
+  @@index([idProcesoDesarrolloOrden])
+}
+
+model ReporteArchivo {
+  id                       String                 @id @default(cuid())
+  idProcesoDesarrolloOrden String
+  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
+  name                     String
+  urlID                    String
+  type                     String
+
   @@index([idProcesoDesarrolloOrden])
 }
 

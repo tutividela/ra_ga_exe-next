@@ -20,9 +20,7 @@ const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
     [selectedProcess, orderData?.procesos]
   );
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-
   const { data } = useSession();
-
   const { role } = useGetRole(data.user.email);
 
   const handleUploadDialogOpen = () => setUploadDialogOpen(true);

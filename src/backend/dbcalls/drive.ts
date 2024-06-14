@@ -63,7 +63,7 @@ export const createDirectory = async (
         orderId,
         newClientNameFolderId
       );
-      return await newFolderId;
+      return newFolderId;
     }
 
     //find order folder
