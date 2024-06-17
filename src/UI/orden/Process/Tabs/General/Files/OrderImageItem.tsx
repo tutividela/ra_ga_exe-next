@@ -1,13 +1,13 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { LoadingButton } from "@mui/lab";
 import { Button, Grow, Menu, MenuItem } from "@mui/material";
-import { Archivo, ArchivoFichaTecnica } from "@prisma/client";
+import { Archivo, ArchivoFichaTecnica, ReporteArchivo } from "@prisma/client";
 import { downloadFromFetch } from "@utils/downloadFromFetch";
 import Image from "next/image";
 import { useState } from "react";
 
 type Props = {
-  archivo: Archivo | ArchivoFichaTecnica;
+  archivo: Archivo | ArchivoFichaTecnica | ReporteArchivo;
 };
 const OrderImageItem = ({ archivo }: Props) => {
   const [downloading, setDownloading] = useState(false);

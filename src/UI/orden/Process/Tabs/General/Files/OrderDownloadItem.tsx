@@ -1,11 +1,11 @@
 import SaveIcon from "@mui/icons-material/Save";
 import { LoadingButton } from "@mui/lab";
-import { Archivo, ArchivoFichaTecnica } from "@prisma/client";
+import { Archivo, ArchivoFichaTecnica, ReporteArchivo } from "@prisma/client";
 import { downloadFromFetch } from "@utils/downloadFromFetch";
 import { useState } from "react";
 
 type Props = {
-  archivo: Archivo | ArchivoFichaTecnica;
+  archivo: Archivo | ArchivoFichaTecnica | ReporteArchivo;
 };
 
 const OrderDownloadItem = ({ archivo }: Props) => {

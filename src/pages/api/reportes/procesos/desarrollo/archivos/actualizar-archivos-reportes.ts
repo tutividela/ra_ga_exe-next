@@ -21,7 +21,7 @@ export default async function post(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(201).json(reportesCreados);
   } catch (error: any) {
-    console.log("Error en la obtencion de los reportes de archivos: ", error);
+    console.log("Error en la creacion de reportes de archivos: ", error);
 
     if (error instanceof ZodError) {
       res.status(400).json(error.flatten());
