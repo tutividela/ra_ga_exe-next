@@ -69,7 +69,7 @@ function Uploader<Model>(props: UploaderProps<Model>) {
                   <input
                     multiple={layout?.options?.multifile}
                     hidden
-                    accept="image/*,.plt,.jpg,.png,.pdf"
+                    accept="image/*,.plt,.jpg,.png,.pdf,.xlsx"
                     type="file"
                     onChange={(event) =>
                       onChange([

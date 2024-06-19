@@ -1,4 +1,4 @@
-import { ProcesoDisenioSchema } from "@backend/schemas/ProcesoDisenioSchema";
+import { ProcesoDisenioSchema } from "@backend/schemas/reportes/ProcesoDisenioSchema";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
 

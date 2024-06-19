@@ -10,7 +10,7 @@ type Props = {
   idProcesoDesarrollo: string;
   orderData: ExtendedOrdenData;
 };
-export default function ReporteDeMolderia({
+export default function ReporteDeArchivo({
   idProcesoDesarrollo,
   orderData,
 }: Props) {
@@ -36,6 +36,12 @@ export default function ReporteDeMolderia({
       reporteDeProcesoDesarrollo.type.includes("pdf")
   );
 
+  const otros = reportesDeProcesoDesarrollo?.filter(
+    (reporteDeProcesoDesarrollo) =>
+      !reporteDeProcesoDesarrollo.type.includes("pdf") &&
+      !reporteDeProcesoDesarrollo.type.includes("image")
+  );
+
   return (
     <LoadingIndicator show={seEstaBuscandoLosReportesDeProcesoDesarrollo}>
       <div className="h-full border-2 flex justify-center items-center p-4">
@@ -49,7 +55,7 @@ export default function ReporteDeMolderia({
                 <OrderImageItem archivo={imagen} key={imagen.id} />
               ))}
               <div hidden={imagenes.length > 0}>
-                <p>No hay imagenes cargadas</p>
+                <p className="text-m font-semibold">No hay imagenes cargadas</p>
               </div>
             </>
           )}
@@ -68,13 +74,19 @@ export default function ReporteDeMolderia({
               </div>
             </>
           )}
-
-          <div
-            className="text-2xl"
-            hidden={reportesDeProcesoDesarrollo?.length > 0}
-          >
-            No hay reportes correspondientes a {proceso}
-          </div>
+          {otros && (
+            <>
+              <div>
+                <p className="underline">Otros</p>
+              </div>
+              {otros.map((otro) => (
+                <OrderImageItem archivo={otro} key={otro.id} />
+              ))}
+              <div hidden={otros.length > 0}>
+                <p className="text-m font-semibold">No hay archivos cargados</p>
+              </div>
+            </>
+          )}
           <div>
             <Button
               variant="outlined"

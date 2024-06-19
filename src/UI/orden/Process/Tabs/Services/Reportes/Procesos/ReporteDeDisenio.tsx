@@ -1,5 +1,5 @@
 import HookForm from "@UI/Forms/HookForm";
-import { ProcesoDisenioType } from "@backend/schemas/ProcesoDisenioSchema";
+
 import { Button } from "@mui/material";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";

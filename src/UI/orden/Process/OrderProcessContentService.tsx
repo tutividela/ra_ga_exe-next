@@ -6,7 +6,8 @@ import ServiceDetailsTab from "./Tabs/Services/Details/ServiceDetailsTab";
 import ServiceFilesTab from "./Tabs/Services/Files/ServiceFilesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import ReporteDeDisenio from "./Tabs/Services/Reportes/Procesos/ReporteDeDisenio";
-import ReporteDeMolderia from "./Tabs/Services/Reportes/Procesos/ReporteTipoCargaArchivo";
+import ReporteDeArchivo from "./Tabs/Services/Reportes/Procesos/ReporteTipoCargaArchivo";
+import { ReporteDeDigitalizacion } from "./Tabs/Services/Reportes/Procesos/ReporteDeDigitalizacion";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -28,6 +29,12 @@ const OrderProcessContentService = ({
       ),
     [selectedProcess]
   );
+  const tieneReportes = useMemo(() => {
+    const proceso = orderData?.procesos.find(
+      (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+    );
+    return ![4, 7, 13, 14, 15].includes(proceso.idProceso);
+  }, [selectedProcess]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -49,9 +56,8 @@ const OrderProcessContentService = ({
                 <Tab label="Detalles" value={0} />
                 <Tab label="Archivos" value={1} />
                 <Tab label="Mensajes" value={2} />
-                {(rol === adminRole || rol === ayudanteRole) && (
-                  <Tab label="Reporte" value={3} />
-                )}
+                {(rol === adminRole || rol === ayudanteRole) &&
+                  tieneReportes && <Tab label="Reporte" value={3} />}
               </Tabs>
             </div>
             <div hidden={value !== 0} className="w-full">
@@ -72,13 +78,19 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
-            {(rol === adminRole || rol === ayudanteRole) && (
+            {(rol === adminRole || rol === ayudanteRole) && tieneReportes && (
               <div hidden={value !== 3} className="w-full">
                 {idProceso === 1 && (
                   <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
                 )}
                 {(idProceso === 2 || idProceso === 5) && (
-                  <ReporteDeMolderia
+                  <ReporteDeArchivo
+                    idProcesoDesarrollo={selectedProcess}
+                    orderData={orderData}
+                  />
+                )}
+                {idProceso === 3 && (
+                  <ReporteDeDigitalizacion
                     idProcesoDesarrollo={selectedProcess}
                     orderData={orderData}
                   />

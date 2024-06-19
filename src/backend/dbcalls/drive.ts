@@ -10,6 +10,7 @@ export const verifyFileType = (file: formidable.File) => {
     "image/gif",
     "application/pdf",
     "application/octet-stream",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ];
   return allowedFileTypes.includes(file.mimetype);
 };
