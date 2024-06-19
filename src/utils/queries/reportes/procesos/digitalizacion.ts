@@ -16,12 +16,32 @@ export async function obtenerReporteDigitalizacionPorProcesoDesarrollo(
 }
 
 export async function cargarReporteDigitalizacionPorProcesoDesarrollo(
-  reporteDeDigitalizacion: ReporteDeDigitalizacion
+  reporteDeDigitalizacion: Partial<ReporteDeDigitalizacion>
 ): Promise<ReporteDeDisenio> {
-  return fetch(`/api/reportes/procesos/desarrollo/disenio/cargar-por-proceso`, {
-    method: "POST",
-    body: JSON.stringify(reporteDeDigitalizacion),
-  })
+  return fetch(
+    `/api/reportes/procesos/desarrollo/digitalizacion/cargar-por-proceso`,
+    {
+      method: "POST",
+      body: JSON.stringify(reporteDeDigitalizacion),
+    }
+  )
+    .then((response: Response) =>
+      response.ok ? response.json() : errorHandle(response)
+    )
+    .catch((error: any) => {
+      throw error;
+    });
+}
+
+export async function borrarReporteDigitalizacionPorProcesoDesarrollo(
+  id: string
+): Promise<ReporteDeDigitalizacion> {
+  return fetch(
+    `/api/reportes/procesos/desarrollo/digitalizacion/borrar-por-proceso?id=${id}`,
+    {
+      method: "DELETE",
+    }
+  )
     .then((response: Response) =>
       response.ok ? response.json() : errorHandle(response)
     )

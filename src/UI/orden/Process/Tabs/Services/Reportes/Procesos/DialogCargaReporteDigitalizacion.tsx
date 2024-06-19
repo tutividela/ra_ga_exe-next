@@ -9,18 +9,24 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { ReporteDeDigitalizacion } from "@prisma/client";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
+import { cargarReporteDigitalizacionPorProcesoDesarrollo } from "@utils/queries/reportes/procesos/digitalizacion";
+import { useContext } from "react";
+import { useMutation, useQueryClient } from "react-query";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   idProcesoDesarrollo: string;
+  reporteActual?: ReporteDeDigitalizacion | null;
 };
 
 export function DialogCargaReporteDigitalizacion({
   open,
   onClose,
   idProcesoDesarrollo,
+  reporteActual,
 }: Props) {
   const defaultLayoutValues: Partial<ReporteDeDigitalizacion> = {
     cantidadDeAviosConMedida: 0,
@@ -29,16 +35,32 @@ export function DialogCargaReporteDigitalizacion({
     cantidadDeMoldes: 0,
     idProcesoDesarrolloOrden: idProcesoDesarrollo,
   };
+  const { addError } = useContext(ErrorHandlerContext);
+  const queryClient = useQueryClient();
+  const {
+    mutateAsync: cargaReporteDigitalizacionAsync,
+    isLoading: seEstaCargandoReporteDigitalizacion,
+  } = useMutation(cargarReporteDigitalizacionPorProcesoDesarrollo, {
+    onError: () => addError("Error en la carga de las cantidades", "error"),
+    onSuccess: () => {
+      onClose();
+      queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
+      addError("Se ha cargado el reporte con exito!", "success");
+    },
+  });
 
   return (
     <Dialog open={open} fullWidth={true}>
-      <LoadingIndicator variant="blocking" show={false}>
+      <LoadingIndicator
+        variant="blocking"
+        show={seEstaCargandoReporteDigitalizacion}
+      >
         <HookForm
-          defaultValues={defaultLayoutValues}
-          onSubmit={() => console.log("hola")}
+          defaultValues={reporteActual ? reporteActual : defaultLayoutValues}
+          onSubmit={cargaReporteDigitalizacionAsync}
         >
           <DialogTitle>Carga de cantidades de la Digitalizacion</DialogTitle>
-          <DialogContent className="w-auto">
+          <DialogContent>
             <FormItem layout={digitalizacionLayout} />
           </DialogContent>
           <DialogActions>

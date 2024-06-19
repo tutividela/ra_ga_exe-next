@@ -15,7 +15,7 @@ export default function ReporteDeArchivo({
   orderData,
 }: Props) {
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
-  const { proceso } = useMemo(
+  const { proceso, idProceso } = useMemo(
     () => orderData?.procesos.find((el) => el.id === idProcesoDesarrollo),
     [idProcesoDesarrollo, orderData?.procesos]
   );
@@ -46,7 +46,7 @@ export default function ReporteDeArchivo({
     <LoadingIndicator show={seEstaBuscandoLosReportesDeProcesoDesarrollo}>
       <div className="h-full border-2 flex justify-center items-center p-4">
         <div className="flex flex-col space-y-4 items-center">
-          {imagenes && (
+          {imagenes && [5].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">Imagenes</p>
@@ -59,7 +59,7 @@ export default function ReporteDeArchivo({
               </div>
             </>
           )}
-          {pdfs && (
+          {pdfs && [2, 3].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">PDF's</p>

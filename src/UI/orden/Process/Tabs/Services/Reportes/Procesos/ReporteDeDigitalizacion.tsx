@@ -1,13 +1,18 @@
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import ReporteDeArchivo from "./ReporteTipoCargaArchivo";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { useContext, useMemo, useState } from "react";
-import { obtenerReporteDigitalizacionPorProcesoDesarrollo } from "@utils/queries/reportes/procesos/digitalizacion";
+import {
+  borrarReporteDigitalizacionPorProcesoDesarrollo,
+  obtenerReporteDigitalizacionPorProcesoDesarrollo,
+} from "@utils/queries/reportes/procesos/digitalizacion";
 import { DataGrid, GridColDef, GridColumns } from "@mui/x-data-grid";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { Button } from "@mui/material";
 import { DialogCargaReporteDigitalizacion } from "./DialogCargaReporteDigitalizacion";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { DialogBorrarCargaReporteDigitalizacion } from "./DialogBorrarCargaReporteDigitalizacion";
 
 type Props = {
   idProcesoDesarrollo: string;
@@ -18,7 +23,10 @@ export function ReporteDeDigitalizacion({
   orderData,
 }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
+  const queryClient = useQueryClient();
   const [showCargaDeCantidades, setShowCargaDeCantidades] =
+    useState<boolean>(false);
+  const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
 
   const {
@@ -32,44 +40,74 @@ export function ReporteDeDigitalizacion({
     }
   );
 
+  const {
+    mutateAsync: borrarReporteDigitalizacionAsync,
+    isLoading: seEstaBorrandoReporteDigitalizacion,
+  } = useMutation(borrarReporteDigitalizacionPorProcesoDesarrollo, {
+    onError: () =>
+      addError("Error en la eliminacion de las cantidades", "error"),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
+      addError("Se ha eliminado el reporte con exito!", "success");
+    },
+  });
+
+  async function onHandleBorrarReporteDigitalizacion(): Promise<void> {
+    setShowBorrarCargaDeCantidades(false);
+    await borrarReporteDigitalizacionAsync(reporteDeDigitalizacion?.id);
+  }
+
   const columns: GridColDef[] = [
     {
       field: "cantidadDeMoldes",
       headerName: "Cantidad de Moldes",
       width: 150,
-      editable: true,
+      align: "center",
     },
     {
       field: "cantidadDeAviosConMedida",
       headerName: "Cantidad de Avios con Medida",
-      width: 150,
-      editable: true,
+      width: 220,
+      align: "center",
     },
     {
       field: "cantidadDeTalles",
       headerName: "Cantidad de Talles",
       width: 150,
-      editable: true,
+      align: "center",
     },
     {
       field: "cantidadDeMateriales",
       headerName: "Cantidad de Materiales",
-      type: "number",
-      width: 110,
-      editable: true,
+      width: 180,
+      align: "center",
+    },
+    {
+      field: "acciones",
+      headerName: "Acciones",
+      width: 100,
+      align: "center",
+      renderCell: () => (
+        <DeleteIcon onClick={() => setShowBorrarCargaDeCantidades(true)} />
+      ),
     },
   ];
 
   return (
     <div className="mt-4">
-      <LoadingIndicator show={seEstaBuscandoReporteDeDigitalizacion}>
+      <LoadingIndicator
+        show={
+          seEstaBuscandoReporteDeDigitalizacion ||
+          seEstaBorrandoReporteDigitalizacion
+        }
+      >
         <ReporteDeArchivo
           idProcesoDesarrollo={idProcesoDesarrollo}
           orderData={orderData}
         />
         <div
           style={{
-            height: 200,
+            height: 250,
             width: "100%",
             borderWidth: 2,
             marginTop: 10,
@@ -83,7 +121,7 @@ export function ReporteDeDigitalizacion({
               columns={columns || []}
               rows={[reporteDeDigitalizacion] || []}
               pageSize={1}
-              className="mt-2"
+              className="m-2"
             />
           )}
           {!reporteDeDigitalizacion && (
@@ -92,21 +130,33 @@ export function ReporteDeDigitalizacion({
                 No se ha cargado las cantidades de moldes, talles, materiales,
                 avios asociados a la Digitalizacion
               </p>
-              <div className="self-center m-3">
-                <Button
-                  variant="outlined"
-                  onClick={() => setShowCargaDeCantidades(true)}
-                >
-                  Cargar cantidades
-                </Button>
-              </div>
             </div>
           )}
+          <div className="self-center m-3">
+            <Button
+              variant="outlined"
+              onClick={() => setShowCargaDeCantidades(true)}
+            >
+              {reporteDeDigitalizacion
+                ? "Editar cantidades"
+                : "Cargar cantidades"}
+            </Button>
+          </div>
           {showCargaDeCantidades && (
             <DialogCargaReporteDigitalizacion
               idProcesoDesarrollo={idProcesoDesarrollo}
               onClose={() => setShowCargaDeCantidades(false)}
               open={showCargaDeCantidades}
+              reporteActual={reporteDeDigitalizacion}
+            />
+          )}
+          {showBorrarCargaDeCantidades && (
+            <DialogBorrarCargaReporteDigitalizacion
+              open={showBorrarCargaDeCantidades}
+              onClose={() => setShowBorrarCargaDeCantidades(false)}
+              handleBorrarCantidad={async () => {
+                await onHandleBorrarReporteDigitalizacion();
+              }}
             />
           )}
         </div>
