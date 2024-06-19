@@ -1,5 +1,5 @@
 import { LayoutElement } from "@UI/Forms/types";
-import { ProcesoDisenioType } from "@backend/schemas/ProcesoDisenioSchema";
+import { ProcesoDisenioType } from "@backend/schemas/reportes/ProcesoDisenioSchema";
 
 export const disenioLayout: LayoutElement<ProcesoDisenioType> = {
   type: "Horizontal",
