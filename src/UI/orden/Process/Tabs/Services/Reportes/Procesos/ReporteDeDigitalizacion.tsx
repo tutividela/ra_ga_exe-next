@@ -2,12 +2,12 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import ReporteDeArchivo from "./ReporteTipoCargaArchivo";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import {
   borrarReporteDigitalizacionPorProcesoDesarrollo,
   obtenerReporteDigitalizacionPorProcesoDesarrollo,
 } from "@utils/queries/reportes/procesos/digitalizacion";
-import { DataGrid, GridColDef, GridColumns } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { Button } from "@mui/material";
 import { DialogCargaReporteDigitalizacion } from "./DialogCargaReporteDigitalizacion";

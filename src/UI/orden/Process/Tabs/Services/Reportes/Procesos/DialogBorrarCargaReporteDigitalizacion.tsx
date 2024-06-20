@@ -1,5 +1,4 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 
 type Props = {
   open: boolean;

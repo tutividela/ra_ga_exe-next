@@ -12,12 +12,10 @@ export default async function handleUserCreation(
 ) {
   if (req.method === "POST") await handlePOST(req, res);
   else {
-    res
-      .status(400)
-      .json({
-        statusCode: 400,
-        error: `The HTTP ${req.method} method is not supported at this route.`,
-      });
+    res.status(400).json({
+      statusCode: 400,
+      error: `The HTTP ${req.method} method is not supported at this route.`,
+    });
   }
 }
 

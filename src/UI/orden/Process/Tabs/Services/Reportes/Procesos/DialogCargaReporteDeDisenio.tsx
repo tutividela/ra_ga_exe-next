@@ -13,7 +13,7 @@ import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { cargarReporteDiseñoPorProcesoDesarrollo } from "@utils/queries/reportes/procesos/diseño";
 import { useContext } from "react";
-import { QueryClient, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 type Props = {
   showCargaReporte: boolean;

@@ -56,13 +56,11 @@ const postMessage = async (req: NextApiRequest, res: NextApiResponse) => {
           throw err;
         });
     } else {
-      res
-        .status(200)
-        .json({
-          mensaje: message.mensaje,
-          from: message.user.email,
-          createdAt: message.createdAt,
-        });
+      res.status(200).json({
+        mensaje: message.mensaje,
+        from: message.user.email,
+        createdAt: message.createdAt,
+      });
     }
   } catch (error) {
     res.status(500).json({ error: error });

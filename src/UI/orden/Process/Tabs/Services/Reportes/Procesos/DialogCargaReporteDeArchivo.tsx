@@ -1,9 +1,6 @@
 import FormItem from "@UI/Forms/FormItem";
 import HookForm from "@UI/Forms/HookForm";
-import {
-  FichaTecnicaUploadFormData,
-  ValidatedFichaTecnicaFileUploadSchema,
-} from "@backend/schemas/FichaTecnicaFileUploadSchema";
+import { FichaTecnicaUploadFormData } from "@backend/schemas/FichaTecnicaFileUploadSchema";
 import {
   Button,
   Dialog,
@@ -30,20 +27,12 @@ type Props = {
   onClose: () => void;
 };
 
-type FileUploadData = {
-  clientName: string;
-  orderID: string;
-  formData: FormData;
-  fichaType: string;
-};
-
 export default function DialogCargaReporteDeArchivo({
   idProcesoDesarrolloOrden,
   open,
   orderData,
   onClose,
 }: Props) {
-  const queryClient = useQueryClient();
   const { addError } = useContext(ErrorHandlerContext);
   const currProcess = useMemo(
     () => orderData?.procesos.find((el) => el.id === idProcesoDesarrolloOrden),

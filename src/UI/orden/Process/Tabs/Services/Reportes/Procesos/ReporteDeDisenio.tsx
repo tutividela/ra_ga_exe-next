@@ -3,13 +3,9 @@ import HookForm from "@UI/Forms/HookForm";
 import { Button } from "@mui/material";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import {
-  obtenerReporteDiseñoPorProcesoDesarrollo,
-  cargarReporteDiseñoPorProcesoDesarrollo,
-} from "@utils/queries/reportes/procesos/diseño";
-import { useContext, useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
+import { obtenerReporteDiseñoPorProcesoDesarrollo } from "@utils/queries/reportes/procesos/diseño";
+import { useContext, useState } from "react";
+import { useQuery } from "react-query";
 import { DialogCargaReporteDeDisenio } from "./DialogCargaReporteDeDisenio";
 
 type Props = {

@@ -11,12 +11,10 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     const data = OrderCreationDataSchema.parse(req.body);
     const precio = await calculateOrderTotal(data, debugComplejidadID);
 
-    res
-      .status(200)
-      .json({
-        price: precio.precioTotal,
-        preciosIndividuales: precio.preciosIndividuales,
-      });
+    res.status(200).json({
+      price: precio.precioTotal,
+      preciosIndividuales: precio.preciosIndividuales,
+    });
   } catch (error) {
     res.status(500).json({ error: error });
   }

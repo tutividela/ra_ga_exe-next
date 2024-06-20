@@ -62,7 +62,7 @@ export default function ReporteDeArchivo({
           {pdfs && [2, 3].includes(idProceso) && (
             <>
               <div>
-                <p className="underline">PDF's</p>
+                <p className="underline">{"PDF's"}</p>
               </div>
               {pdfs.map((pdf) => (
                 <OrderImageItem archivo={pdf} key={pdf.id} />
