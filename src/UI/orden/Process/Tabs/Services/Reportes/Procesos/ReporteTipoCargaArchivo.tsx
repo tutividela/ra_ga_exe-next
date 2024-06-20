@@ -23,30 +23,47 @@ export default function ReporteDeArchivo({
   const {
     data: reportesDeProcesoDesarrollo,
     isLoading: seEstaBuscandoLosReportesDeProcesoDesarrollo,
+    isRefetching: seEstaRecargandoLosReportesDeProcesoDesarrollo,
   } = useQuery(["reportes-de-archivo", idProcesoDesarrollo], () =>
     obtenerReportesDeArchivosPorIdProcesoDesarrollo(idProcesoDesarrollo)
   );
 
-  const imagenes = reportesDeProcesoDesarrollo?.filter(
-    (reporteDeProcesoDesarrollo) =>
-      reporteDeProcesoDesarrollo.type.includes("image")
-  );
-  const pdfs = reportesDeProcesoDesarrollo?.filter(
-    (reporteDeProcesoDesarrollo) =>
-      reporteDeProcesoDesarrollo.type.includes("pdf")
+  const imagenes = useMemo(
+    () =>
+      reportesDeProcesoDesarrollo?.filter((reporteDeProcesoDesarrollo) =>
+        reporteDeProcesoDesarrollo.type.includes("image")
+      ),
+    [reportesDeProcesoDesarrollo]
   );
 
-  const otros = reportesDeProcesoDesarrollo?.filter(
-    (reporteDeProcesoDesarrollo) =>
-      !reporteDeProcesoDesarrollo.type.includes("pdf") &&
-      !reporteDeProcesoDesarrollo.type.includes("image")
+  const pdfs = useMemo(
+    () =>
+      reportesDeProcesoDesarrollo?.filter((reporteDeProcesoDesarrollo) =>
+        reporteDeProcesoDesarrollo.type.includes("pdf")
+      ),
+    [reportesDeProcesoDesarrollo]
+  );
+
+  const otros = useMemo(
+    () =>
+      reportesDeProcesoDesarrollo?.filter(
+        (reporteDeProcesoDesarrollo) =>
+          !reporteDeProcesoDesarrollo.type.includes("pdf") &&
+          !reporteDeProcesoDesarrollo.type.includes("image")
+      ),
+    [reportesDeProcesoDesarrollo]
   );
 
   return (
-    <LoadingIndicator show={seEstaBuscandoLosReportesDeProcesoDesarrollo}>
+    <LoadingIndicator
+      show={
+        seEstaBuscandoLosReportesDeProcesoDesarrollo ||
+        seEstaRecargandoLosReportesDeProcesoDesarrollo
+      }
+    >
       <div className="h-full border-2 flex justify-center items-center p-4">
         <div className="flex flex-col space-y-4 items-center">
-          {imagenes && [5].includes(idProceso) && (
+          {imagenes && [5, 2].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">Imagenes</p>

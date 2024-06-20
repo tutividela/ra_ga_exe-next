@@ -8,6 +8,7 @@ import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import ReporteDeDisenio from "./Tabs/Services/Reportes/Procesos/ReporteDeDisenio";
 import ReporteDeArchivo from "./Tabs/Services/Reportes/Procesos/ReporteTipoCargaArchivo";
 import { ReporteDeDigitalizacion } from "./Tabs/Services/Reportes/Procesos/ReporteDeDigitalizacion";
+import { ReporteDeImpresion } from "./Tabs/Services/Reportes/Procesos/ReporteDeImpresion";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -91,6 +92,12 @@ const OrderProcessContentService = ({
                 )}
                 {idProceso === 3 && (
                   <ReporteDeDigitalizacion
+                    idProcesoDesarrollo={selectedProcess}
+                    orderData={orderData}
+                  />
+                )}
+                {idProceso === 6 && (
+                  <ReporteDeImpresion
                     idProcesoDesarrollo={selectedProcess}
                     orderData={orderData}
                   />

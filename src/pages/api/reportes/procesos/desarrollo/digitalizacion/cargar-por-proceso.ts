@@ -45,7 +45,7 @@ export default async function cargar(
     res.status(200).json(reporteActualizado);
   } catch (error: any) {
     console.log(
-      "Error en la creacion/actualizacion de los reportes de diseño: ",
+      "Error en la creacion/actualizacion de los reportes de digitalizacion: ",
       error
     );
 

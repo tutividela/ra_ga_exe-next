@@ -34,6 +34,7 @@ export default function DialogCargaReporteDeArchivo({
   onClose,
 }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
+  const queryClient = useQueryClient();
   const currProcess = useMemo(
     () => orderData?.procesos.find((el) => el.id === idProcesoDesarrolloOrden),
     [idProcesoDesarrolloOrden, orderData?.procesos]
@@ -53,6 +54,14 @@ export default function DialogCargaReporteDeArchivo({
     mutateAsync: cargarReporteDeArchivoAsync,
     isLoading: seEstaCargandoReporteDeArchivo,
   } = useMutation(cargarReporteDeArchivoPorProcesoDesarrollo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([
+        "reportes-de-archivo",
+        idProcesoDesarrolloOrden,
+      ]);
+      addError("Se ha subido el reporte con exito!", "success");
+      onClose();
+    },
     onError: () => addError("Error en la carga del reporte", "error"),
   });
 
