@@ -9,8 +9,7 @@ export const impresionLayout: LayoutElement<ProcesoImpresionSchemaType> = {
     {
       type: "Input",
       scope: "cantidadDeMetros",
-      label: "Moldes",
-      title: "Cantidad de Moldes",
+      label: "Cantidad de Metros",
       className: "mt-2",
       options: {
         numeric: true,

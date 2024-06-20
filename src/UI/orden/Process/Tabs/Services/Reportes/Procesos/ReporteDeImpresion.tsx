@@ -5,12 +5,13 @@ import {
   borrarReporteImpresionPorProcesoDesarrollo,
   obtenerReporteImpresionPorProcesoDesarrollo,
 } from "@utils/queries/reportes/procesos/impresion";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "@mui/material";
 import { DialogCargaReporteImpresion } from "./DialogCargaReporteImpresion";
 import { DialogBorrarCargaReporteImpresion } from "./DialogBorrarCargaReporteImpresion";
+import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 
 type Props = {
   idProcesoDesarrollo: string;
@@ -36,6 +37,12 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
     }
   );
 
+  const { proceso: nombreDeProceso } = useMemo(
+    () =>
+      orderData.procesos.find((proceso) => proceso.id === idProcesoDesarrollo),
+    [idProcesoDesarrollo]
+  );
+
   const {
     mutateAsync: borrarReporteImpresionAsync,
     isLoading: seEstaBorrandoReporteImpresion,
@@ -58,18 +65,24 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
       field: "nombreDeProceso",
       headerName: "Proceso",
       width: 150,
+      flex: 1,
+      headerAlign: "center",
       align: "center",
     },
     {
       field: "cantidadDeMetros",
       headerName: "Cantidad de metros impresos",
-      width: 200,
+      width: 250,
+      flex: 1,
+      headerAlign: "center",
       align: "center",
     },
     {
       field: "acciones",
       headerName: "Acciones",
       width: 100,
+      flex: 1,
+      headerAlign: "center",
       align: "center",
       renderCell: () => (
         <DeleteIcon onClick={() => setShowBorrarCargaDeCantidades(true)} />
@@ -77,57 +90,61 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
     },
   ];
   return (
-    <div
-      style={{
-        height: 250,
-        width: "100%",
-        borderWidth: 2,
-        marginTop: 10,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
+    <LoadingIndicator
+      show={seEstaBuscandoReporteDeImpresion || seEstaBorrandoReporteImpresion}
     >
-      {reporteDeImpresion && (
-        <DataGrid
-          columns={columns || []}
-          rows={[reporteDeImpresion] || []}
-          pageSize={1}
-          className="m-2"
-        />
-      )}
-      {!reporteDeImpresion && (
-        <div className="flex flex-col">
-          <p className="font-semibold text-base self-center">
-            No se ha cargado los metros impresos
-          </p>
+      <div
+        style={{
+          height: 250,
+          width: "100%",
+          borderWidth: 2,
+          marginTop: 10,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        {reporteDeImpresion && (
+          <DataGrid
+            columns={columns || []}
+            rows={[{ ...reporteDeImpresion, nombreDeProceso }] || []}
+            pageSize={1}
+            className="m-2"
+          />
+        )}
+        {!reporteDeImpresion && (
+          <div className="flex flex-col">
+            <p className="font-semibold text-base self-center">
+              No se ha cargado los metros impresos
+            </p>
+          </div>
+        )}
+        <div className="self-center m-3">
+          <Button
+            variant="outlined"
+            onClick={() => setShowCargaDeCantidades(true)}
+          >
+            {reporteDeImpresion ? "Editar cantidad" : "Cargar cantidad"}
+          </Button>
         </div>
-      )}
-      <div className="self-center m-3">
-        <Button
-          variant="outlined"
-          onClick={() => setShowCargaDeCantidades(true)}
-        >
-          {reporteDeImpresion ? "Editar cantidad" : "Cargar cantidad"}
-        </Button>
+        {showCargaDeCantidades && (
+          <DialogCargaReporteImpresion
+            idProcesoDesarrollo={idProcesoDesarrollo}
+            onClose={() => setShowCargaDeCantidades(false)}
+            open={showCargaDeCantidades}
+            reporteActual={reporteDeImpresion}
+          />
+        )}
+        {showBorrarCargaDeCantidades && (
+          <DialogBorrarCargaReporteImpresion
+            open={showBorrarCargaDeCantidades}
+            onClose={() => setShowBorrarCargaDeCantidades(false)}
+            handleBorrarCantidad={async () => {
+              await onHandleBorrarReporteImpresion();
+            }}
+          />
+        )}
       </div>
-      {showCargaDeCantidades && (
-        <DialogCargaReporteImpresion
-          idProcesoDesarrollo={idProcesoDesarrollo}
-          onClose={() => setShowCargaDeCantidades(false)}
-          open={showCargaDeCantidades}
-          reporteActual={reporteDeImpresion}
-        />
-      )}
-      {showBorrarCargaDeCantidades && (
-        <DialogBorrarCargaReporteImpresion
-          open={showBorrarCargaDeCantidades}
-          onClose={() => setShowBorrarCargaDeCantidades(false)}
-          handleBorrarCantidad={async () => {
-            await onHandleBorrarReporteImpresion();
-          }}
-        />
-      )}
-    </div>
+    </LoadingIndicator>
   );
 }
