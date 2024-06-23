@@ -76,7 +76,7 @@ export default function ReporteDeArchivo({
               </div>
             </>
           )}
-          {pdfs && [2, 3].includes(idProceso) && (
+          {pdfs && [2, 3, 8].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">{"PDF's"}</p>

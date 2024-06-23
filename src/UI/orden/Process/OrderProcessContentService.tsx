@@ -9,6 +9,7 @@ import ReporteDeDisenio from "./Tabs/Services/Reportes/Procesos/ReporteDeDisenio
 import ReporteDeArchivo from "./Tabs/Services/Reportes/Procesos/ReporteTipoCargaArchivo";
 import { ReporteDeDigitalizacion } from "./Tabs/Services/Reportes/Procesos/ReporteDeDigitalizacion";
 import { ReporteDeImpresion } from "./Tabs/Services/Reportes/Procesos/ReporteDeImpresion";
+import { ReporteDeCorteMuestra } from "./Tabs/Services/Reportes/Procesos/ReporteDeCorteMuestra";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -81,23 +82,29 @@ const OrderProcessContentService = ({
             </div>
             {(rol === adminRole || rol === ayudanteRole) && tieneReportes && (
               <div hidden={value !== 3} className="w-full">
-                {idProceso === 1 && (
+                {[1].includes(idProceso) && (
                   <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
                 )}
-                {(idProceso === 2 || idProceso === 5) && (
+                {[2, 5, 8].includes(idProceso) && (
                   <ReporteDeArchivo
                     idProcesoDesarrollo={selectedProcess}
                     orderData={orderData}
                   />
                 )}
-                {idProceso === 3 && (
+                {[3].includes(idProceso) && (
                   <ReporteDeDigitalizacion
                     idProcesoDesarrollo={selectedProcess}
                     orderData={orderData}
                   />
                 )}
-                {idProceso === 6 && (
+                {[6].includes(idProceso) && (
                   <ReporteDeImpresion
+                    idProcesoDesarrollo={selectedProcess}
+                    orderData={orderData}
+                  />
+                )}
+                {[9].includes(idProceso) && (
+                  <ReporteDeCorteMuestra
                     idProcesoDesarrollo={selectedProcess}
                     orderData={orderData}
                   />

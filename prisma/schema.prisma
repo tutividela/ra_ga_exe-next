@@ -230,6 +230,7 @@ model ProcesoDesarrolloOrden {
   ReportesDeDigitalizacion                   ReporteDeDigitalizacion?
   ReportesDeImpresion                        ReporteDeImpresion?
   ReportesArchivo                            ReporteArchivo[]
+  ReporteDeCorte                             ReporteDeCorteMuestra[]
 
   @@index([idOrden])
   @@index([idProceso])
@@ -365,6 +366,18 @@ model ReporteDeImpresion {
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@unique([idProcesoDesarrolloOrden])
+  @@index([idProcesoDesarrolloOrden])
+}
+
+model ReporteDeCorteMuestra {
+  id                       String                 @id @default(cuid())
+  idProcesoDesarrolloOrden String
+  nombre                   String
+  cantidad                 Int
+  esAvio                   Boolean                @default(false)
+  tipoDeAvio               String
+  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
+
   @@index([idProcesoDesarrolloOrden])
 }
 

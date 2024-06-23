@@ -1,8 +1,4 @@
-import {
-  ReporteDeDigitalizacion,
-  ReporteDeDisenio,
-  ReporteDeImpresion,
-} from "@prisma/client";
+import { ReporteDeImpresion } from "@prisma/client";
 import { errorHandle } from "@utils/queries/cotizador";
 
 export async function obtenerReporteImpresionPorProcesoDesarrollo(
@@ -20,7 +16,7 @@ export async function obtenerReporteImpresionPorProcesoDesarrollo(
 }
 
 export async function cargarReporteImpresionPorProcesoDesarrollo(
-  reporteDeImpresion: Partial<ReporteDeDigitalizacion>
+  reporteDeImpresion: Partial<ReporteDeImpresion>
 ): Promise<ReporteDeImpresion> {
   return fetch(
     `/api/reportes/procesos/desarrollo/impresion/cargar-por-proceso`,
