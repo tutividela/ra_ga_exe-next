@@ -1,5 +1,4 @@
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
-import ReporteDeArchivo from "./ReporteTipoCargaArchivo";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { useContext, useState } from "react";
@@ -10,24 +9,18 @@ import {
 } from "@utils/queries/reportes/procesos/corteMuestra";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { Button } from "@mui/material";
-import { DialogCargaReporteDigitalizacion } from "./DialogCargaReporteDigitalizacion";
+import { Button, Dialog } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DialogBorrarCargaReporteDigitalizacion } from "./DialogBorrarCargaReporteDigitalizacion";
-import { DialogCargaReporte } from "./Dialogs/DialogCargaReporte";
-import { DialogBorrarReporte } from "./Dialogs/DialogBorrarReporte";
-import { LayoutElement } from "@UI/Forms/types";
+import { DialogCargaReporteCorteMuestra } from "./DialogCargaReporteCorteMuestra";
+import { DialogBorrarReporteCorteMuestra } from "./DialogBorrarReporteCorteMuestra";
 import { ProcesoCorteMuestraSchemaType } from "@backend/schemas/reportes/ProcesoCorteMuestraSchema";
 import { corteMuestraLayout } from "@UI/Reportes/forms/corteMuestra.layout";
+import HookForm from "@UI/Forms/HookForm";
 
 type Props = {
   idProcesoDesarrollo: string;
-  orderData: ExtendedOrdenData;
 };
-export function ReporteDeCorteMuestra({
-  idProcesoDesarrollo,
-  orderData,
-}: Props) {
+export function ReporteDeCorteMuestra({ idProcesoDesarrollo }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
   const queryClient = useQueryClient();
   const [showCargaDeConsumos, setShowCargaDeConsumos] =
@@ -55,6 +48,18 @@ export function ReporteDeCorteMuestra({
     onSuccess: () => {
       queryClient.invalidateQueries(["reportes-corte-muestra"]);
       addError("Se ha eliminado el reporte con exito!", "success");
+    },
+  });
+
+  const {
+    mutateAsync: cargaReporteCorteMuestraAsync,
+    isLoading: seEstaCargandoReporteCorteMuestra,
+  } = useMutation(cargarReporteCorteMuestraPorProcesoDesarrollo, {
+    onError: () => addError("Error en la carga de las cantidades", "error"),
+    onSuccess: () => {
+      setShowCargaDeConsumos(false);
+      queryClient.invalidateQueries(["reportes-corte-muestra"]);
+      addError("Se ha cargado el reporte con exito!", "success");
     },
   });
 
@@ -138,10 +143,10 @@ export function ReporteDeCorteMuestra({
               rows={reportesDeCorteMuestra.map((reporte) => ({
                 ...reporte,
                 cantidad: reporte.esAvio
-                  ? `${reporte.cantidad} unidades`
-                  : `${reporte.cantidad} metros`,
+                  ? `${reporte.cantidad} unidad(es)`
+                  : `${reporte.cantidad} metro(s)`,
                 esAvio: reporte.esAvio ? "Si" : "No",
-                tipoDeAvio: reporte.esAvio ? reporte.tipoDeAvio : "Sin tipo",
+                tipoDeAvio: reporte.esAvio ? reporte.tipoDeAvio : "N/A",
               }))}
               pageSize={7}
               className="m-2"
@@ -163,16 +168,22 @@ export function ReporteDeCorteMuestra({
             </Button>
           </div>
           {showCargaDeConsumos && (
-            <DialogCargaReporte
-              titulo="Carga de consumo"
-              layoutFormulario={corteMuestraLayout}
-              defaultLayoutFormulario={defaultCorteMuestraLayout}
-              onClose={() => setShowCargaDeConsumos(false)}
-              open={showCargaDeConsumos}
-            />
+            <Dialog open={showCargaDeConsumos}>
+              <HookForm
+                defaultValues={defaultCorteMuestraLayout}
+                onSubmit={cargaReporteCorteMuestraAsync}
+              >
+                <DialogCargaReporteCorteMuestra
+                  titulo="Carga de consumo"
+                  layoutFormulario={corteMuestraLayout}
+                  onClose={() => setShowCargaDeConsumos(false)}
+                  open={seEstaCargandoReporteCorteMuestra}
+                />
+              </HookForm>
+            </Dialog>
           )}
           {showBorrarCargaDeConsumos && (
-            <DialogBorrarReporte
+            <DialogBorrarReporteCorteMuestra
               open={showBorrarCargaDeConsumos}
               onClose={() => setShowBorrarCargaDeConsumos(false)}
               handleBorrarCantidad={async () => {

@@ -37,7 +37,6 @@ export const corteMuestraLayout: LayoutElement<ProcesoCorteMuestraSchemaType> =
         className: "w-full",
         options: {
           optionsName: "tiposDeAvios",
-          placeholderText: "hola",
         },
       },
     ],

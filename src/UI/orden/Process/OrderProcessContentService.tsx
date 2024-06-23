@@ -106,7 +106,6 @@ const OrderProcessContentService = ({
                 {[9].includes(idProceso) && (
                   <ReporteDeCorteMuestra
                     idProcesoDesarrollo={selectedProcess}
-                    orderData={orderData}
                   />
                 )}
               </div>

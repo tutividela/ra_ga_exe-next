@@ -7,7 +7,7 @@ type Props = {
   handleBorrarCantidad: () => void;
 };
 
-export function DialogBorrarReporte({
+export function DialogBorrarReporteCorteMuestra({
   titulo,
   open,
   onClose,
