@@ -1,6 +1,7 @@
 import { FichaTecnicaFileUploadSchema } from "@backend/schemas/FichaTecnicaFileUploadSchema";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
+import { prisma } from "@server/db/client";
 
 export default async function post(req: NextApiRequest, res: NextApiResponse) {
   try {

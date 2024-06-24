@@ -1,6 +1,7 @@
 import { ProcesoCorteSchema } from "@backend/schemas/reportes/ProcesoCorteMuestraSchema";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
+import { prisma } from "@server/db/client";
 
 export default async function cargar(
   req: NextApiRequest,

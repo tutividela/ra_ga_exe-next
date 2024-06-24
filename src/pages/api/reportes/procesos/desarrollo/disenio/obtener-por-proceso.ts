@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
+import { prisma } from "@server/db/client";
 
 export default async function get(req: NextApiRequest, res: NextApiResponse) {
   const idProcesoDesarrolloOrden = req.query.idProcesoDesarrolloOrden as string;
