@@ -1,16 +1,16 @@
 import { LayoutElement } from "../../../Forms/types";
 
 export const recoveryLayout: LayoutElement<{ email: string }> = {
-    type: 'Horizontal',
-    elements: [
-        {
-            type: 'Input',
-            label: 'Correo',
-            scope: 'email',
-            width: 12,
-            options: {
-                size: 'small'
-            }
-        }
-    ]
-}
+  type: "Horizontal",
+  elements: [
+    {
+      type: "Input",
+      label: "Correo",
+      scope: "email",
+      width: 12,
+      options: {
+        size: "small",
+      },
+    },
+  ],
+};

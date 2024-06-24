@@ -1,154 +1,233 @@
 import { ValidatedOrderSchema } from "@backend/schemas/OrderCreationSchema";
-import { Prisma } from "@prisma/client";
+import { Prisma, Servicio } from "@prisma/client";
 import { prisma } from "@server/db/client";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 
 export const updateExpiredOrders = async () => {
-    await prisma.orden.updateMany({
-        where: {
-            expiresAt: { lt: new Date() },
-        },
-        data: {
-            idEstado: 7,
-        }
-    });
-}
+  await prisma.orden.updateMany({
+    where: {
+      expiresAt: { lt: new Date() },
+    },
+    data: {
+      idEstado: 7,
+    },
+  });
+};
 
 export const createOrder = async (data: Prisma.OrdenCreateInput) => {
-    return await prisma.orden.create({
-        data: data,
-    })
-}
+  return await prisma.orden.create({
+    data: data,
+  });
+};
 
 export const findOrder = async (id: string) => {
-    return await prisma.orden.findFirst({
-        where: { id: id }
-    })
-}
+  return await prisma.orden.findFirst({
+    where: { id: id },
+  });
+};
 
 export const changeOrderState = async (id: string, newOrderId: number) => {
+  return await prisma.orden.update({
+    include: { user: true, estado: true },
+    where: { id: id },
+    data: {
+      idEstado: newOrderId,
+    },
+  });
+};
 
-    return await prisma.orden.update({
-        include: { user: true, estado: true },
-        where: { id: id },
-        data: {
-            idEstado: newOrderId
-        }
-    })
+export const verifyUserOrder = async (
+  orderId: string | string[],
+  userEmail: string
+) => {
+  const id = Array.isArray(orderId) ? orderId[0] : orderId;
+  const order = await prisma.orden.findFirst({
+    where: {
+      id: id,
+    },
+    include: {
+      user: true,
+    },
+  });
 
-}
+  //TODO: Check if user is admin
+  if (order?.user.email === userEmail) return true;
 
+  const role = await prisma.user.findUnique({
+    where: { email: userEmail },
+    select: { role: true },
+  });
 
-export const verifyUserOrder = async (orderId: string | string[], userEmail: string) => {
-    const id = Array.isArray(orderId) ? orderId[0] : orderId;
-    const order = await prisma.orden.findFirst({
-        where: {
-            id: id,
-        },
-        include: {
-            user: true
-        }
-    })
+  if (role?.role.name === adminRole || role?.role.name === ayudanteRole)
+    return true;
 
+  const recursosAsignados = await prisma.procesoDesarrolloOrden.findMany({
+    select: { usuarioDeServicio: { select: { email: true } } },
+    where: { idOrden: id },
+  });
 
-    //TODO: Check if user is admin
-    if (order?.user.email === userEmail) return true
-
-    const role = await prisma.user.findUnique({
-        where: { email: userEmail },
-        select: { role: true }
-    })
-
-    if (role?.role.name === adminRole || role?.role.name === ayudanteRole) return true
-
-    const recursosAsignados = await prisma.procesoDesarrolloOrden.findMany({
-        select: { usuarioDeServicio: { select: { email: true } } },
-        where: { idOrden: id }
-    })
-
-    return recursosAsignados.some(el => el.usuarioDeServicio.some(el => el.email === userEmail))
-}
+  return recursosAsignados.some((el) =>
+    el.usuarioDeServicio.some((el) => el.email === userEmail)
+  );
+};
 
 export const getPrecioDolar = async () => {
-    return await prisma.precioDelDolar.findFirst({
-        where: {
-            fechaDesde: {
-                lte: new Date()
-            },
-            fechaHasta: {
-                gte: new Date()
-            }
-        },
-        orderBy: {
-            fechaDesde: "desc"
-        }
-    })
-}
+  return await prisma.precioDelDolar.findFirst({
+    where: {
+      fechaDesde: {
+        lte: new Date(),
+      },
+      fechaHasta: {
+        gte: new Date(),
+      },
+    },
+    orderBy: {
+      fechaDesde: "desc",
+    },
+  });
+};
 
-export const findPrendaPrecioByTypeAndComplexity = async (tipoId: string, complejidadId: string) => {
-    return await prisma.precioPrenda.findFirst({
+export const findPrendaPrecioByTypeAndComplexity = async (
+  tipoId: string,
+  complejidadId: string
+) => {
+  return await prisma.precioPrenda.findFirst({
+    include: {
+      tipo: true,
+      complejidad: true,
+    },
+    where: {
+      complejidadId: complejidadId,
+      tipoId: tipoId,
+    },
+  });
+};
+
+export const calculateOrderTotal = async (
+  datosDeLaOrden: ValidatedOrderSchema,
+  complexityId: string
+) => {
+  try {
+    const { procesosDesarrolloSeleccionados } = datosDeLaOrden;
+    let precioTotal = 0;
+    const preciosIndividuales = [];
+
+    const precioDolar = await getPrecioDolar();
+    const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(
+      datosDeLaOrden.tipoPrenda.id,
+      complexityId
+    );
+    const todosProcesoDesarrolloConServicio =
+      await prisma.procesoDesarrollo.findMany({
         include: {
-            tipo: true,
-            complejidad: true
+          servicio: true,
         },
-        where: {
-            complejidadId: complejidadId,
-            tipoId: tipoId
+      });
+    Object.entries(procesosDesarrolloSeleccionados).map((procesoDesarrollo) => {
+      const precioFijoYFactorMultiplicador = {
+        precioFijo: 0,
+        factorMultiplicador: 0,
+      };
+      const [nombre, { selected: seleccionado }] = procesoDesarrollo;
+
+      if (seleccionado) {
+        if (nombre === "Corte") {
+          const procesoServicioSeleccionado =
+            todosProcesoDesarrolloConServicio.find(
+              (procesoDesarrolloConServicios) =>
+                procesoDesarrolloConServicios.nombre === nombre
+            );
+          const corteMuestra = procesoServicioSeleccionado.servicio.find(
+            (servicio) => servicio.name === "Corte Muestra"
+          );
+
+          precioFijoYFactorMultiplicador.precioFijo += corteMuestra.precioFijo;
+          precioFijoYFactorMultiplicador.factorMultiplicador +=
+            corteMuestra.factorMultiplicador;
+
+          preciosIndividuales.push({
+            servicio: nombre,
+            precioTotal:
+              precioDolar?.precio *
+              (prendaPrecio.precioBase *
+                precioFijoYFactorMultiplicador.factorMultiplicador +
+                precioFijoYFactorMultiplicador.precioFijo),
+          });
+          return;
         }
-    })
-}
 
-// export const getServicesFromOrderData = async (data: OrderCreationData) => {
+        if (nombre === "Confección") {
+          const procesoServicioSeleccionado =
+            todosProcesoDesarrolloConServicio.find(
+              (procesoDesarrolloConServicios) =>
+                procesoDesarrolloConServicios.nombre === nombre
+            );
+          const confeccionMuestra = procesoServicioSeleccionado.servicio.find(
+            (servicio) => servicio.name === "Confección Muestra"
+          );
 
-// }
+          precioFijoYFactorMultiplicador.precioFijo +=
+            confeccionMuestra.precioFijo;
+          precioFijoYFactorMultiplicador.factorMultiplicador +=
+            confeccionMuestra.factorMultiplicador;
 
-export const calculateOrderTotal = async (orderData: ValidatedOrderSchema, complexityId: string) => {
-    try {
-        const precioDolar = await getPrecioDolar()
-        await prisma.servicio.findMany({ where: { name: { in: Object.keys(orderData) } } })
+          preciosIndividuales.push({
+            servicio: nombre,
+            precioTotal:
+              precioDolar?.precio *
+              (prendaPrecio.precioBase *
+                precioFijoYFactorMultiplicador.factorMultiplicador +
+                precioFijoYFactorMultiplicador.precioFijo),
+          });
+          return;
+        }
 
-        const preciosIndividuales = []
-        const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(orderData.tipoPrenda.id, complexityId);
+        const servicios = todosProcesoDesarrolloConServicio.filter(
+          (procesoDesarrolloConServicio) =>
+            procesoDesarrolloConServicio.nombre === nombre
+        )[0].servicio;
 
-        const services = await prisma.servicio.findMany({})
+        servicios.forEach((servicio: Servicio) => {
+          precioFijoYFactorMultiplicador.precioFijo += servicio.precioFijo;
+          precioFijoYFactorMultiplicador.factorMultiplicador +=
+            servicio.factorMultiplicador;
+        });
+        preciosIndividuales.push({
+          servicio: nombre,
+          precioTotal:
+            precioDolar?.precio *
+            (prendaPrecio.precioBase *
+              precioFijoYFactorMultiplicador.factorMultiplicador +
+              precioFijoYFactorMultiplicador.precioFijo),
+        });
+      }
+    });
+    preciosIndividuales.forEach(
+      (precioIndividual: { servicio: string; precioTotal: number }) =>
+        (precioTotal += precioIndividual.precioTotal)
+    );
 
-        const servicesPrices = services.reduce<{ [key: string]: { precioFijo: number, factorMultiplicador: number } }>((acc, service) => {
-            acc[service.name] = { precioFijo: service.precioFijo, factorMultiplicador: service.factorMultiplicador }
-            return acc
-        }, {})
-
-        const factores = Object.keys(orderData).reduce((prev, key) => {
-            if (key in servicesPrices) {
-                if (orderData[key]?.selected) {
-                    prev.factorMultiplicador += servicesPrices[key].factorMultiplicador
-                    prev.precioFijo += servicesPrices[key].precioFijo
-                    prev.servicios[key] = { precioFijo: servicesPrices[key].precioFijo, factorMultiplicador: servicesPrices[key].factorMultiplicador }
-                    preciosIndividuales.push({
-                        servicio: key,
-                        precioTotal: precioDolar?.precio * (prendaPrecio.precioBase * servicesPrices[key].factorMultiplicador + servicesPrices[key].precioFijo)
-                    })
-                }
-            }
-            return prev
-        }, { precioFijo: 0, factorMultiplicador: 0, servicios: {} })
-        return { precioTotal: (precioDolar?.precio * (prendaPrecio.precioBase * factores.factorMultiplicador + factores.precioFijo)), preciosIndividuales, precioDolar }
-    }
-    catch (e) {
-        console.error(e)
-    }
-}
-
+    return {
+      precioTotal,
+      preciosIndividuales,
+      precioDolar,
+    };
+  } catch (e) {
+    console.error("Error en el calculo del precio: ", e);
+  }
+};
 
 export const getAtributosPrenda = async (orderData: ValidatedOrderSchema) => {
+  const atributos = Object.keys(orderData.atributosPrenda)
+    .filter((key) => orderData.atributosPrenda[key]?.selected === true)
+    .map((key) => {
+      return {
+        name: key,
+        observaciones:
+          (orderData.atributosPrenda[key]?.observaciones as string) || "",
+        cantidad: (orderData.atributosPrenda[key]?.cantidad as number) || 0,
+      };
+    });
 
-    const atributos = Object.keys(orderData.atributosPrenda).filter(key => orderData.atributosPrenda[key]?.selected === true).map(key => {
-        return {
-            name: key,
-            observaciones: orderData.atributosPrenda[key]?.observaciones as string || '',
-            cantidad: orderData.atributosPrenda[key]?.cantidad as number || 0
-        }
-    })
-
-    return atributos
-
-}
+  return atributos;
+};

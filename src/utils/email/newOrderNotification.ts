@@ -1,5 +1,8 @@
-export const newOrderNotificationHTML = (data: { name: string, orderId: string }) => {
-    return `
+export const newOrderNotificationHTML = (data: {
+  name: string;
+  orderId: string;
+}) => {
+  return `
     <!DOCTYPE html>
         <html lang="en">
 
@@ -14,15 +17,19 @@ export const newOrderNotificationHTML = (data: { name: string, orderId: string }
     <div style="background-color: midnightblue;padding:1rem; border-radius: 0.5rem;margin:4rem;">
         <div style="background-color: white;padding:2rem;box-shadow: 5px 5px 20px slategray; border-radius: 0.5rem;">
             <div>
-                <h1 style="font-family:Georgia;color:darkslategrey">Señor ${data.name}</h1>
+                <h1 style="font-family:Georgia;color:darkslategrey">Señor ${
+                  data.name
+                }</h1>
             </div>
             <div style="color:dimgray">
                 <p>Se ha creado su nueva orden exitosamente</p>
-                <p>Para ver el detalle de la orden, haga <a href="${process.env.NEXTAUTH_URL || process.env.VERCEL_URL}/orden/${data.orderId}">click aqui</a></p>
+                <p>Para ver el detalle de la orden, haga <a href="${
+                  process.env.NEXTAUTH_URL || process.env.VERCEL_URL
+                }/orden/${data.orderId}">click aqui</a></p>
             </div>
         </div>
     </div>
 </body>
 </html>
-    `
-}
+    `;
+};

@@ -1,72 +1,80 @@
-import { OrderStateUpdateSchemaType } from '@backend/schemas/OrderStateUpdateSchema'
-import { Button } from '@mui/material'
-import HookForm from '@UI/Forms/HookForm'
-import { ErrorHandlerContext } from '@utils/ErrorHandler/error'
-import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData"
-import { errorHandle } from '@utils/queries/cotizador'
-import React, { useContext, useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-import ConfirmStateChangeDialog from './ConfirmStateChangeDialog'
-import OrderStateChange from './OrderStateChange'
+import { OrderStateUpdateSchemaType } from "@backend/schemas/OrderStateUpdateSchema";
+import { Button } from "@mui/material";
+import HookForm from "@UI/Forms/HookForm";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
+import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
+import { errorHandle } from "@utils/queries/cotizador";
+import React, { useContext, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import ConfirmStateChangeDialog from "./ConfirmStateChangeDialog";
+import OrderStateChange from "./OrderStateChange";
 
 type Props = {
-    orderData: ExtendedOrdenData
-}
+  orderData: ExtendedOrdenData;
+};
 
 const OrderStateTab = (props: Props) => {
+  const { orderData } = props;
+  const { addError } = useContext(ErrorHandlerContext);
+  const queryClient = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const { orderData } = props
-    const { addError } = useContext(ErrorHandlerContext)
-    const queryClient = useQueryClient()
-    const [confirmOpen, setConfirmOpen] = useState(false)
-
-    const modifyOrderState = async (data: OrderStateUpdateSchemaType): Promise<string> => {
-        const { id, newStateId } = data
-        return await fetch(`/api/order/updateState`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", accept: "application/json" },
-            body: JSON.stringify({ id, newStateId }),
-        })
-            .then((res) => (res.ok ? res.json() : errorHandle(res)))
-            .catch((error) => {
-                throw error;
-            });
-    };
-
-    const { mutate } = useMutation(modifyOrderState, {
-        onSuccess: () => {
-            addError('Modificacion exitosa', 'success')
-            queryClient.invalidateQueries(['order'])
-        }
+  const modifyOrderState = async (
+    data: OrderStateUpdateSchemaType
+  ): Promise<string> => {
+    const { id, newStateId } = data;
+    return await fetch(`/api/order/updateState`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify({ id, newStateId }),
     })
+      .then((res) => (res.ok ? res.json() : errorHandle(res)))
+      .catch((error) => {
+        throw error;
+      });
+  };
 
-    const handleFormSubmit = (data: { orderState: number }) => {
-        mutate({ id: orderData.id, newStateId: data.orderState })
-    }
+  const { mutate } = useMutation(modifyOrderState, {
+    onSuccess: () => {
+      addError("Modificacion exitosa", "success");
+      queryClient.invalidateQueries(["order"]);
+    },
+  });
 
-    const handleOpenConfirmDialog = () => {
-        setConfirmOpen(true)
-    }
+  const handleFormSubmit = (data: { orderState: number }) => {
+    mutate({ id: orderData.id, newStateId: data.orderState });
+  };
 
-    const handleCloseConfirmDialog = () => {
-        setConfirmOpen(false)
-    }
+  const handleOpenConfirmDialog = () => {
+    setConfirmOpen(true);
+  };
 
-    const defaultFormData = {
-        orderState: 0
-    }
+  const handleCloseConfirmDialog = () => {
+    setConfirmOpen(false);
+  };
 
-    return (
-        <HookForm defaultValues={defaultFormData} onSubmit={handleFormSubmit}>
-            <OrderStateChange order={orderData} />
-            <ConfirmStateChangeDialog onClose={handleCloseConfirmDialog} open={confirmOpen} formSubmit={handleFormSubmit} />
-            <div className="mt-8">
-                <div className="flex flex-row">
-                    <Button onClick={handleOpenConfirmDialog}>Confirmar</Button>
-                </div>
-            </div>
-        </HookForm>
-    )
-}
+  const defaultFormData = {
+    orderState: 0,
+  };
 
-export default OrderStateTab
+  return (
+    <HookForm defaultValues={defaultFormData} onSubmit={handleFormSubmit}>
+      <OrderStateChange order={orderData} />
+      <ConfirmStateChangeDialog
+        onClose={handleCloseConfirmDialog}
+        open={confirmOpen}
+        formSubmit={handleFormSubmit}
+      />
+      <div className="mt-8">
+        <div className="flex flex-row">
+          <Button onClick={handleOpenConfirmDialog}>Confirmar</Button>
+        </div>
+      </div>
+    </HookForm>
+  );
+};
+
+export default OrderStateTab;
