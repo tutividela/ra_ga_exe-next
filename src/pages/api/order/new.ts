@@ -85,7 +85,7 @@ const handleOrderCreation = async (
 
     /* const { sendEmail } = generateEmailer({
             password: process.env.MAILGUN_SMTP_PASS,
-            user: 'postmaster@gasppo.lol',
+            user: 'postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org',
             from: 'soporte@gasppo.lol',
             fromTitle: 'Soporte HS-Taller'
         }) */
