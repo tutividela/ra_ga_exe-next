@@ -23,7 +23,7 @@ Los objetivos del proyecto a desarrollar consisten en agilizar la creación de n
 prendas y mantener un seguimiento del flujo de los estados de las órdenes creadas, con la finalidad que
 los clientes dispongan de un sitio para visualizar sus órdenes y los estados en los que se encuentran.
 
-Este desarrollo web permitirá al Taller HS automatizar la parte de la cotización de prendas que
+Este desarrollo web permitirá a Taller HS automatizar la parte de la cotización de prendas que
 actualmente se realiza de manera manual a través de hojas de cálculo Excel, a la vez que ahorrar tiempo
 a la hora de informar al cliente el estado de sus órdenes, ya que será posible consultarlas dentro del
 portal web.
