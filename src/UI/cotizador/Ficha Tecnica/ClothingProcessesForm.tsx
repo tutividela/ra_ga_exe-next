@@ -1,12 +1,16 @@
 import { Alert } from "@mui/material";
 import FormItem from "@UI/Forms/FormItem";
-import { clothingProcessesLayout } from "./forms/clothingProcessesForm.layout";
+import {
+  clothingProcessesLayout,
+  procesosDeDesarrolloLayout,
+} from "./forms/clothingProcessesForm.layout";
 import { useFormContext } from "react-hook-form";
 import { OrderCreationData } from "@backend/schemas/OrderCreationSchema";
 import { useEffect } from "react";
 
 const ClothingProcessesForm = () => {
   const { watch, setValue } = useFormContext<OrderCreationData>();
+  const cantidadAProducir = watch("cantidad");
   const valorDeProcesoDesarrolloMateriales = watch(
     "procesosDesarrolloSeleccionados.Materiales.selected"
   );
@@ -42,7 +46,9 @@ const ClothingProcessesForm = () => {
     setValue("procesosDesarrolloSeleccionados.Digitalización.selected", true);
   }, []);
   useEffect(() => {
-    corregirSwitchesPorProcesoImpresion();
+    if (cantidadAProducir === "muestra") {
+      corregirSwitchesPorProcesoImpresion();
+    }
   }, [valorDeProcesoDesarrolloImpresion]);
   useEffect(() => {
     corregirSwitchesPorProcesoMateriales();
@@ -51,15 +57,10 @@ const ClothingProcessesForm = () => {
     corregirSwitchesPorProcesoFichaTecnica();
   }, [valorDeProcesoDesarrolloFichaTecnica]);
   useEffect(() => {
-    if (!valorDeProcesoDesarrolloCorte) {
-      setValue(
-        "procesosDesarrolloSeleccionados.Pre-confección.selected",
-        false
-      );
-      setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
-      setValue("procesosDesarrolloSeleccionados.Confección.selected", false);
-      setValue("procesosDesarrolloSeleccionados.Terminado.selected", false);
-    }
+    setValue("procesosDesarrolloSeleccionados.Pre-confección.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Confección.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Terminado.selected", false);
   }, [valorDeProcesoDesarrolloCorte]);
 
   return (
@@ -68,7 +69,13 @@ const ClothingProcessesForm = () => {
         Seleccione los procesos que desea agregar al desarollo
       </Alert>
       <div className="form-input-section">
-        <FormItem layout={clothingProcessesLayout} />
+        <FormItem
+          layout={
+            cantidadAProducir === "desarrollo"
+              ? procesosDeDesarrolloLayout
+              : clothingProcessesLayout
+          }
+        />
       </div>
     </div>
   );

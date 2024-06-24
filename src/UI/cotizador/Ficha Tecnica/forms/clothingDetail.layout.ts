@@ -22,7 +22,7 @@ export const clothingDetailLayout: LayoutElement<OrderCreationData> = {
         },
         {
           type: "Select",
-          label: "Cantidad a producir",
+          label: "Tipo de Desarrollo",
           scope: "cantidad",
           width: 6,
           options: {

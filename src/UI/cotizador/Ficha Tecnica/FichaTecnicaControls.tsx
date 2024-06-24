@@ -21,10 +21,7 @@ const FichaTecnicaControls = (props: FichaTecnicaControlsProps) => {
     switch (stepNumer) {
       case 0:
         return (
-          !data.nombreProducto ||
-          !data.tipoPrenda.name ||
-          !data.complejidad ||
-          !data.atributosPrenda.material.observaciones
+          !data.nombreProducto || !data.tipoPrenda.name || !data.complejidad
         );
       case 1:
         return data.orderFiles.files.length === 0;

@@ -373,7 +373,7 @@ model ReporteDeCorteMuestra {
   id                       String                 @id @default(cuid())
   idProcesoDesarrolloOrden String
   nombre                   String
-  cantidad                 Int
+  cantidad                 Float
   esAvio                   Boolean                @default(false)
   tipoDeAvio               String
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)

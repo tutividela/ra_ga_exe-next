@@ -257,3 +257,13 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
     },
   ],
 };
+
+export const procesosDeDesarrolloLayout: LayoutElement<OrderCreationData> = {
+  type: clothingProcessesLayout.type,
+  elements: [
+    clothingProcessesLayout.elements[0],
+    clothingProcessesLayout.elements[1],
+    clothingProcessesLayout.elements[2],
+    clothingProcessesLayout.elements[3],
+  ],
+};

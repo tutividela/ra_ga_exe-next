@@ -21,7 +21,7 @@ export default function ReporteDeDisenio({ idProcesoDesarrollo }: Props) {
       ["reporteDeDiseño", idProcesoDesarrollo],
       () => obtenerReporteDiseñoPorProcesoDesarrollo(idProcesoDesarrollo),
       {
-        onError: () => addError("Error el reporte de diseño", "warning"),
+        onError: () => addError("Error el reporte de diseño", "error"),
         refetchOnWindowFocus: false,
       }
     );
@@ -29,22 +29,26 @@ export default function ReporteDeDisenio({ idProcesoDesarrollo }: Props) {
   return (
     <LoadingIndicator variant="blocking" show={seEstaBuscandoReporteDeDiseño}>
       <div className="m-4 text-gray-700 text-xl font-semibold">Resumen</div>
-      {reporteDeDiseño ? (
-        <div className="m-4 border-4 shadow-lg min-h-[16rem] max-h-[20rem] flex p-4 flex-col space-y-2">
-          <p>{reporteDeDiseño?.comentario}</p>
-        </div>
-      ) : (
-        <div>
-          <p>No hay reporte de diseño, carga uno!</p>
-        </div>
-      )}
-      <Button
-        variant="outlined"
-        className="mr-4 text-xs"
-        onClick={() => setShowCargaReporte(true)}
-      >
-        Editar reporte
-      </Button>
+
+      <div className="flex flex-col">
+        {reporteDeDiseño ? (
+          <div className="m-4 border-4 shadow-lg min-h-[16rem] max-h-[20rem] flex p-4 flex-col space-y-2">
+            <p>{reporteDeDiseño?.comentario}</p>
+          </div>
+        ) : (
+          <p className="font-semibold self-center m-3">
+            No hay reporte de diseño, carga uno!
+          </p>
+        )}
+        <Button
+          variant="outlined"
+          className="mr-4 text-xs w-1/5 self-center"
+          onClick={() => setShowCargaReporte(true)}
+        >
+          {reporteDeDiseño ? "Editar reporte" : "Cargar reporte"}
+        </Button>
+      </div>
+
       {showCargaReporte && (
         <DialogCargaReporteDeDisenio
           onClose={() => setShowCargaReporte(false)}

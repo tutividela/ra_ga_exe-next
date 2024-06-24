@@ -105,6 +105,7 @@ const handleOrderCreation = async (
     const { id: idEstadoAguardandoConfirmacion } =
       await prisma.estadoOrden.findFirst({ where: { id: 1 } });
     const usuarioActual = await checkIfUserExists({ email: data.user.email });
+    const cantidad = data.cantidad === "desarrollo" ? 0 : 1;
 
     const ordenCreada = await prisma.orden.create({
       include: {
@@ -118,7 +119,7 @@ const handleOrderCreation = async (
       data: {
         id: idOrden,
         nombre: data.nombreProducto,
-        cantidad: 100,
+        cantidad: cantidad,
         expiresAt: fromToday(60 * 60 * 24 * 15),
         estado: {
           connect: { id: idEstadoAguardandoConfirmacion },

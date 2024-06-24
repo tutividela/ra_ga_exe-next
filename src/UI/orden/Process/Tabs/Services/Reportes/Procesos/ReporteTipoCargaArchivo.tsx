@@ -15,7 +15,7 @@ export default function ReporteDeArchivo({
   orderData,
 }: Props) {
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
-  const { proceso, idProceso } = useMemo(
+  const { idProceso } = useMemo(
     () => orderData?.procesos.find((el) => el.id === idProcesoDesarrollo),
     [idProcesoDesarrollo, orderData?.procesos]
   );
@@ -24,16 +24,13 @@ export default function ReporteDeArchivo({
     data: reportesDeProcesoDesarrollo,
     isLoading: seEstaBuscandoLosReportesDeProcesoDesarrollo,
     isRefetching: seEstaRecargandoLosReportesDeProcesoDesarrollo,
-  } = useQuery(["reportes-de-archivo", idProcesoDesarrollo], () =>
+  } = useQuery(["reportes-de-archivo"], () =>
     obtenerReportesDeArchivosPorIdProcesoDesarrollo(idProcesoDesarrollo)
   );
 
-  const imagenes = useMemo(
-    () =>
-      reportesDeProcesoDesarrollo?.filter((reporteDeProcesoDesarrollo) =>
-        reporteDeProcesoDesarrollo.type.includes("image")
-      ),
-    [reportesDeProcesoDesarrollo]
+  const imagenes = reportesDeProcesoDesarrollo?.filter(
+    (reporteDeProcesoDesarrollo) =>
+      reporteDeProcesoDesarrollo.type.includes("image")
   );
 
   const pdfs = useMemo(

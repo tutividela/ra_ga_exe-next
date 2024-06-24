@@ -6,9 +6,7 @@ import { useFormContext } from "react-hook-form";
 
 const ClothingDetailForm = () => {
   const { watch, setValue } = useFormContext<OrderCreationData>();
-
   const selectedGenders = watch("atributosPrenda.genero.values");
-
   const observaciones = useMemo(
     () => selectedGenders?.map((el) => el.text)?.join(", ") || "",
     [selectedGenders]
@@ -24,8 +22,8 @@ const ClothingDetailForm = () => {
         layout={clothingDetailLayout}
         selectOptions={{
           cantidades: [
-            { key: "Desarrollo", text: "Sólo Desarrollo" },
-            { key: "Muestra", text: "Muestrario ( 1 a 5 prendas )" },
+            { key: "desarrollo", text: "Sólo Desarrollo" },
+            { key: "muestra", text: "Con Muestra" },
           ],
           generos: [
             { key: "bebe", text: "Bebés" },

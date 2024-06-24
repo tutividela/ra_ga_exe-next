@@ -72,86 +72,122 @@ const ClothingConfirmationForm = () => {
             : " - "}
         </div>
         <div>
-          Cantidad: {cotizadorData.cantidad ? cotizadorData.cantidad : " - "}
+          Tipo de Desarrollo:{" "}
+          {cotizadorData.cantidad ? cotizadorData.cantidad : " - "}
         </div>
         <div>Talles: {cotizadorData.talles ? cotizadorData.talles : " - "}</div>
       </div>
 
       <div className="border-gray-300 border-2 w-full md:w-2/4 mt-3"></div>
 
-      <div className="mt-3 w-full md:w-2/4">
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Diseño?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Diseño{" "}
+      {cotizadorData.cantidad === "muestra" && (
+        <div className="mt-3 w-full md:w-2/4">
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Diseño?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Diseño{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Molderia?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Moldería Base{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Digitalización
+              ?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Digitalización y Progresiones{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Geometral?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Ficha Técnica (Geometral + Guía de Armado){" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Impresion.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Impresión Moldería Base{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Materiales?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Materiales{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Corte.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Corte Muestra{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados["Pre-confección"]
+              ?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Pre-Confeccion{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados["Confección"]
+              ?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Confección Muestra{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Tizado?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Tizado{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Terminado?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Terminación (Ojal, Botón, Plancha, etc){" "}
+          </div>
+          <div>
+            {cotizadorData.cotización?.selected ? "✔️ " : "❌ "} Cotización{" "}
+          </div>
         </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Molderia?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Moldería Base{" "}
+      )}
+      {cotizadorData.cantidad === "desarrollo" && (
+        <div className="mt-3 w-full md:w-2/4">
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Diseño?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Diseño{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Molderia?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Moldería Base{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Digitalización
+              ?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Digitalización y Progresiones{" "}
+          </div>
+          <div>
+            {cotizadorData.procesosDesarrolloSeleccionados.Geometral?.selected
+              ? "✔️ "
+              : "❌ "}{" "}
+            Ficha Técnica (Geometral + Guía de Armado){" "}
+          </div>
+          <div>
+            {cotizadorData.cotización?.selected ? "✔️ " : "❌ "} Cotización{" "}
+          </div>
         </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Digitalización
-            ?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Digitalización y Progresiones{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Geometral?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Ficha Técnica (Geometral + Guía de Armado){" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Impresion.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Impresión Moldería Base{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Materiales?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Materiales{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Corte.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Corte Muestra{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados["Pre-confección"]
-            ?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Pre-Confeccion{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados["Confección"]?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Confección Muestra{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Tizado?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Tizado{" "}
-        </div>
-        <div>
-          {cotizadorData.procesosDesarrolloSeleccionados.Terminado?.selected
-            ? "✔️ "
-            : "❌ "}{" "}
-          Terminación (Ojal, Botón, Plancha, etc){" "}
-        </div>
-        <div>
-          {cotizadorData.cotización?.selected ? "✔️ " : "❌ "} Cotización{" "}
-        </div>
-      </div>
+      )}
 
       <div className="border-gray-300 border-2 w-full md:w-2/4 mt-3"></div>
     </div>
