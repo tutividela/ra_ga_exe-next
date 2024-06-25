@@ -52,7 +52,6 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     {
       initialData: [],
       onError: (err) => addError(JSON.stringify(err)),
-
     }
   );
   const { mutateAsync, isLoading: isUpdatingState } = useMutation(
@@ -65,10 +64,14 @@ const OrderProcessItemChangeDialog = (props: Props) => {
       onError: (err) => addError(JSON.stringify(err)),
     }
   );
-  const states = estadosProcesoDesarrollo.map((estadoProcesoDesarrollo) => ({
-    key: estadoProcesoDesarrollo.descripcion,
-    text: estadoProcesoDesarrollo.descripcion,
-  }));
+  const states = estadosProcesoDesarrollo
+    .filter(
+      (estadoProcesoDesarrollo) => ![7, 8].includes(estadoProcesoDesarrollo.id)
+    )
+    .map((estadoProcesoDesarrollo) => ({
+      key: estadoProcesoDesarrollo.descripcion,
+      text: estadoProcesoDesarrollo.descripcion,
+    }));
   function sePuedeHabilitarCambioEstado(
     estadoProcesoDesarrolloActual: string
   ): boolean {

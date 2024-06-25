@@ -175,9 +175,6 @@ const SelectableOrderProcessItem = ({
                 <div className="text-gray-400 text-xs">
                   Estado: <span className={`${color}`}>{estado}</span>
                 </div>
-                <div className="text-gray-400 text-xs">
-                  Plazo estimado: <span>{estimatedAt}</span>
-                </div>
                 {lastUpdated ? (
                   <div className="text-gray-400 text-xs">
                     Actualizado el:{" "}

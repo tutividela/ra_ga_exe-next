@@ -89,18 +89,6 @@ const OrderProcessContentGeneral = ({
             {
               <div hidden={value !== 3} className="w-full">
                 <ServiceReportesTiempoTab orderData={orderData} />
-                {/* <div
-                  style={{
-                    height: 400,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    marginTop: 10,
-                    width: "100%",
-                  }}
-                >
-                  <Pie data={data} />
-                </div> */}
               </div>
             }
           </div>
