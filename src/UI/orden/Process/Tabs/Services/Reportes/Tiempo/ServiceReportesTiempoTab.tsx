@@ -6,9 +6,12 @@ import {
 } from "@mui/x-data-grid";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { useEffect, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { TypedChartComponent } from "react-chartjs-2/dist/types";
+import { Button } from "@mui/material";
+import { Download } from "@mui/icons-material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -18,6 +21,7 @@ type Props = {
 
 export function ServiceReportesTiempoTab({ orderData }: Props) {
   const [showReporteTiempo, setShowReporteTiempo] = useState(false);
+  const pieChartRef = useRef(null);
 
   useEffect(() => {
     const ordenDesarrolloFinalizada = orderData?.procesos
@@ -251,6 +255,15 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
     [orderData.procesos]
   );
 
+  function descargarPieChart() {
+    const base64PieChart = pieChartRef.current.toBase64Image();
+    const a = document.createElement("a");
+
+    a.href = base64PieChart;
+    a.download = "TallerHS_Grafico_Reporte_Tiempo";
+    a.click();
+  }
+
   return (
     <LoadingIndicator show={false} variant="blocking">
       <div
@@ -259,6 +272,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
           display: "flex",
           flexDirection: "column",
           width: "100%",
+          marginTop: 15,
         }}
       >
         {showReporteTiempo ? (
@@ -297,17 +311,29 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
         )}
       </div>
       {showReporteTiempo && (
-        <div
-          style={{
-            height: 400,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <Pie data={datosParaPieChart} />
-        </div>
+        <>
+          <div className="flex flex-row m-3 items-start">
+            <Button
+              onClick={descargarPieChart}
+              variant="outlined"
+              endIcon={<Download />}
+              className="text-xs"
+            >
+              Descargar
+            </Button>
+          </div>
+          <div
+            style={{
+              height: 400,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Pie data={datosParaPieChart} ref={pieChartRef} />
+          </div>
+        </>
       )}
     </LoadingIndicator>
   );
