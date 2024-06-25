@@ -7,6 +7,10 @@ import {
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { useEffect, useMemo, useState } from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -150,11 +154,108 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
     [showReporteTiempo]
   );
 
+  function armarDatosParaPieChart() {
+    const procesosTerminados = obtenerProcesosTerminados();
+    const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+    const duracionesDeProcesos = calcularDuracionesPorProcesoDesarrollo(
+      procesosTerminados,
+      fechaDeCreacionOrden
+    );
+
+    return {
+      labels: duracionesDeProcesos.map(
+        (duracionDeProceso) => duracionDeProceso.proceso
+      ),
+      datasets: [
+        {
+          label: "Tiempo",
+          data: duracionesDeProcesos.map(
+            (duracionDeProceso) => duracionDeProceso.duracion
+          ),
+          backgroundColor: duracionesDeProcesos.map(
+            (duracionDeProceso) =>
+              coloresPorProceso.find(
+                (colorPorProceso) =>
+                  colorPorProceso.idProceso === duracionDeProceso.idProceso
+              ).color
+          ),
+          hoverOffset: 4,
+        },
+      ],
+    };
+  }
+  const coloresPorProceso = [
+    {
+      idProceso: 1,
+      color: "rgb(150, 196, 255)",
+    },
+    {
+      idProceso: 2,
+      color: "rgb(107, 152, 209)",
+    },
+    {
+      idProceso: 3,
+      color: "rgb(69, 97, 133)",
+    },
+    {
+      idProceso: 4,
+      color: "rgb(66, 93, 128)",
+    },
+    {
+      idProceso: 5,
+      color: "rgb(36, 76, 128)",
+    },
+    {
+      idProceso: 6,
+      color: "rgb(247, 144, 124)",
+    },
+    {
+      idProceso: 7,
+      color: "rgb(179, 105, 91)",
+    },
+    {
+      idProceso: 8,
+      color: "rgb(130, 75, 65)",
+    },
+    {
+      idProceso: 9,
+      color: "rgb(168, 74, 57)",
+    },
+    {
+      idProceso: 10,
+      color: "rgb(120, 51, 38)",
+    },
+    {
+      idProceso: 11,
+      color: "rgb(242, 73, 41)",
+    },
+    {
+      idProceso: 12,
+      color: "rgb(196, 59, 33)",
+    },
+    {
+      idProceso: 13,
+      color: "rgb(138, 42, 23)",
+    },
+    {
+      idProceso: 14,
+      color: "rgb(247, 57, 20)",
+    },
+    {
+      idProceso: 15,
+      color: "rgb(181, 45, 18)",
+    },
+  ];
+  const datosParaPieChart = useMemo(
+    () => armarDatosParaPieChart(),
+    [orderData.procesos]
+  );
+
   return (
     <LoadingIndicator show={false} variant="blocking">
       <div
         style={{
-          height: 400,
+          height: 500,
           display: "flex",
           flexDirection: "column",
           width: "100%",
@@ -195,6 +296,19 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
           </div>
         )}
       </div>
+      {showReporteTiempo && (
+        <div
+          style={{
+            height: 400,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Pie data={datosParaPieChart} />
+        </div>
+      )}
     </LoadingIndicator>
   );
 }

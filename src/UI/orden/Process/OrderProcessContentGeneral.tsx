@@ -6,6 +6,10 @@ import OrderFilesTab from "./Tabs/General/Files/OrderFilesTab";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/Tiempo/ServiceReportesTiempoTab";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -35,6 +39,22 @@ const OrderProcessContentGeneral = ({
       ?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
   }
+
+  /*   const data = {
+    labels: ["Red", "Blue", "Yellow"],
+    datasets: [
+      {
+        label: "Tiempo: ",
+        data: [300, 50, 100],
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(54, 162, 235)",
+          "rgb(255, 205, 86)",
+        ],
+        hoverOffset: 4,
+      },
+    ],
+  }; */
 
   return (
     <Slide direction="up" in={slide}>
@@ -69,6 +89,18 @@ const OrderProcessContentGeneral = ({
             {
               <div hidden={value !== 3} className="w-full">
                 <ServiceReportesTiempoTab orderData={orderData} />
+                {/* <div
+                  style={{
+                    height: 400,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    marginTop: 10,
+                    width: "100%",
+                  }}
+                >
+                  <Pie data={data} />
+                </div> */}
               </div>
             }
           </div>
