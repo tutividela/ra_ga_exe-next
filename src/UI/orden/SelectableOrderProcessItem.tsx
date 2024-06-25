@@ -100,7 +100,6 @@ const SelectableOrderProcessItem = ({
     : !selectable
     ? "bg-gray-300"
     : "hover:bg-gray-100 cursor-pointer";
-  const estimatedAt = new Date(ficha.estimatedAt).toLocaleDateString("es-AR");
 
   const handleSelectProcess = () => {
     if (selected || !selectable) return;
@@ -144,11 +143,7 @@ const SelectableOrderProcessItem = ({
         </div>
       </>
     );
-  if (
-    role === adminRole ||
-    role === prestadorDeServiciosRole ||
-    role === ayudanteRole
-  )
+  if ([adminRole, prestadorDeServiciosRole, ayudanteRole].includes(role))
     return (
       <>
         <OrderProcessItemChangeDialog
@@ -221,9 +216,6 @@ const SelectableOrderProcessItem = ({
           <div className="font-bold text-lg">{nombreProceso}</div>
           <div className="text-gray-400 text-xs">
             Estado: <span className={`${color}`}>{estado}</span>
-          </div>
-          <div className="text-gray-400 text-xs">
-            Plazo estimado: <span>{estimatedAt}</span>
           </div>
         </li>
       </div>

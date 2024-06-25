@@ -4,7 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import ServiceDetailsTab from "./Tabs/Services/Details/ServiceDetailsTab";
 import ServiceFilesTab from "./Tabs/Services/Files/ServiceFilesTab";
-import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
+import {
+  adminRole,
+  ayudanteRole,
+  prestadorDeServiciosRole,
+} from "@utils/roles/SiteRoles";
 import ReporteDeDisenio from "./Tabs/Services/Reportes/Procesos/ReporteDeDisenio";
 import ReporteDeArchivo from "./Tabs/Services/Reportes/Procesos/ReporteTipoCargaArchivo";
 import { ReporteDeDigitalizacion } from "./Tabs/Services/Reportes/Procesos/ReporteDeDigitalizacion";
@@ -58,7 +62,9 @@ const OrderProcessContentService = ({
                 <Tab label="Detalles" value={0} />
                 <Tab label="Archivos" value={1} />
                 <Tab label="Mensajes" value={2} />
-                {(rol === adminRole || rol === ayudanteRole) &&
+                {(rol === adminRole ||
+                  rol === ayudanteRole ||
+                  prestadorDeServiciosRole) &&
                   tieneReportes && <Tab label="Reporte" value={3} />}
               </Tabs>
             </div>
@@ -80,36 +86,39 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
-            {(rol === adminRole || rol === ayudanteRole) && tieneReportes && (
-              <div hidden={value !== 3} className="w-full">
-                {[1].includes(idProceso) && (
-                  <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
-                )}
-                {[2, 5, 8].includes(idProceso) && (
-                  <ReporteDeArchivo
-                    idProcesoDesarrollo={selectedProcess}
-                    orderData={orderData}
-                  />
-                )}
-                {[3].includes(idProceso) && (
-                  <ReporteDeDigitalizacion
-                    idProcesoDesarrollo={selectedProcess}
-                    orderData={orderData}
-                  />
-                )}
-                {[6].includes(idProceso) && (
-                  <ReporteDeImpresion
-                    idProcesoDesarrollo={selectedProcess}
-                    orderData={orderData}
-                  />
-                )}
-                {[9].includes(idProceso) && (
-                  <ReporteDeCorteMuestra
-                    idProcesoDesarrollo={selectedProcess}
-                  />
-                )}
-              </div>
-            )}
+            {(rol === adminRole ||
+              rol === ayudanteRole ||
+              prestadorDeServiciosRole) &&
+              tieneReportes && (
+                <div hidden={value !== 3} className="w-full">
+                  {[1].includes(idProceso) && (
+                    <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
+                  )}
+                  {[2, 5, 8].includes(idProceso) && (
+                    <ReporteDeArchivo
+                      idProcesoDesarrollo={selectedProcess}
+                      orderData={orderData}
+                    />
+                  )}
+                  {[3].includes(idProceso) && (
+                    <ReporteDeDigitalizacion
+                      idProcesoDesarrollo={selectedProcess}
+                      orderData={orderData}
+                    />
+                  )}
+                  {[6].includes(idProceso) && (
+                    <ReporteDeImpresion
+                      idProcesoDesarrollo={selectedProcess}
+                      orderData={orderData}
+                    />
+                  )}
+                  {[9].includes(idProceso) && (
+                    <ReporteDeCorteMuestra
+                      idProcesoDesarrollo={selectedProcess}
+                    />
+                  )}
+                </div>
+              )}
           </div>
         </div>
       </div>

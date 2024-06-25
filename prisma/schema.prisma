@@ -243,6 +243,8 @@ model Servicio {
   description         String
   precioFijo          Float               @default(0)
   factorMultiplicador Float               @default(0)
+  esDeDesarrollo      Boolean             @default(true)
+  esDeProduccion      Boolean             @default(false)
   ordenes             Orden[]
   procesos            ProcesoDesarrollo[]
 }
