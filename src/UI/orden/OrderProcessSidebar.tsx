@@ -2,12 +2,16 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import { clienteRole, prestadorDeServiciosRole } from "@utils/roles/SiteRoles";
 import { useSession } from "next-auth/react";
 import SelectableOrderProcessItem from "./SelectableOrderProcessItem";
+import { ProcesoDesarrollo, Servicio } from "@prisma/client";
 
 type Props = {
   orderData: ExtendedOrdenData;
   selectedProcess: string;
   role: string;
   onSelect: (processID: string) => void;
+  serviciosConProcesos: (Servicio & {
+    procesos: ProcesoDesarrollo[];
+  })[];
 };
 
 const OrderProcessSidebar = ({
@@ -15,6 +19,7 @@ const OrderProcessSidebar = ({
   role,
   selectedProcess,
   onSelect,
+  serviciosConProcesos,
 }: Props) => {
   const { data } = useSession();
 
@@ -40,16 +45,26 @@ const OrderProcessSidebar = ({
       : true;
   }
 
+  function obtenerServiciosDeProceso(idProceso: number) {
+    return serviciosConProcesos.filter((servicioConProceso) =>
+      servicioConProceso.procesos
+        .map((proceso) => proceso.id)
+        .includes(idProceso)
+    );
+  }
+
   return (
     <div className="flex flex-col mt-4">
       <div className="flex flex-col max-h-screen overflow-y-auto">
         <SelectableOrderProcessItem
           proceso={{
+            idOrden: orderData?.id,
             estado: "N/A",
             id: "general",
             icon: "https://cdn-icons-png.flaticon.com/512/839/839599.png",
             lastUpdated: null,
             proceso: "General",
+            idProceso: -1,
             ficha: {
               archivos: [],
               contenido: null,
@@ -65,6 +80,8 @@ const OrderProcessSidebar = ({
           onSelect={onSelect}
           selected={selectedProcess === "general"}
           habilitarCambioEstado={true}
+          servicios={serviciosConProcesos}
+          prenda={orderData?.prenda}
         />
       </div>
       <div className="m-2 font-bold text-lg">Procesos de Diseño/Desarrollo</div>
@@ -79,7 +96,7 @@ const OrderProcessSidebar = ({
           .map((proceso, index) => (
             <SelectableOrderProcessItem
               key={proceso.id}
-              proceso={proceso}
+              proceso={{ ...proceso, idOrden: orderData?.id }}
               role={role || "Cliente"}
               onSelect={onSelect}
               selected={selectedProcess === proceso.id}
@@ -88,6 +105,8 @@ const OrderProcessSidebar = ({
                   ? validarHabilitacionCambioEstado(proceso.idProceso)
                   : true || false
               }
+              servicios={obtenerServiciosDeProceso(proceso.idProceso)}
+              prenda={orderData?.prenda}
             />
           ))}
       </div>

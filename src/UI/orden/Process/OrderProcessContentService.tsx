@@ -39,7 +39,7 @@ const OrderProcessContentService = ({
     const proceso = orderData?.procesos.find(
       (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
     );
-    return ![4, 7, 13, 14, 15].includes(proceso.idProceso);
+    return ![4, 7].includes(proceso.idProceso);
   }, [selectedProcess]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -94,7 +94,7 @@ const OrderProcessContentService = ({
                   {[1].includes(idProceso) && (
                     <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
                   )}
-                  {[2, 5, 8].includes(idProceso) && (
+                  {[2, 5, 8, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
                     <ReporteDeArchivo
                       idProcesoDesarrollo={selectedProcess}
                       orderData={orderData}

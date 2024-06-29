@@ -76,6 +76,9 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
         <DetailsListElement title="Estado" value={currProcess?.estado} />
         <DetailsListElement title="Fecha estimada" value={estimatedAt} />
         <DetailsListElement title="Ultima modificacion" value={updatedAt} />
+        {currProcess?.idEstado === 6 && (
+          <DetailsListElement title="Precio Actualizado" value={100} />
+        )}
         {[adminRole, ayudanteRole].includes(role) && (
           <DetailsListElement title="Recursos Asignados" value={recursos} />
         )}
