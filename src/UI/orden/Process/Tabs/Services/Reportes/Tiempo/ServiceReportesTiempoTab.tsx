@@ -6,10 +6,9 @@ import {
 } from "@mui/x-data-grid";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
-import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { TypedChartComponent } from "react-chartjs-2/dist/types";
 import { Button } from "@mui/material";
 import { Download } from "@mui/icons-material";
 

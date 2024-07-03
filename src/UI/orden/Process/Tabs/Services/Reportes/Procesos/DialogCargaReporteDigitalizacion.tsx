@@ -45,6 +45,7 @@ export function DialogCargaReporteDigitalizacion({
     onSuccess: () => {
       onClose();
       queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
+      queryClient.invalidateQueries(["reportes-datos-numericos"]);
       addError("Se ha cargado el reporte con exito!", "success");
     },
   });

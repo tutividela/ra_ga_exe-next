@@ -17,7 +17,7 @@ import {
   prestadorDeServiciosRole,
 } from "@utils/roles/SiteRoles";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import OrderGeneralChangeDialog from "./Process/OrderGeneralChangeDialog";
 import OrderProcessItemChangeDialog from "./Process/OrderProcessItemChangeDialog";
 import OrderProcessItemResourcesDialog from "./Process/OrderProcessItemResourcesDialog";
@@ -26,6 +26,7 @@ import { getServicePrice } from "@utils/queries/cotizador";
 import { useQuery } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { obtenerDatosDeReportePorIdProceso } from "@utils/queries/reportes/procesos/todos";
+import { calcularPrecioActualizadoDeProceso } from "@utils/procesos/desarrollo/precios";
 
 export type ProcesoFicha = {
   idOrden: string;
@@ -89,14 +90,7 @@ const SelectableOrderProcessItem = ({
   servicios,
   prenda,
 }: Props) => {
-  const {
-    estado,
-    proceso: nombreProceso,
-    lastUpdated,
-    icon,
-    id,
-    ficha,
-  } = proceso;
+  const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
   const { addError } = useContext(ErrorHandlerContext);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState(false);
@@ -144,168 +138,6 @@ const SelectableOrderProcessItem = ({
       refetchOnWindowFocus: false,
     }
   );
-
-  function calcularPrecioMolderiaBase(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const servicioMolderia = servicios?.find(
-      (servicio) => servicio.name === "Moldería Base"
-    );
-
-    return (
-      prenda.precioBase * precioDelDolar * servicioMolderia?.factorMultiplicador
-    );
-  }
-
-  function calcularPrecioDiseño(): number {
-    return calcularPrecioMolderiaBase() / 2;
-  }
-
-  function calcularPrecioDigitalizacion(): number {
-    const idDigitalizacionPorAvio = "clxxoh44a0002wd7855vzxyhc";
-    const idDigitliazacionPorMolde = "cl90d1q8t000h356tylhao6tc";
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadoresYIds = servicios.map((servicio) => ({
-      precioFijo: servicio.precioFijo,
-      id: servicio.id,
-    }));
-    const reporteDeDigitalizacion = reportesConDatosNumericos?.find(
-      (reporte) => reporte.ReportesDeDigitalizacion !== null
-    );
-
-    const precioFijoDigitalizacionPorAvio = factoresMultiplicadoresYIds.find(
-      (factor) => factor.id === idDigitalizacionPorAvio
-    ).precioFijo;
-    const precioFijoDigitalizacionPorMolde = factoresMultiplicadoresYIds.find(
-      (factor) => factor.id === idDigitliazacionPorMolde
-    ).precioFijo;
-
-    return reportesConDatosNumericos
-      ? precioDelDolar *
-          (reporteDeDigitalizacion?.ReportesDeDigitalizacion
-            ?.cantidadDeAviosConMedida *
-            precioFijoDigitalizacionPorAvio +
-            reporteDeDigitalizacion?.ReportesDeDigitalizacion
-              ?.cantidadDeMoldes *
-              precioFijoDigitalizacionPorMolde)
-      : 0.0;
-  }
-
-  function calcularPrecioGeometral(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.precioFijo);
-
-    return factoresMultiplicadores
-      .map((factorMultiplicador) => factorMultiplicador * precioDelDolar)
-      .reduce((total, subtotal) => total + subtotal, 0);
-  }
-
-  function calcularPrecioImpresion(): number {
-    return 0.0;
-  }
-
-  function calcularPrecioTizado(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.precioFijo);
-
-    return precioDelDolar
-      ? factoresMultiplicadores.reduce(
-          (total, factorMultiplicador) =>
-            total + factorMultiplicador * precioDelDolar,
-          0
-        )
-      : 0.0;
-  }
-
-  function calcularPrecioCorteMuestra(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.factorMultiplicador);
-
-    return precioDelDolar
-      ? factoresMultiplicadores.reduce(
-          (total, factorMultiplicador) =>
-            total + factorMultiplicador * precioDelDolar,
-          0
-        )
-      : 0.0;
-  }
-
-  function calcularPrecioPreConfeccion(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.precioFijo);
-
-    return precioDelDolar
-      ? factoresMultiplicadores.reduce(
-          (total, factorMultiplicador) =>
-            total + factorMultiplicador * precioDelDolar,
-          0
-        )
-      : 0.0;
-  }
-
-  function calcularPrecioConfeccionMuestra(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.precioFijo);
-
-    return precioDelDolar
-      ? factoresMultiplicadores.reduce(
-          (total, factorMultiplicador) =>
-            total + factorMultiplicador * precioDelDolar,
-          0
-        )
-      : 0.0;
-  }
-
-  function calcularPrecioTerminado(): number {
-    const precioDelDolar = servicioPrecioDelDolar?.precioBase;
-    const factoresMultiplicadores = servicios
-      .filter((servicio) => servicio.esDeDesarrollo)
-      .map((servicio) => servicio.factorMultiplicador);
-
-    return precioDelDolar
-      ? factoresMultiplicadores.reduce(
-          (total, factorMultiplicador) =>
-            total + factorMultiplicador * precioDelDolar,
-          0
-        )
-      : 0.0;
-  }
-
-  function calcularPrecioActualizadoDeProceso(idProceso: number): number {
-    switch (idProceso) {
-      case 1:
-        return calcularPrecioDiseño();
-      case 2:
-        return calcularPrecioMolderiaBase();
-      case 3:
-        return calcularPrecioDigitalizacion();
-      case 5:
-        return calcularPrecioGeometral();
-      case 6:
-        return calcularPrecioImpresion();
-      case 8:
-        return calcularPrecioTizado();
-      case 9:
-        return calcularPrecioCorteMuestra();
-      case 10:
-        return calcularPrecioPreConfeccion();
-      case 11:
-        return calcularPrecioConfeccionMuestra();
-      case 12:
-        return calcularPrecioTerminado();
-      default:
-        return 0.0;
-    }
-  }
 
   if (id === "general")
     return (
@@ -384,9 +216,13 @@ const SelectableOrderProcessItem = ({
                     Precio Actualizado:{" "}
                     <span>
                       {calcularPrecioActualizadoDeProceso(
-                        proceso.idProceso
-                      ).toFixed(2)}{" "}
-                      $
+                        proceso.idProceso,
+                        prenda.precioBase,
+                        servicios,
+                        servicioPrecioDelDolar,
+                        reportesConDatosNumericos
+                      ).toFixed(2)}
+                      {" $"}
                     </span>
                   </div>
                 )}

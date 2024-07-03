@@ -57,6 +57,7 @@ export function ReporteDeCorteMuestra({ idProcesoDesarrollo }: Props) {
     onError: () => addError("Error en la carga de las cantidades", "error"),
     onSuccess: () => {
       setShowCargaDeConsumos(false);
+      queryClient.invalidateQueries(["reportes-datos-numericos"]);
       queryClient.invalidateQueries(["reportes-corte-muestra"]);
       addError("Se ha cargado el reporte con exito!", "success");
     },

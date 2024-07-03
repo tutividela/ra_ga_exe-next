@@ -32,6 +32,7 @@ export function DialogCargaReporteDeDisenio({
     useMutation(cargarReporteDiseñoPorProcesoDesarrollo, {
       onSuccess: () => {
         queryClient.invalidateQueries(["reporteDeDiseño"]);
+        queryClient.invalidateQueries(["reportes-datos-numericos"]);
         addError("Se ha cargado el resumen de diseño con exito!", "info");
         onClose();
       },

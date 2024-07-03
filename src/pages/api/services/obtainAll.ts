@@ -11,6 +11,8 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     name: "Precio del Dolar",
     description: "Precio del Dolar",
     factorMultiplicador: 0,
+    esDeDesarrollo: true,
+    esDeProduccion: true,
     precioFijo: precioDelDolar[0].precio,
   };
 

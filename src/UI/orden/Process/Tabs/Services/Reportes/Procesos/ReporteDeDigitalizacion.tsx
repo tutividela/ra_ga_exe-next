@@ -48,6 +48,7 @@ export function ReporteDeDigitalizacion({
       addError("Error en la eliminacion de las cantidades", "error"),
     onSuccess: () => {
       queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
+      queryClient.invalidateQueries(["reportes-datos-numericos"]);
       addError("Se ha eliminado el reporte con exito!", "success");
     },
   });
