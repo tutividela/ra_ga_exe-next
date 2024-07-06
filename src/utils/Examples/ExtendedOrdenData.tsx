@@ -39,6 +39,7 @@ export type ExtendedOrdenData = Orden & {
     icon: string;
     id: string;
     lastUpdated: Date;
+    precioActualizado: number;
     ficha: FichaTecnica & {
       archivos: ArchivoFichaTecnica[];
       contenido: ContenidoFichaTencica;

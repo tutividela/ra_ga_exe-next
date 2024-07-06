@@ -67,6 +67,7 @@ model User {
   userPersonalDataId                         String?                                      @unique
   userPersonalData                           UserPersonalData?                            @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
+  servicios                                  ServiciosPorUsuario[]
 
   @@index([roleId])
 }
@@ -225,6 +226,7 @@ model ProcesoDesarrolloOrden {
   idFichaTecnica                             String?
   usuarioDeServicio                          User[]
   lastUpdated                                DateTime                                     @default(now())
+  precioActualizado                          Float                                        @default(0)
   RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
   ReportesDeDisenio                          ReporteDeDisenio?
   ReportesDeDigitalizacion                   ReporteDeDigitalizacion?
@@ -238,15 +240,16 @@ model ProcesoDesarrolloOrden {
 }
 
 model Servicio {
-  id                  String              @id @default(cuid())
-  name                String              @unique
+  id                  String                @id @default(cuid())
+  name                String                @unique
   description         String
-  precioFijo          Float               @default(0)
-  factorMultiplicador Float               @default(0)
-  esDeDesarrollo      Boolean             @default(true)
-  esDeProduccion      Boolean             @default(false)
+  precioFijo          Float                 @default(0)
+  factorMultiplicador Float                 @default(0)
+  esDeDesarrollo      Boolean               @default(true)
+  esDeProduccion      Boolean               @default(false)
   ordenes             Orden[]
   procesos            ProcesoDesarrollo[]
+  usuarios            ServiciosPorUsuario[]
 }
 
 model Archivo {
@@ -351,10 +354,10 @@ model ReporteArchivo {
 model ReporteDeDigitalizacion {
   id                       String                 @id @default(cuid())
   idProcesoDesarrolloOrden String
-  cantidadDeMoldes         Int
-  cantidadDeAviosConMedida Int
-  cantidadDeTalles         Int
-  cantidadDeMateriales     Int
+  cantidadDeMoldes         Int                    @default(0)
+  cantidadDeAviosConMedida Int                    @default(0)
+  cantidadDeTalles         Int                    @default(0)
+  cantidadDeMateriales     Int                    @default(0)
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@unique([idProcesoDesarrolloOrden])
@@ -381,6 +384,18 @@ model ReporteDeCorteMuestra {
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@index([idProcesoDesarrolloOrden])
+}
+
+model ServiciosPorUsuario {
+  id                  String   @id @default(cuid())
+  idUsuario           String
+  idServicio          String
+  usuario             User     @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  servicio            Servicio @relation(fields: [idServicio], references: [id], onDelete: Cascade)
+  factorMultiplicador Float    @default(0)
+
+  @@index([idServicio])
+  @@index([idUsuario])
 }
 
 model OrdenToServicio {

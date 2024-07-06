@@ -13,6 +13,7 @@ import { Button } from "@mui/material";
 import { DialogCargaReporteDigitalizacion } from "./DialogCargaReporteDigitalizacion";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DialogBorrarCargaReporteDigitalizacion } from "./DialogBorrarCargaReporteDigitalizacion";
+import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 type Props = {
   idProcesoDesarrollo: string;
@@ -48,7 +49,6 @@ export function ReporteDeDigitalizacion({
       addError("Error en la eliminacion de las cantidades", "error"),
     onSuccess: () => {
       queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
-      queryClient.invalidateQueries(["reportes-datos-numericos"]);
       addError("Se ha eliminado el reporte con exito!", "success");
     },
   });
@@ -56,6 +56,20 @@ export function ReporteDeDigitalizacion({
   async function onHandleBorrarReporteDigitalizacion(): Promise<void> {
     setShowBorrarCargaDeCantidades(false);
     await borrarReporteDigitalizacionAsync(reporteDeDigitalizacion?.id);
+  }
+
+  async function onHandleCalcularPrecioProceso() {
+    const { idEstado, idProceso } = orderData?.procesos.find(
+      (proceso) => proceso.id === idProcesoDesarrollo
+    );
+    if (idEstado === 6) {
+      await actualizarPrecio({
+        emailDePrestador: "",
+        idProceso,
+        idProcesoDesarrollo,
+        precioPrendaBase: orderData?.prenda.precioBase,
+      });
+    }
   }
 
   const columns: GridColDef[] = [
@@ -149,6 +163,7 @@ export function ReporteDeDigitalizacion({
               onClose={() => setShowCargaDeCantidades(false)}
               open={showCargaDeCantidades}
               reporteActual={reporteDeDigitalizacion}
+              handleCalcularPrecioProceso={onHandleCalcularPrecioProceso}
             />
           )}
           {showBorrarCargaDeCantidades && (

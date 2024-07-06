@@ -20,6 +20,7 @@ type Props = {
   onClose: () => void;
   idProcesoDesarrollo: string;
   reporteActual?: ReporteDeDigitalizacion | null;
+  handleCalcularPrecioProceso: () => Promise<void>;
 };
 
 export function DialogCargaReporteDigitalizacion({
@@ -27,6 +28,7 @@ export function DialogCargaReporteDigitalizacion({
   onClose,
   idProcesoDesarrollo,
   reporteActual,
+  handleCalcularPrecioProceso,
 }: Props) {
   const defaultLayoutValues: Partial<ReporteDeDigitalizacion> = {
     cantidadDeAviosConMedida: 0,
@@ -44,11 +46,15 @@ export function DialogCargaReporteDigitalizacion({
     onError: () => addError("Error en la carga de las cantidades", "error"),
     onSuccess: () => {
       onClose();
-      queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
-      queryClient.invalidateQueries(["reportes-datos-numericos"]);
+      queryClient.invalidateQueries(["order"]);
       addError("Se ha cargado el reporte con exito!", "success");
     },
   });
+
+  async function handleSubmit(data: ReporteDeDigitalizacion) {
+    await cargaReporteDigitalizacionAsync(data);
+    await handleCalcularPrecioProceso();
+  }
 
   return (
     <Dialog open={open} fullWidth={true}>
@@ -58,7 +64,7 @@ export function DialogCargaReporteDigitalizacion({
       >
         <HookForm
           defaultValues={reporteActual ? reporteActual : defaultLayoutValues}
-          onSubmit={cargaReporteDigitalizacionAsync}
+          onSubmit={handleSubmit}
         >
           <DialogTitle>Carga de cantidades de la Digitalizacion</DialogTitle>
           <DialogContent>

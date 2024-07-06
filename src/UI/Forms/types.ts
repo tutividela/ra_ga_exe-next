@@ -57,4 +57,5 @@ export interface Options<Model> {
   textType?: string;
   fileSection?: Paths<Model>;
   placeholderText?: string;
+  multiple?: boolean;
 }

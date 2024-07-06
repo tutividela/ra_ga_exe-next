@@ -65,6 +65,7 @@ const OrderProcessSidebar = ({
             lastUpdated: null,
             proceso: "General",
             idProceso: -1,
+            precioActualizado: 0,
             ficha: {
               archivos: [],
               contenido: null,

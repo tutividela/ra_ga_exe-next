@@ -34,6 +34,7 @@ type Props = {
   process: ProcesoFicha;
   open: boolean;
   onClose: () => void;
+  onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<any>;
 };
 
 const OrderProcessItemResourcesDialog = (props: Props) => {
@@ -63,8 +64,14 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
 
   const serviceUsers = data.map((el) => ({ key: el.email, text: el.name }));
 
-  const handleSubmit = async (data: ProcesoFicha) => {
-    await mutateAsync(data);
+  const handleSubmit = async (data) => {
+    await mutateAsync({
+      ...data,
+      recursos: data.recursos ? [data.recursos as unknown as any] : [],
+    });
+    if (data.estado === "Terminado") {
+      await props.onHandleTerminarProceso(data.recursos?.key || "");
+    }
   };
 
   const handleClose = () => props.onClose();

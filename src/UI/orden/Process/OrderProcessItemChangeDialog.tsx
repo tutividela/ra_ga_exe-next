@@ -40,6 +40,7 @@ type Props = {
   process: Process;
   open: boolean;
   onClose: () => void;
+  onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<void>;
 };
 
 const OrderProcessItemChangeDialog = (props: Props) => {
@@ -85,6 +86,9 @@ const OrderProcessItemChangeDialog = (props: Props) => {
       id: data.id,
       proceso: data.proceso,
     });
+    if (data.estado === "Terminado") {
+      await props.onHandleTerminarProceso();
+    }
   };
   const handleClose = () => props.onClose();
 

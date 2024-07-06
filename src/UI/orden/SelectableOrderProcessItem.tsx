@@ -23,10 +23,18 @@ import OrderProcessItemChangeDialog from "./Process/OrderProcessItemChangeDialog
 import OrderProcessItemResourcesDialog from "./Process/OrderProcessItemResourcesDialog";
 import React from "react";
 import { getServicePrice } from "@utils/queries/cotizador";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { obtenerDatosDeReportePorIdProceso } from "@utils/queries/reportes/procesos/todos";
 import { calcularPrecioActualizadoDeProceso } from "@utils/procesos/desarrollo/precios";
+import {
+  calcularPrecioPreconfeccion,
+  obtenerFactorPrecioServicioExternoPreConfeccion,
+} from "@utils/queries/procesos/externos/preconfeccion";
+import { useSession } from "next-auth/react";
+import { calcularPrecioConfeccion } from "@utils/queries/procesos/externos/confeccion";
+import { calcularPrecioTerminado } from "@utils/queries/procesos/externos/terminado";
+import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 export type ProcesoFicha = {
   idOrden: string;
@@ -36,6 +44,7 @@ export type ProcesoFicha = {
   id: string;
   lastUpdated: Date;
   idProceso: number;
+  precioActualizado: number;
   ficha: FichaTecnica & {
     archivos: ArchivoFichaTecnica[];
     contenido: ContenidoFichaTencica;
@@ -87,7 +96,6 @@ const SelectableOrderProcessItem = ({
   selected,
   onSelect,
   habilitarCambioEstado,
-  servicios,
   prenda,
 }: Props) => {
   const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
@@ -121,23 +129,16 @@ const SelectableOrderProcessItem = ({
     onSelect(id);
   };
 
-  const { data: servicioPrecioDelDolar } = useQuery(
-    ["precio-del-dolar"],
-    () => getServicePrice("cl9609m9b00454cvhlvv7vd0e"),
-    {
-      onError: () => addError("Error al traer los precios de los servicios"),
-      refetchOnWindowFocus: false,
-    }
-  );
-  const { data: reportesConDatosNumericos } = useQuery(
-    ["reportes-datos-numericos"],
-    () => obtenerDatosDeReportePorIdProceso(proceso.idOrden),
-    {
-      onError: () =>
-        addError("Error al traer los reportes con datos numericos"),
-      refetchOnWindowFocus: false,
-    }
-  );
+  async function handleTerminarProceso(
+    emailRecursoNuevo: string
+  ): Promise<void> {
+    await actualizarPrecio({
+      emailDePrestador: emailRecursoNuevo,
+      idProceso: proceso.idProceso,
+      idProcesoDesarrollo: proceso.id,
+      precioPrendaBase: prenda.precioBase,
+    });
+  }
 
   if (id === "general")
     return (
@@ -183,11 +184,13 @@ const SelectableOrderProcessItem = ({
           process={proceso}
           open={statusDialogOpen}
           onClose={handleStatusDialogClose}
+          onHandleTerminarProceso={handleTerminarProceso}
         />
         <OrderProcessItemResourcesDialog
           process={proceso}
           open={resourceDialogOpen}
           onClose={handleResourceDialogClose}
+          onHandleTerminarProceso={handleTerminarProceso}
         />
         <div
           className={`py-2 px-4 flex flex-row items-center justify-between text-2 m-2 border-2 ${backgroundColor}`}
@@ -215,13 +218,7 @@ const SelectableOrderProcessItem = ({
                   <div className="text-gray-400 text-xs">
                     Precio Actualizado:{" "}
                     <span>
-                      {calcularPrecioActualizadoDeProceso(
-                        proceso.idProceso,
-                        prenda.precioBase,
-                        servicios,
-                        servicioPrecioDelDolar,
-                        reportesConDatosNumericos
-                      ).toFixed(2)}
+                      {proceso.precioActualizado}
                       {" $"}
                     </span>
                   </div>
