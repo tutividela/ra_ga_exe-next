@@ -29,6 +29,9 @@ export function ReporteDeDigitalizacion({
     useState<boolean>(false);
   const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
+  const { idProceso, idEstado } = orderData?.procesos.find(
+    (proceso) => proceso.id === idProcesoDesarrollo
+  );
 
   const {
     data: reporteDeDigitalizacion,
@@ -56,20 +59,22 @@ export function ReporteDeDigitalizacion({
   async function onHandleBorrarReporteDigitalizacion(): Promise<void> {
     setShowBorrarCargaDeCantidades(false);
     await borrarReporteDigitalizacionAsync(reporteDeDigitalizacion?.id);
+    await actualizarPrecio({
+      emailDePrestador: "",
+      idProceso,
+      idProcesoDesarrollo,
+      precioPrendaBase: orderData?.prenda.precioBase,
+    });
+    queryClient.invalidateQueries(["order"]);
   }
 
   async function onHandleCalcularPrecioProceso() {
-    const { idEstado, idProceso } = orderData?.procesos.find(
-      (proceso) => proceso.id === idProcesoDesarrollo
-    );
-    if (idEstado === 6) {
-      await actualizarPrecio({
-        emailDePrestador: "",
-        idProceso,
-        idProcesoDesarrollo,
-        precioPrendaBase: orderData?.prenda.precioBase,
-      });
-    }
+    await actualizarPrecio({
+      emailDePrestador: "",
+      idProceso,
+      idProcesoDesarrollo,
+      precioPrendaBase: orderData?.prenda.precioBase,
+    });
   }
 
   const columns: GridColDef[] = [

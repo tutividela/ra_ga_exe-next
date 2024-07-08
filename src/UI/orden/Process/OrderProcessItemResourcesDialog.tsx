@@ -56,7 +56,6 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
     {
       onSuccess: () => {
         props.onClose();
-        queryClient.invalidateQueries(["order"]);
       },
       onError: (err) => addError(JSON.stringify(err)),
     }
@@ -72,6 +71,7 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
     if (data.estado === "Terminado") {
       await props.onHandleTerminarProceso(data.recursos?.key || "");
     }
+    queryClient.invalidateQueries(["order"]);
   };
 
   const handleClose = () => props.onClose();
@@ -84,7 +84,10 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
         onClose={handleClose}
       >
         <HookForm
-          defaultValues={props.process}
+          defaultValues={{
+            ...props.process,
+            recursos: { ...props.process.recursos[0] },
+          }}
           onSubmit={handleSubmit}
           resetOnDialogClose={{ dialogStatus: props.open }}
         >

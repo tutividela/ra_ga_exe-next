@@ -34,6 +34,7 @@ type Process = {
     archivos: ArchivoFichaTecnica[];
     contenido: ContenidoFichaTencica;
   };
+  recursos: { key: string; text: string }[];
 };
 
 type Props = {
@@ -60,7 +61,6 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     {
       onSuccess: () => {
         props.onClose();
-        queryClient.invalidateQueries(["order"]);
       },
       onError: (err) => addError(JSON.stringify(err)),
     }
@@ -87,8 +87,9 @@ const OrderProcessItemChangeDialog = (props: Props) => {
       proceso: data.proceso,
     });
     if (data.estado === "Terminado") {
-      await props.onHandleTerminarProceso();
+      await props.onHandleTerminarProceso(props.process.recursos[0]?.key || "");
     }
+    queryClient.invalidateQueries(["order"]);
   };
   const handleClose = () => props.onClose();
 

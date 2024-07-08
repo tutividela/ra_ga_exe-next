@@ -45,8 +45,8 @@ export function DialogCargaReporteDigitalizacion({
   } = useMutation(cargarReporteDigitalizacionPorProcesoDesarrollo, {
     onError: () => addError("Error en la carga de las cantidades", "error"),
     onSuccess: () => {
+      queryClient.invalidateQueries(["reportes", idProcesoDesarrollo]);
       onClose();
-      queryClient.invalidateQueries(["order"]);
       addError("Se ha cargado el reporte con exito!", "success");
     },
   });
@@ -54,6 +54,7 @@ export function DialogCargaReporteDigitalizacion({
   async function handleSubmit(data: ReporteDeDigitalizacion) {
     await cargaReporteDigitalizacionAsync(data);
     await handleCalcularPrecioProceso();
+    await queryClient.invalidateQueries(["order"]);
   }
 
   return (
