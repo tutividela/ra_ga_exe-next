@@ -17,23 +17,12 @@ import {
   prestadorDeServiciosRole,
 } from "@utils/roles/SiteRoles";
 import Image from "next/image";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import OrderGeneralChangeDialog from "./Process/OrderGeneralChangeDialog";
 import OrderProcessItemChangeDialog from "./Process/OrderProcessItemChangeDialog";
 import OrderProcessItemResourcesDialog from "./Process/OrderProcessItemResourcesDialog";
 import React from "react";
-import { getServicePrice } from "@utils/queries/cotizador";
-import { useMutation, useQuery } from "react-query";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
-import { obtenerDatosDeReportePorIdProceso } from "@utils/queries/reportes/procesos/todos";
-import { calcularPrecioActualizadoDeProceso } from "@utils/procesos/desarrollo/precios";
-import {
-  calcularPrecioPreconfeccion,
-  obtenerFactorPrecioServicioExternoPreConfeccion,
-} from "@utils/queries/procesos/externos/preconfeccion";
-import { useSession } from "next-auth/react";
-import { calcularPrecioConfeccion } from "@utils/queries/procesos/externos/confeccion";
-import { calcularPrecioTerminado } from "@utils/queries/procesos/externos/terminado";
 import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 export type ProcesoFicha = {
@@ -160,6 +149,13 @@ const SelectableOrderProcessItem = ({
                 <div className="font-bold text-lg">{nombreProceso}</div>
                 <div className="text-gray-400 text-xs">
                   Detalles generales de la orden
+                </div>
+                <div className="text-gray-400 text-xs">
+                  Precio Total:{" "}
+                  <span>
+                    {proceso.precioActualizado}
+                    {" $"}
+                  </span>
                 </div>
               </li>
             </div>

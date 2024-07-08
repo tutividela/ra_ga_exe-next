@@ -3,6 +3,7 @@ import { clienteRole, prestadorDeServiciosRole } from "@utils/roles/SiteRoles";
 import { useSession } from "next-auth/react";
 import SelectableOrderProcessItem from "./SelectableOrderProcessItem";
 import { ProcesoDesarrollo, Servicio } from "@prisma/client";
+import { useMemo } from "react";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -22,6 +23,14 @@ const OrderProcessSidebar = ({
   serviciosConProcesos,
 }: Props) => {
   const { data } = useSession();
+  const precioTotal = useMemo(
+    () =>
+      orderData?.procesos
+        .filter((proceso) => proceso.idEstado === 6)
+        .map((proceso) => proceso.precioActualizado)
+        .reduce((acumulador, precio) => acumulador + precio, 0),
+    [orderData?.procesos]
+  );
 
   function validarHabilitacionCambioEstado(idProceso: number): boolean {
     if (idProceso === 1) {
@@ -65,7 +74,7 @@ const OrderProcessSidebar = ({
             lastUpdated: null,
             proceso: "General",
             idProceso: -1,
-            precioActualizado: 0,
+            precioActualizado: precioTotal,
             ficha: {
               archivos: [],
               contenido: null,
