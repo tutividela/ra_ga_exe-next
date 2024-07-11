@@ -14,7 +14,6 @@ import {
   ErrorMessage,
   getServicePrice,
   modifyServicePrice,
-  modificarServicioExterno,
   PrecioServicioExtended,
 } from "@utils/queries/cotizador";
 import * as React from "react";

@@ -29,7 +29,7 @@ export function ReporteDeDigitalizacion({
     useState<boolean>(false);
   const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
-  const { idProceso, idEstado } = orderData?.procesos.find(
+  const { idProceso } = orderData?.procesos.find(
     (proceso) => proceso.id === idProcesoDesarrollo
   );
 

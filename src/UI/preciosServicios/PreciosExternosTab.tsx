@@ -2,7 +2,6 @@ import { IconButton } from "@mui/material";
 import { DataGrid, GridColumns } from "@mui/x-data-grid";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { obtenerServiciosExternosPor } from "@utils/queries/procesos/procesos";
-import { useSession } from "next-auth/react";
 import { useContext, useState } from "react";
 import { useIsMutating, useQuery } from "react-query";
 import EditIcon from "@mui/icons-material/Edit";

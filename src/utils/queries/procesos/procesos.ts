@@ -1,5 +1,3 @@
-import { Servicio, ServiciosPorUsuario } from "@prisma/client";
-
 export async function actualizarPrecio({
   emailDePrestador,
   idProceso,

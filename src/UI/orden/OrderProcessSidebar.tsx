@@ -2,7 +2,6 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import { clienteRole, prestadorDeServiciosRole } from "@utils/roles/SiteRoles";
 import { useSession } from "next-auth/react";
 import SelectableOrderProcessItem from "./SelectableOrderProcessItem";
-import { ProcesoDesarrollo, Servicio } from "@prisma/client";
 import { useMemo } from "react";
 
 type Props = {
@@ -10,9 +9,6 @@ type Props = {
   selectedProcess: string;
   role: string;
   onSelect: (processID: string) => void;
-  serviciosConProcesos: (Servicio & {
-    procesos: ProcesoDesarrollo[];
-  })[];
 };
 
 const OrderProcessSidebar = ({
@@ -20,7 +16,6 @@ const OrderProcessSidebar = ({
   role,
   selectedProcess,
   onSelect,
-  serviciosConProcesos,
 }: Props) => {
   const { data } = useSession();
   const precioTotal = useMemo(
@@ -54,14 +49,6 @@ const OrderProcessSidebar = ({
       : true;
   }
 
-  function obtenerServiciosDeProceso(idProceso: number) {
-    return serviciosConProcesos.filter((servicioConProceso) =>
-      servicioConProceso.procesos
-        .map((proceso) => proceso.id)
-        .includes(idProceso)
-    );
-  }
-
   return (
     <div className="flex flex-col mt-4">
       <div className="flex flex-col max-h-screen overflow-y-auto">
@@ -90,7 +77,6 @@ const OrderProcessSidebar = ({
           onSelect={onSelect}
           selected={selectedProcess === "general"}
           habilitarCambioEstado={true}
-          servicios={serviciosConProcesos}
           prenda={orderData?.prenda}
         />
       </div>
@@ -115,7 +101,6 @@ const OrderProcessSidebar = ({
                   ? validarHabilitacionCambioEstado(proceso.idProceso)
                   : true || false
               }
-              servicios={obtenerServiciosDeProceso(proceso.idProceso)}
               prenda={orderData?.prenda}
             />
           ))}

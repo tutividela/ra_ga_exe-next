@@ -93,7 +93,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                           onSelect={handleSelectProcess}
                           role={role}
                           selectedProcess={selectedProcess}
-                          serviciosConProcesos={serviciosConProcesos}
+                          //serviciosConProcesos={serviciosConProcesos}
                         />
                       </div>
                       <div className="hidden md:w-2/3 m-6 p-4 md:flex flex-col items-center ">

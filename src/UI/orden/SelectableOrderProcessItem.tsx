@@ -7,8 +7,6 @@ import {
   ContenidoFichaTencica,
   FichaTecnica,
   PrecioPrenda,
-  ProcesoDesarrollo,
-  Servicio,
   TipoPrenda,
 } from "@prisma/client";
 import {
@@ -17,12 +15,11 @@ import {
   prestadorDeServiciosRole,
 } from "@utils/roles/SiteRoles";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import OrderGeneralChangeDialog from "./Process/OrderGeneralChangeDialog";
 import OrderProcessItemChangeDialog from "./Process/OrderProcessItemChangeDialog";
 import OrderProcessItemResourcesDialog from "./Process/OrderProcessItemResourcesDialog";
 import React from "react";
-import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 export type ProcesoFicha = {
@@ -47,9 +44,9 @@ type Props = {
   selected?: boolean;
   onSelect?: (processID: string) => void;
   habilitarCambioEstado: boolean;
-  servicios: (Servicio & {
+  /* servicios: (Servicio & {
     procesos: ProcesoDesarrollo[];
-  })[];
+  })[]; */
   prenda: PrecioPrenda & {
     complejidad: ComplejidadConfeccion;
     tipo: TipoPrenda;
@@ -88,7 +85,6 @@ const SelectableOrderProcessItem = ({
   prenda,
 }: Props) => {
   const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
-  const { addError } = useContext(ErrorHandlerContext);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState(false);
   const [generalDialogOpen, setGeneralDialogOpen] = useState(false);

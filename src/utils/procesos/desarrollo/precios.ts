@@ -1,5 +1,4 @@
 import { PrecioServicioExtended } from "@utils/queries/cotizador";
-import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import {
   ReporteDeDigitalizacion,
   ReporteDeImpresion,

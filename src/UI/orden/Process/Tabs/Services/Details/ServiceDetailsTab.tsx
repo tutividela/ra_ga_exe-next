@@ -58,9 +58,9 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
     () => orderData?.procesos.find((el) => el.id === selectedProcess),
     [selectedProcess, orderData?.procesos]
   );
-  const estimatedAt = new Date(
-    currProcess?.ficha.estimatedAt
-  ).toLocaleDateString("es-AR");
+  const estimatedAt = new Date(currProcess?.lastUpdated).toLocaleDateString(
+    "es-AR"
+  );
   const updatedAt =
     new Date(currProcess?.ficha.updatedAt).toLocaleDateString("es-AR") +
     " " +
@@ -77,7 +77,10 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
         <DetailsListElement title="Fecha estimada" value={estimatedAt} />
         <DetailsListElement title="Ultima modificacion" value={updatedAt} />
         {currProcess?.idEstado === 6 && (
-          <DetailsListElement title="Precio Actualizado" value={100} />
+          <DetailsListElement
+            title="Precio Actualizado"
+            value={`${currProcess.precioActualizado.toFixed(2)} $`}
+          />
         )}
         {[adminRole, ayudanteRole].includes(role) && (
           <DetailsListElement title="Recursos Asignados" value={recursos} />

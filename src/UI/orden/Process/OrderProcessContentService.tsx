@@ -62,9 +62,9 @@ const OrderProcessContentService = ({
                 <Tab label="Detalles" value={0} />
                 <Tab label="Archivos" value={1} />
                 <Tab label="Mensajes" value={2} />
-                {(rol === adminRole ||
-                  rol === ayudanteRole ||
-                  prestadorDeServiciosRole) &&
+                {[adminRole, ayudanteRole, prestadorDeServiciosRole].includes(
+                  rol
+                ) &&
                   tieneReportes && <Tab label="Reporte" value={3} />}
               </Tabs>
             </div>
@@ -86,9 +86,9 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
-            {(rol === adminRole ||
-              rol === ayudanteRole ||
-              prestadorDeServiciosRole) &&
+            {[adminRole, ayudanteRole, prestadorDeServiciosRole].includes(
+              rol
+            ) &&
               tieneReportes && (
                 <div hidden={value !== 3} className="w-full">
                   {[1].includes(idProceso) && (

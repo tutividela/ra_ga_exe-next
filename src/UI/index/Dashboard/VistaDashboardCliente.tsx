@@ -43,7 +43,6 @@ const VistaDashboardCliente = (props: props) => {
     () => fetchOrderFromEmail(props?.emailToFetchOrders),
     {
       onError: () => addError("Error al traer ordenes"),
-
     }
   );
 

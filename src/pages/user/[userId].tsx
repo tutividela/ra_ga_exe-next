@@ -55,7 +55,7 @@ const Home: NextPage = () => {
   >((data) => updateUser(data), {
     onError: () => addError("Error al modificar información del usuario"),
     onSuccess: () => {
-      addError("Información modificada exitosamente", "success");
+      addError("Información modificada exitosamente", "info");
       queryClient.invalidateQueries(["userInfo", userId]);
       queryClient.invalidateQueries(["reducedUserInfo"]);
     },

@@ -62,6 +62,7 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
   );
 
   const serviceUsers = data.map((el) => ({ key: el.email, text: el.name }));
+  console.log(props.process.recursos);
 
   const handleSubmit = async (data) => {
     await mutateAsync({
@@ -86,7 +87,12 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
         <HookForm
           defaultValues={{
             ...props.process,
-            recursos: { ...props.process.recursos[0] },
+            recursos: {
+              ...(props.process.recursos[0] || {
+                key: "",
+                text: "Sin asignar",
+              }),
+            },
           }}
           onSubmit={handleSubmit}
           resetOnDialogClose={{ dialogStatus: props.open }}
