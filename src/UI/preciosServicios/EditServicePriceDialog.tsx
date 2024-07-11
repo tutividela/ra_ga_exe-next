@@ -14,6 +14,7 @@ import {
   ErrorMessage,
   getServicePrice,
   modifyServicePrice,
+  modificarServicioExterno,
   PrecioServicioExtended,
 } from "@utils/queries/cotizador";
 import * as React from "react";
@@ -40,25 +41,21 @@ interface ConfirmDialogProps {
 
 export default function EditServicePriceDialog(props: ConfirmDialogProps) {
   const { addError } = React.useContext(ErrorHandlerContext);
-
   const queryClient = useQueryClient();
 
   const handleClose = () => {
     props.onClose();
   };
-
   const handleNewClothingSubmit = async (data: PrecioServicioExtended) => {
     await modifyPriceMutation(data);
     props.onClose();
   };
-
   const placeHolderData: PrecioServicioExtended = {
     id: "",
     name: "",
     precioBase: 0,
     factorMultiplicador: 0,
   };
-
   const { data: servicePriceData, isFetching: isFetchingServicePriceData } =
     useQuery<PrecioServicioExtended, ErrorMessage>(
       ["servicePriceData", props.idToShow],
@@ -70,7 +67,6 @@ export default function EditServicePriceDialog(props: ConfirmDialogProps) {
         initialData: placeHolderData,
       }
     );
-
   const { mutateAsync: modifyPriceMutation } = useMutation<
     PrecioServicioExtended,
     ErrorMessage,
