@@ -1,18 +1,12 @@
 import { Slide, Tab, Tabs } from "@mui/material";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import OrderDetailsTab from "./Tabs/General/Details/OrderDetailsTab";
 import OrderFilesTab from "./Tabs/General/Files/OrderFilesTab";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/Tiempo/ServiceReportesTiempoTab";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { useQuery } from "react-query";
-import { getServicePrice } from "@utils/queries/cotizador";
-import { obtenerDatosDeReportePorIdProceso } from "@utils/queries/reportes/procesos/todos";
-import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
-import { obtenerServiciosConProcesos } from "@utils/queries/servicios";
-import { calcularPrecioDeDesarrolloTotal } from "@utils/procesos/desarrollo/precios";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -29,7 +23,6 @@ const OrderProcessContentGeneral = ({
 }: Props) => {
   const [value, setValue] = useState(0);
   const [slide, setSlide] = useState(true);
-  const { addError } = useContext(ErrorHandlerContext);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -46,48 +39,15 @@ const OrderProcessContentGeneral = ({
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
   }
 
-  const { data: servicioPrecioDelDolar } = useQuery(
-    ["precio-del-dolar"],
-    () => getServicePrice("cl9609m9b00454cvhlvv7vd0e"),
-    {
-      onError: () => addError("Error al traer los precios de los servicios"),
-      refetchOnWindowFocus: false,
-    }
-  );
-  const { data: reportesConDatosNumericos } = useQuery(
-    ["reportes-datos-numericos"],
-    () => obtenerDatosDeReportePorIdProceso(orderData?.id),
-    {
-      onError: () =>
-        addError("Error al traer los reportes con datos numericos"),
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const { data: serviciosConProcesos } = useQuery(
-    ["servicios-con-procesos"],
-    obtenerServiciosConProcesos,
-    {
-      onError: () => addError("Error al traer servicios con procesos"),
-      refetchOnWindowFocus: false,
-    }
-  );
-
   const ordenDesarrolloFinalizada = useMemo(
     () => validarOrdenDesarrolloFinalizada(),
     [orderData?.procesos]
   );
 
-  const precioDesarrolloTotal = useMemo(
-    () =>
-      calcularPrecioDeDesarrolloTotal(
-        orderData?.prenda.precioBase,
-        serviciosConProcesos,
-        servicioPrecioDelDolar,
-        reportesConDatosNumericos
-      ),
-    [orderData]
-  );
+  const precioDesarrolloTotal = orderData.procesos
+    .filter((proceso) => proceso.idEstado === 6)
+    .map((proceso) => proceso.precioActualizado)
+    .reduce((acumulador, precio) => acumulador + precio, 0);
 
   return (
     <Slide direction="up" in={slide}>
@@ -110,7 +70,6 @@ const OrderProcessContentGeneral = ({
             <div hidden={value !== 0} className="w-full">
               <OrderDetailsTab
                 orderData={orderData}
-                ordenFinalizada={ordenDesarrolloFinalizada}
                 precioDesarrolloTotal={precioDesarrolloTotal}
               />
             </div>

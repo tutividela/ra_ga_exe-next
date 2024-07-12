@@ -34,23 +34,3 @@ export const fetchServicesFromEmail = (
       errorHandle(error);
     });
 };
-
-export async function obtenerServiciosConProcesos(): Promise<
-  (Servicio & {
-    procesos: ProcesoDesarrollo[];
-  })[]
-> {
-  return fetch("/api/services/obtener-con-procesos", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      return data;
-    })
-    .catch((error) => {
-      errorHandle(error);
-    });
-}

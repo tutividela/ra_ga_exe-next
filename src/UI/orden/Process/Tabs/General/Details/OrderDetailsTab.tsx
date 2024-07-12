@@ -2,15 +2,10 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 
 type Props = {
   orderData: ExtendedOrdenData;
-  ordenFinalizada: boolean;
   precioDesarrolloTotal: number;
 };
 
-const OrderDetailsTab = ({
-  orderData,
-  ordenFinalizada,
-  precioDesarrolloTotal,
-}: Props) => {
+const OrderDetailsTab = ({ orderData, precioDesarrolloTotal }: Props) => {
   return (
     <>
       <div className="flex flex-col mt-4">
@@ -38,16 +33,15 @@ const OrderDetailsTab = ({
           ))}
         </div>
       </div>
-      {ordenFinalizada && (
-        <div className="flex flex-col mt-4">
-          <div className="text-gray-700 text-xl font-semibold">
-            Precio Total de desarrollo
-          </div>
-          <div className="capitalize text-gray-700">
-            {precioDesarrolloTotal.toFixed(2)} $
-          </div>
+
+      <div className="flex flex-col mt-4">
+        <div className="text-gray-700 text-xl font-semibold">
+          Precio Total de desarrollo
         </div>
-      )}
+        <div className="mx-1 text-gray-700">
+          - {precioDesarrolloTotal.toFixed(2)} $
+        </div>
+      </div>
     </>
   );
 };

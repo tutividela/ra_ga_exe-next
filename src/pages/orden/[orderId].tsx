@@ -14,7 +14,6 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import OrderViewProvider from "@utils/Order/OrderViewContext";
 import { errorHandle } from "@utils/queries/cotizador";
-import { obtenerServiciosConProcesos } from "@utils/queries/servicios";
 import type { GetServerSideProps, NextPage } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
@@ -50,14 +49,6 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
     }
   );
 
-  const {
-    data: serviciosConProcesos,
-    isFetching: seEstaBuscandoProcesosConProcesos,
-  } = useQuery(["servicios-con-procesos"], obtenerServiciosConProcesos, {
-    onError: () => addError("Error al traer servicios con procesos"),
-    refetchOnWindowFocus: false,
-  });
-
   const [selectedProcess, setSelectedProcess] = useState("general");
   const handleSelectProcess = (processID: string) => {
     setSelectedProcess(processID);
@@ -80,10 +71,8 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
             <ErrorAlerter />
             <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
               <PageTitle title={"Detalles de orden"} hasBack size="medium" />
-              <LoadingIndicator
-                show={isFetchingOrders || seEstaBuscandoProcesosConProcesos}
-              >
-                {orderData?.id && serviciosConProcesos && (
+              <LoadingIndicator show={isFetchingOrders}>
+                {orderData?.id && (
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
                     <div className="m-6 p-4 border-2 min-h-screen flex flex-row">
@@ -93,7 +82,6 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                           onSelect={handleSelectProcess}
                           role={role}
                           selectedProcess={selectedProcess}
-                          //serviciosConProcesos={serviciosConProcesos}
                         />
                       </div>
                       <div className="hidden md:w-2/3 m-6 p-4 md:flex flex-col items-center ">
