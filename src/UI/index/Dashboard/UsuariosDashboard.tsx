@@ -40,43 +40,35 @@ const UsuariosDashboard = () => {
     role: { name: "" },
     available: false,
   });
-
   const { addError } = useContext(ErrorHandlerContext);
 
   const handleCloseSignIn = () => {
     setOpenSignIn(false);
   };
-
   const handleCloseSignUp = () => {
     setOpenSignUp(false);
     queryClient.invalidateQueries(["usuarios"]);
   };
-
   const handleOpenSignIn = async () => {
     handleCloseSignUp();
     await signOut();
   };
-
   const handleOpenSignUp = () => {
     handleCloseSignIn();
     setOpenSignUp(true);
   };
-
   const handleCloseEditUserRoleDialog = () => {
     setConfirmEditUserRoleOpen(false);
     queryClient.invalidateQueries(["usuarios"]);
   };
-
   const handleEditUserRoleDialog = (data: ReducedUser) => {
     setFocusedItem(data);
     setConfirmEditUserRoleOpen(true);
   };
-
   const handleCloseEditUserAvailabilityDialog = () => {
     setConfirmEditUserAvailabilityOpen(false);
     queryClient.invalidateQueries(["usuarios"]);
   };
-
   const handleEditUserAvailabilityDialog = (data: ReducedUser) => {
     setFocusedItem(data);
     setConfirmEditUserAvailabilityOpen(true);

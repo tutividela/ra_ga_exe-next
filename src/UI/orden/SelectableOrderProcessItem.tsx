@@ -221,7 +221,11 @@ const SelectableOrderProcessItem = ({
           <div className="flex flex-row">
             {role === adminRole && (
               <div>
-                <IconButton type="button" onClick={handleResourceDialogOpen}>
+                <IconButton
+                  type="button"
+                  onClick={handleResourceDialogOpen}
+                  disabled={!habilitarCambioEstado}
+                >
                   <PersonAddIcon />
                 </IconButton>
               </div>
