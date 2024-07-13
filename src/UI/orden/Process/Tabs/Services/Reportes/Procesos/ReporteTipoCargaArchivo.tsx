@@ -60,7 +60,7 @@ export default function ReporteDeArchivo({
     >
       <div className="h-full border-2 flex justify-center items-center p-4">
         <div className="flex flex-col space-y-4 items-center">
-          {imagenes && [5, 2].includes(idProceso) && (
+          {imagenes && [5, 2, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">Imagenes</p>
@@ -73,7 +73,7 @@ export default function ReporteDeArchivo({
               </div>
             </>
           )}
-          {pdfs && [2, 3, 8].includes(idProceso) && (
+          {pdfs && [2, 3, 8, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
             <>
               <div>
                 <p className="underline">{"PDF's"}</p>

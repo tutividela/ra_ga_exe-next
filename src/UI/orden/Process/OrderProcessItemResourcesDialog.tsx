@@ -34,6 +34,7 @@ type Props = {
   process: ProcesoFicha;
   open: boolean;
   onClose: () => void;
+  onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<any>;
 };
 
 const OrderProcessItemResourcesDialog = (props: Props) => {
@@ -55,16 +56,23 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
     {
       onSuccess: () => {
         props.onClose();
-        queryClient.invalidateQueries(["order"]);
       },
       onError: (err) => addError(JSON.stringify(err)),
     }
   );
 
   const serviceUsers = data.map((el) => ({ key: el.email, text: el.name }));
+  console.log(props.process.recursos);
 
-  const handleSubmit = async (data: ProcesoFicha) => {
-    await mutateAsync(data);
+  const handleSubmit = async (data) => {
+    await mutateAsync({
+      ...data,
+      recursos: data.recursos ? [data.recursos as unknown as any] : [],
+    });
+    if (data.estado === "Terminado") {
+      await props.onHandleTerminarProceso(data.recursos?.key || "");
+    }
+    queryClient.invalidateQueries(["order"]);
   };
 
   const handleClose = () => props.onClose();
@@ -77,7 +85,15 @@ const OrderProcessItemResourcesDialog = (props: Props) => {
         onClose={handleClose}
       >
         <HookForm
-          defaultValues={props.process}
+          defaultValues={{
+            ...props.process,
+            recursos: {
+              ...(props.process.recursos[0] || {
+                key: "",
+                text: "Sin asignar",
+              }),
+            },
+          }}
           onSubmit={handleSubmit}
           resetOnDialogClose={{ dialogStatus: props.open }}
         >

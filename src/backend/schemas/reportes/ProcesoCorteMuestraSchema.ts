@@ -4,7 +4,7 @@ export const ProcesoCorteSchema = z.object({
   id: z.string().optional(),
   idProcesoDesarrolloOrden: z.string(),
   nombre: z.string(),
-  cantidad: z.number(),
+  cantidad: z.number().nonnegative(),
   esAvio: z.boolean().default(false),
   tipoDeAvio: z.string().default(""),
 });

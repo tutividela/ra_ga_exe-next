@@ -14,6 +14,7 @@ import { useQuery } from "react-query";
 import PageTitle from "../../Generic/Utils/PageTitle";
 import { Button } from "@mui/material";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { ReducedUserInfoSchemaType } from "@backend/schemas/ReducedUserInfoSchema";
 import { getReducedUser } from "@utils/queries/user";
 import React from "react";
@@ -110,6 +111,13 @@ const VistaDashboardPrestadorDeServicios = (props: props) => {
                 >
                   <Button variant="outlined" startIcon={<PostAddIcon />}>
                     Datos de usuario
+                  </Button>
+                </Link>
+              </div>
+              <div className="rounded-2xl">
+                <Link href={"/preciosBase"} passHref={true}>
+                  <Button variant="outlined" startIcon={<MonetizationOnIcon />}>
+                    Ver Precios
                   </Button>
                 </Link>
               </div>

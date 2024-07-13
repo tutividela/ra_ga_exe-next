@@ -95,7 +95,7 @@ export const createNewUser = async (data: {
   isServiceProvider: boolean;
 }) => {
   const password = hashPassword(data.password);
-  return await prisma.user.create({
+  const usuarioCreado = await prisma.user.create({
     data: {
       email: data.email,
       name: data.name,
@@ -103,7 +103,49 @@ export const createNewUser = async (data: {
       roleId: data.isServiceProvider ? 4 : 1,
     },
   });
+
+  if (data.isServiceProvider) {
+    const serviciosPorProcesoExterno =
+      await obtenerServiciosExternosPorProceso();
+
+    const idServicios = serviciosPorProcesoExterno.map(
+      (servicioProProceso) => servicioProProceso.id
+    );
+    const relacionesServicioUsuarioACrear = idServicios.map((idServicio) => ({
+      idServicio: idServicio,
+      idUsuario: usuarioCreado.id,
+    }));
+
+    await prisma.serviciosPorUsuario.createMany({
+      data: relacionesServicioUsuarioACrear,
+    });
+  }
+
+  return usuarioCreado;
 };
+
+async function obtenerServiciosExternosPorProceso() {
+  const idProcesosExternos = [10, 11, 12, 13];
+
+  const serviciosPorProceso = await prisma.servicio.findMany({
+    select: {
+      id: true,
+      name: true,
+      procesos: true,
+    },
+    where: {
+      procesos: {
+        every: {
+          id: {
+            in: idProcesosExternos,
+          },
+        },
+      },
+    },
+  });
+
+  return serviciosPorProceso;
+}
 
 export const obtainRole = async (email: string) => {
   return await prisma.user.findUnique({

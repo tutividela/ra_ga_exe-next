@@ -1,3 +1,4 @@
+import { ModificarPrecioServicioExternoSchemaType } from "@backend/schemas/ModificarPrecioServicioExterno";
 import { OrderCreationData } from "@backend/schemas/OrderCreationSchema";
 import { OrderFieldsUpdateSchemaType } from "@backend/schemas/OrderFieldsUpdateSchema";
 import { ProcessUpdateSchemaType } from "@backend/schemas/ProcessUpdateResourcesSchema";
@@ -11,6 +12,7 @@ import {
   TipoPrenda,
   User,
   Servicio,
+  ServiciosPorUsuario,
 } from "@prisma/client";
 
 // Cargar archivos a Google Drive
@@ -116,6 +118,19 @@ export const modifyServicePrice = (
 ): Promise<PrecioServicioExtended> =>
   fetch(`/api/services/modifyPrice/${data.id}`, {
     method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((res) => (res.ok ? res.json() : errorHandle(res)))
+    .catch((error) => {
+      throw error;
+    });
+
+export const modificarServicioExterno = (
+  data: ModificarPrecioServicioExternoSchemaType
+): Promise<ServiciosPorUsuario> =>
+  fetch(`/api/services/externos/editar`, {
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })

@@ -2,6 +2,7 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import { clienteRole, prestadorDeServiciosRole } from "@utils/roles/SiteRoles";
 import { useSession } from "next-auth/react";
 import SelectableOrderProcessItem from "./SelectableOrderProcessItem";
+import { useMemo } from "react";
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -17,6 +18,14 @@ const OrderProcessSidebar = ({
   onSelect,
 }: Props) => {
   const { data } = useSession();
+  const precioTotal = useMemo(
+    () =>
+      orderData?.procesos
+        .filter((proceso) => proceso.idEstado === 6)
+        .map((proceso) => proceso.precioActualizado)
+        .reduce((acumulador, precio) => acumulador + precio, 0),
+    [orderData?.procesos]
+  );
 
   function validarHabilitacionCambioEstado(idProceso: number): boolean {
     if (idProceso === 1) {
@@ -45,11 +54,14 @@ const OrderProcessSidebar = ({
       <div className="flex flex-col max-h-screen overflow-y-auto">
         <SelectableOrderProcessItem
           proceso={{
+            idOrden: orderData?.id,
             estado: "N/A",
             id: "general",
             icon: "https://cdn-icons-png.flaticon.com/512/839/839599.png",
             lastUpdated: null,
             proceso: "General",
+            idProceso: -1,
+            precioActualizado: precioTotal,
             ficha: {
               archivos: [],
               contenido: null,
@@ -65,6 +77,7 @@ const OrderProcessSidebar = ({
           onSelect={onSelect}
           selected={selectedProcess === "general"}
           habilitarCambioEstado={true}
+          prenda={orderData?.prenda}
         />
       </div>
       <div className="m-2 font-bold text-lg">Procesos de Diseño/Desarrollo</div>
@@ -79,7 +92,7 @@ const OrderProcessSidebar = ({
           .map((proceso, index) => (
             <SelectableOrderProcessItem
               key={proceso.id}
-              proceso={proceso}
+              proceso={{ ...proceso, idOrden: orderData?.id }}
               role={role || "Cliente"}
               onSelect={onSelect}
               selected={selectedProcess === proceso.id}
@@ -88,6 +101,7 @@ const OrderProcessSidebar = ({
                   ? validarHabilitacionCambioEstado(proceso.idProceso)
                   : true || false
               }
+              prenda={orderData?.prenda}
             />
           ))}
       </div>

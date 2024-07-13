@@ -182,10 +182,12 @@ export const calculateOrderTotal = async (
           return;
         }
 
-        const servicios = todosProcesoDesarrolloConServicio.filter(
-          (procesoDesarrolloConServicio) =>
-            procesoDesarrolloConServicio.nombre === nombre
-        )[0].servicio;
+        const servicios = todosProcesoDesarrolloConServicio
+          .filter(
+            (procesoDesarrolloConServicio) =>
+              procesoDesarrolloConServicio.nombre === nombre
+          )[0]
+          .servicio.filter((servicio) => servicio.esDeDesarrollo);
 
         servicios.forEach((servicio: Servicio) => {
           precioFijoYFactorMultiplicador.precioFijo += servicio.precioFijo;

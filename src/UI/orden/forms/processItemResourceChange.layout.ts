@@ -9,7 +9,7 @@ export const processItemResourceChangeLayout: LayoutElement<ProcesoFicha> = {
       type: "Autocomplete",
       scope: "recursos",
       label: "Recursos Asignados",
-      options: { optionsName: "serviceUsers" },
+      options: { optionsName: "serviceUsers", multiple: false },
     },
   ],
 };

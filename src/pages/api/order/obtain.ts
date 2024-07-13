@@ -51,6 +51,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       id: proc.id,
       idProceso: proc.idProceso,
       lastUpdated: proc.lastUpdated,
+      precioActualizado: proc.precioActualizado,
       ficha: proc.FichaTecnica,
       recursos: proc.usuarioDeServicio.map((el) => ({
         key: el.email,

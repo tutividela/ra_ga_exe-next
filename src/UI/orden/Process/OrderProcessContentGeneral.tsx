@@ -1,11 +1,14 @@
 import { Slide, Tab, Tabs } from "@mui/material";
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import OrderDetailsTab from "./Tabs/General/Details/OrderDetailsTab";
 import OrderFilesTab from "./Tabs/General/Files/OrderFilesTab";
 import OrderMessagesTab from "./Tabs/General/Message/OrderMessagesTab";
 import { adminRole, ayudanteRole } from "@utils/roles/SiteRoles";
 import { ServiceReportesTiempoTab } from "./Tabs/Services/Reportes/Tiempo/ServiceReportesTiempoTab";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Props = {
   orderData: ExtendedOrdenData;
@@ -36,6 +39,16 @@ const OrderProcessContentGeneral = ({
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
   }
 
+  const ordenDesarrolloFinalizada = useMemo(
+    () => validarOrdenDesarrolloFinalizada(),
+    [orderData?.procesos]
+  );
+
+  const precioDesarrolloTotal = orderData.procesos
+    .filter((proceso) => proceso.idEstado === 6)
+    .map((proceso) => proceso.precioActualizado)
+    .reduce((acumulador, precio) => acumulador + precio, 0);
+
   return (
     <Slide direction="up" in={slide}>
       <div className="flex flex-col items-center space-y-4 w-full">
@@ -49,13 +62,16 @@ const OrderProcessContentGeneral = ({
                 )}
                 <Tab label="Mensajes" value={2} />
                 {[adminRole, ayudanteRole].includes(rol) &&
-                  validarOrdenDesarrolloFinalizada() && (
+                  ordenDesarrolloFinalizada && (
                     <Tab label="Tiempos por Proceso" value={3} />
                   )}
               </Tabs>
             </div>
             <div hidden={value !== 0} className="w-full">
-              <OrderDetailsTab orderData={orderData} />
+              <OrderDetailsTab
+                orderData={orderData}
+                precioDesarrolloTotal={precioDesarrolloTotal}
+              />
             </div>
             <div hidden={value !== 1} className="w-full">
               <OrderFilesTab orderData={orderData} />

@@ -4,11 +4,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const updateOrderFields = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { orderId, precioPrendaId } = OrderFieldsUpdateSchema.parse(req.body);
+    const { orderId, precioPrendaId, idEstado } = OrderFieldsUpdateSchema.parse(
+      req.body
+    );
 
     const orden = await prisma.orden.update({
       where: { id: orderId },
-      data: { prenda: { connect: { id: precioPrendaId } } },
+      data: {
+        prenda: { connect: { id: precioPrendaId } },
+        estado: { connect: { id: idEstado } },
+      },
     });
 
     res.status(200).json(orden);

@@ -24,7 +24,7 @@ import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext } from "react";
-import { useMutation, useQueryClient, useQuery, useIsMutating } from "react-query";
+import { useMutation, useQueryClient, useQuery } from "react-query";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -55,7 +55,7 @@ const Home: NextPage = () => {
   >((data) => updateUser(data), {
     onError: () => addError("Error al modificar información del usuario"),
     onSuccess: () => {
-      addError("Información modificada exitosamente", "success");
+      addError("Información modificada exitosamente", "info");
       queryClient.invalidateQueries(["userInfo", userId]);
       queryClient.invalidateQueries(["reducedUserInfo"]);
     },

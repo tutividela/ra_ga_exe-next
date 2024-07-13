@@ -3,8 +3,11 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { IconButton } from "@mui/material";
 import {
   ArchivoFichaTecnica,
+  ComplejidadConfeccion,
   ContenidoFichaTencica,
   FichaTecnica,
+  PrecioPrenda,
+  TipoPrenda,
 } from "@prisma/client";
 import {
   adminRole,
@@ -17,13 +20,17 @@ import OrderGeneralChangeDialog from "./Process/OrderGeneralChangeDialog";
 import OrderProcessItemChangeDialog from "./Process/OrderProcessItemChangeDialog";
 import OrderProcessItemResourcesDialog from "./Process/OrderProcessItemResourcesDialog";
 import React from "react";
+import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 export type ProcesoFicha = {
+  idOrden: string;
   estado: string;
   proceso: string;
   icon: string;
   id: string;
   lastUpdated: Date;
+  idProceso: number;
+  precioActualizado: number;
   ficha: FichaTecnica & {
     archivos: ArchivoFichaTecnica[];
     contenido: ContenidoFichaTencica;
@@ -37,6 +44,13 @@ type Props = {
   selected?: boolean;
   onSelect?: (processID: string) => void;
   habilitarCambioEstado: boolean;
+  /* servicios: (Servicio & {
+    procesos: ProcesoDesarrollo[];
+  })[]; */
+  prenda: PrecioPrenda & {
+    complejidad: ComplejidadConfeccion;
+    tipo: TipoPrenda;
+  };
 };
 
 export const ProcessStateTextColors = (estado: string) => {
@@ -68,15 +82,9 @@ const SelectableOrderProcessItem = ({
   selected,
   onSelect,
   habilitarCambioEstado,
+  prenda,
 }: Props) => {
-  const {
-    estado,
-    proceso: nombreProceso,
-    lastUpdated,
-    icon,
-    id,
-    ficha,
-  } = proceso;
+  const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState(false);
   const [generalDialogOpen, setGeneralDialogOpen] = useState(false);
@@ -100,12 +108,22 @@ const SelectableOrderProcessItem = ({
     : !selectable
     ? "bg-gray-300"
     : "hover:bg-gray-100 cursor-pointer";
-  const estimatedAt = new Date(ficha.estimatedAt).toLocaleDateString("es-AR");
 
   const handleSelectProcess = () => {
     if (selected || !selectable) return;
     onSelect(id);
   };
+
+  async function handleTerminarProceso(
+    emailRecursoNuevo: string
+  ): Promise<void> {
+    await actualizarPrecio({
+      emailDePrestador: emailRecursoNuevo,
+      idProceso: proceso.idProceso,
+      idProcesoDesarrollo: proceso.id,
+      precioPrendaBase: prenda.precioBase,
+    });
+  }
 
   if (id === "general")
     return (
@@ -128,6 +146,13 @@ const SelectableOrderProcessItem = ({
                 <div className="text-gray-400 text-xs">
                   Detalles generales de la orden
                 </div>
+                <div className="text-gray-400 text-xs">
+                  Precio Total:{" "}
+                  <span>
+                    {proceso.precioActualizado}
+                    {" $"}
+                  </span>
+                </div>
               </li>
             </div>
           </div>
@@ -144,22 +169,20 @@ const SelectableOrderProcessItem = ({
         </div>
       </>
     );
-  if (
-    role === adminRole ||
-    role === prestadorDeServiciosRole ||
-    role === ayudanteRole
-  )
+  if ([adminRole, prestadorDeServiciosRole, ayudanteRole].includes(role))
     return (
       <>
         <OrderProcessItemChangeDialog
           process={proceso}
           open={statusDialogOpen}
           onClose={handleStatusDialogClose}
+          onHandleTerminarProceso={handleTerminarProceso}
         />
         <OrderProcessItemResourcesDialog
           process={proceso}
           open={resourceDialogOpen}
           onClose={handleResourceDialogClose}
+          onHandleTerminarProceso={handleTerminarProceso}
         />
         <div
           className={`py-2 px-4 flex flex-row items-center justify-between text-2 m-2 border-2 ${backgroundColor}`}
@@ -175,9 +198,6 @@ const SelectableOrderProcessItem = ({
                 <div className="text-gray-400 text-xs">
                   Estado: <span className={`${color}`}>{estado}</span>
                 </div>
-                <div className="text-gray-400 text-xs">
-                  Plazo estimado: <span>{estimatedAt}</span>
-                </div>
                 {lastUpdated ? (
                   <div className="text-gray-400 text-xs">
                     Actualizado el:{" "}
@@ -186,13 +206,26 @@ const SelectableOrderProcessItem = ({
                     </span>
                   </div>
                 ) : null}
+                {estado.toLowerCase() === "terminado" && (
+                  <div className="text-gray-400 text-xs">
+                    Precio Actualizado:{" "}
+                    <span>
+                      {proceso.precioActualizado}
+                      {" $"}
+                    </span>
+                  </div>
+                )}
               </li>
             </div>
           </div>
           <div className="flex flex-row">
             {role === adminRole && (
               <div>
-                <IconButton type="button" onClick={handleResourceDialogOpen}>
+                <IconButton
+                  type="button"
+                  onClick={handleResourceDialogOpen}
+                  disabled={!habilitarCambioEstado}
+                >
                   <PersonAddIcon />
                 </IconButton>
               </div>
@@ -224,9 +257,6 @@ const SelectableOrderProcessItem = ({
           <div className="font-bold text-lg">{nombreProceso}</div>
           <div className="text-gray-400 text-xs">
             Estado: <span className={`${color}`}>{estado}</span>
-          </div>
-          <div className="text-gray-400 text-xs">
-            Plazo estimado: <span>{estimatedAt}</span>
           </div>
         </li>
       </div>

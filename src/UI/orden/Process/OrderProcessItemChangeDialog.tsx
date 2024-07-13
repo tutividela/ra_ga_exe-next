@@ -34,12 +34,14 @@ type Process = {
     archivos: ArchivoFichaTecnica[];
     contenido: ContenidoFichaTencica;
   };
+  recursos: { key: string; text: string }[];
 };
 
 type Props = {
   process: Process;
   open: boolean;
   onClose: () => void;
+  onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<void>;
 };
 
 const OrderProcessItemChangeDialog = (props: Props) => {
@@ -52,7 +54,6 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     {
       initialData: [],
       onError: (err) => addError(JSON.stringify(err)),
-
     }
   );
   const { mutateAsync, isLoading: isUpdatingState } = useMutation(
@@ -60,15 +61,18 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     {
       onSuccess: () => {
         props.onClose();
-        queryClient.invalidateQueries(["order"]);
       },
       onError: (err) => addError(JSON.stringify(err)),
     }
   );
-  const states = estadosProcesoDesarrollo.map((estadoProcesoDesarrollo) => ({
-    key: estadoProcesoDesarrollo.descripcion,
-    text: estadoProcesoDesarrollo.descripcion,
-  }));
+  const states = estadosProcesoDesarrollo
+    .filter(
+      (estadoProcesoDesarrollo) => ![7, 8].includes(estadoProcesoDesarrollo.id)
+    )
+    .map((estadoProcesoDesarrollo) => ({
+      key: estadoProcesoDesarrollo.descripcion,
+      text: estadoProcesoDesarrollo.descripcion,
+    }));
   function sePuedeHabilitarCambioEstado(
     estadoProcesoDesarrolloActual: string
   ): boolean {
@@ -82,6 +86,10 @@ const OrderProcessItemChangeDialog = (props: Props) => {
       id: data.id,
       proceso: data.proceso,
     });
+    if (data.estado === "Terminado") {
+      await props.onHandleTerminarProceso(props.process.recursos[0]?.key || "");
+    }
+    queryClient.invalidateQueries(["order"]);
   };
   const handleClose = () => props.onClose();
 

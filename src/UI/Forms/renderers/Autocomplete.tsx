@@ -31,7 +31,7 @@ function Autocomplete<Model>(props: SelectProps<Model>) {
         render={({ field: { onChange: formChangeCallback, value } }) => {
           return (
             <MuiAutocomplete
-              multiple
+              multiple={layout?.options?.multiple ?? true}
               id="tags-standard"
               options={options}
               freeSolo={false}
