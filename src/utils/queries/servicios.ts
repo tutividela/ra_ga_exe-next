@@ -3,7 +3,6 @@ import {
   Orden,
   ProcesoDesarrollo,
   ProcesoDesarrolloOrden,
-  Servicio,
 } from "@prisma/client";
 import { errorHandle } from "./cotizador";
 

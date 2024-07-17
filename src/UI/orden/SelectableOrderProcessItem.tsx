@@ -44,13 +44,11 @@ type Props = {
   selected?: boolean;
   onSelect?: (processID: string) => void;
   habilitarCambioEstado: boolean;
-  /* servicios: (Servicio & {
-    procesos: ProcesoDesarrollo[];
-  })[]; */
   prenda: PrecioPrenda & {
     complejidad: ComplejidadConfeccion;
     tipo: TipoPrenda;
   };
+  esProductiva: boolean;
 };
 
 export const ProcessStateTextColors = (estado: string) => {
@@ -83,6 +81,7 @@ const SelectableOrderProcessItem = ({
   onSelect,
   habilitarCambioEstado,
   prenda,
+  esProductiva,
 }: Props) => {
   const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -122,6 +121,7 @@ const SelectableOrderProcessItem = ({
       idProceso: proceso.idProceso,
       idProcesoDesarrollo: proceso.id,
       precioPrendaBase: prenda.precioBase,
+      esDeProduccion: esProductiva,
     });
   }
 
@@ -257,6 +257,14 @@ const SelectableOrderProcessItem = ({
           <div className="font-bold text-lg">{nombreProceso}</div>
           <div className="text-gray-400 text-xs">
             Estado: <span className={`${color}`}>{estado}</span>
+          </div>
+          <div className="text-gray-400 text-xs">
+            Actualizado el:{" "}
+            <span>{new Date(lastUpdated).toLocaleDateString("es-AR")}</span>
+          </div>
+          <div className="text-gray-400 text-xs">
+            Precio actualizado:{" "}
+            <span>{proceso.precioActualizado.toFixed(2)} $</span>
           </div>
         </li>
       </div>

@@ -38,10 +38,37 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
             usuarioDeServicio: true,
           },
         },
+        procesoProductivos: {
+          include: {
+            estado: true,
+            proceso: true,
+            ReporteArchivo: true,
+            FichaTecnica: { include: { archivos: true, contenido: true } },
+            usuarioDeServicio: true,
+          },
+        },
         mensajes: { include: { user: true } },
       },
       where: { id: id },
     });
+
+    const mapearProcesosProductivos = orders.procesoProductivos.map(
+      (proceso) => ({
+        idEstado: proceso.idEstadoProceso,
+        estado: proceso.estado.descripcion,
+        proceso: proceso.proceso.nombre,
+        idProceso: proceso.idProceso,
+        icon: proceso.proceso.icono,
+        id: proceso.id,
+        lastUpdated: proceso.lastUpdated,
+        precioActualizado: proceso.precioActualizado,
+        ficha: proceso.FichaTecnica,
+        recursos: proceso.usuarioDeServicio.map((usuario) => ({
+          key: usuario.email,
+          text: usuario.name,
+        })),
+      })
+    );
 
     const formattedProcesses = orders.procesos.map((proc) => ({
       estado: proc.estado.descripcion,
@@ -71,7 +98,9 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json({
       ...orders,
+      cantidad: orders.cantidad,
       procesos: formattedProcesses,
+      procesosProductivos: mapearProcesosProductivos,
       mensajes: formattedMessages,
     });
   } catch (error) {

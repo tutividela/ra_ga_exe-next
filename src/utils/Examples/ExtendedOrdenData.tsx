@@ -46,5 +46,20 @@ export type ExtendedOrdenData = Orden & {
     };
     recursos: { key: string; text: string }[];
   }[];
+  procesosProductivos: {
+    estado: string;
+    idEstado: number;
+    proceso: string;
+    idProceso: number;
+    icon: string;
+    id: string;
+    lastUpdated: Date;
+    precioActualizado: number;
+    ficha: FichaTecnica & {
+      archivos: ArchivoFichaTecnica[];
+      contenido: ContenidoFichaTencica;
+    };
+    recursos: { key: string; text: string }[];
+  }[];
   servicios: Servicio[];
 };
