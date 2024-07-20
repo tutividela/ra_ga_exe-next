@@ -35,11 +35,24 @@ export default function DialogCargaReporteDeArchivo({
 }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
   const queryClient = useQueryClient();
-  const currProcess = useMemo(
-    () => orderData?.procesos.find((el) => el.id === idProcesoDesarrolloOrden),
-    [idProcesoDesarrolloOrden, orderData?.procesos]
-  );
+  const currProcess = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+
+    return procesosABuscar.find((el) => el.id === idProcesoDesarrolloOrden);
+  }, [
+    idProcesoDesarrolloOrden,
+    orderData?.procesos,
+    orderData?.procesosProductivos,
+  ]);
   const folderName = orderData?.user?.name || "Sin Asignar";
+
+  const laOrdenEstaEnProduccion = useMemo(
+    () => orderData?.idEstado === 3,
+    [orderData]
+  );
 
   const {
     mutateAsync: subirArchivoReporteAsync,
@@ -78,6 +91,7 @@ export default function DialogCargaReporteDeArchivo({
         fichaType: currProcess?.proceso,
         orderID: orderData?.id,
         formData: formData,
+        esDeProduccion: laOrdenEstaEnProduccion,
       });
       Array.isArray(archivosSubidos)
         ? archivosSubidos.map((archivosSubido: FileUploadResponse) =>

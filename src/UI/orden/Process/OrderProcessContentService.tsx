@@ -86,9 +86,18 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
+            {orderData.idEstado === 3 && (
+              <div hidden={value !== 3} className="w-full">
+                <ReporteDeArchivo
+                  idProcesoDesarrollo={selectedProcess}
+                  orderData={orderData}
+                />
+              </div>
+            )}
             {[adminRole, ayudanteRole, prestadorDeServiciosRole].includes(
               rol
             ) &&
+              orderData.idEstado !== 3 &&
               tieneReportes && (
                 <div hidden={value !== 3} className="w-full">
                   {[1].includes(idProceso) && (

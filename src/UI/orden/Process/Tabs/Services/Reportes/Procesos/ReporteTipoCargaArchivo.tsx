@@ -15,47 +15,61 @@ export default function ReporteDeArchivo({
   orderData,
 }: Props) {
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
-  const { idProceso } = useMemo(
-    () => orderData?.procesos.find((el) => el.id === idProcesoDesarrollo),
-    [idProcesoDesarrollo, orderData?.procesos]
+  const { idProceso } = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+
+    return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
+  }, [
+    idProcesoDesarrollo,
+    orderData?.procesos,
+    orderData?.procesosProductivos,
+  ]);
+  const laOrdenEstaEnProduccion = useMemo(
+    () => orderData?.idEstado === 3,
+    [orderData]
   );
 
   const {
-    data: reportesDeProcesoDesarrollo,
-    isLoading: seEstaBuscandoLosReportesDeProcesoDesarrollo,
-    isRefetching: seEstaRecargandoLosReportesDeProcesoDesarrollo,
+    data: reportesDeArchivos,
+    isLoading: seEstaBuscandoLosReportesDeArchivo,
+    isRefetching: seEstaRecargandoLosReportesDeArchivo,
   } = useQuery(["reportes-de-archivo"], () =>
-    obtenerReportesDeArchivosPorIdProcesoDesarrollo(idProcesoDesarrollo)
+    obtenerReportesDeArchivosPorIdProcesoDesarrollo(
+      idProcesoDesarrollo,
+      laOrdenEstaEnProduccion
+    )
   );
 
-  const imagenes = reportesDeProcesoDesarrollo?.filter(
-    (reporteDeProcesoDesarrollo) =>
-      reporteDeProcesoDesarrollo.type.includes("image")
+  const imagenes = reportesDeArchivos?.filter((reporteDeArchivo) =>
+    reporteDeArchivo.type.includes("image")
   );
 
   const pdfs = useMemo(
     () =>
-      reportesDeProcesoDesarrollo?.filter((reporteDeProcesoDesarrollo) =>
-        reporteDeProcesoDesarrollo.type.includes("pdf")
+      reportesDeArchivos?.filter((reporteDeArchivo) =>
+        reporteDeArchivo.type.includes("pdf")
       ),
-    [reportesDeProcesoDesarrollo]
+    [reportesDeArchivos]
   );
 
   const otros = useMemo(
     () =>
-      reportesDeProcesoDesarrollo?.filter(
-        (reporteDeProcesoDesarrollo) =>
-          !reporteDeProcesoDesarrollo.type.includes("pdf") &&
-          !reporteDeProcesoDesarrollo.type.includes("image")
+      reportesDeArchivos?.filter(
+        (reporteDeArchivo) =>
+          !reporteDeArchivo.type.includes("pdf") &&
+          !reporteDeArchivo.type.includes("image")
       ),
-    [reportesDeProcesoDesarrollo]
+    [reportesDeArchivos]
   );
 
   return (
     <LoadingIndicator
       show={
-        seEstaBuscandoLosReportesDeProcesoDesarrollo ||
-        seEstaRecargandoLosReportesDeProcesoDesarrollo
+        seEstaBuscandoLosReportesDeArchivo ||
+        seEstaRecargandoLosReportesDeArchivo
       }
     >
       <div className="h-full border-2 flex justify-center items-center p-4">

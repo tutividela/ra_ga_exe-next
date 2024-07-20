@@ -18,14 +18,17 @@ const OrderProcessSidebar = ({
   onSelect,
 }: Props) => {
   const { data } = useSession();
-  const precioTotal = useMemo(
-    () =>
-      orderData?.procesos
-        .filter((proceso) => proceso.idEstado === 6)
-        .map((proceso) => proceso.precioActualizado)
-        .reduce((acumulador, precio) => acumulador + precio, 0),
-    [orderData?.procesos]
-  );
+  const precioTotal = useMemo(() => {
+    const procesoAUtilizar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+
+    return procesoAUtilizar
+      .filter((proceso) => proceso.idEstado === 6)
+      .map((proceso) => proceso.precioActualizado)
+      .reduce((acumulador, precio) => acumulador + precio, 0);
+  }, [orderData?.procesos]);
 
   const laOrdenEstaEnProduccion = useMemo(
     () => orderData.idEstado === 3,

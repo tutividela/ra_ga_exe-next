@@ -11,6 +11,7 @@ type FileUploadData = {
   orderID: string;
   formData: FormData;
   fichaType: string;
+  esDeProduccion: boolean;
 };
 
 export const updateFileURL = (
@@ -78,7 +79,7 @@ export async function subirArchivoDeReporte(
   data: FileUploadData
 ): Promise<DriveUploadResponse> {
   return fetch(
-    `/api/drive/subir-a-reporte?nombreDeUsuario=${data.clientName}&idOrden=${data.orderID}&procesoDesarrollo=${data.fichaType}`,
+    `/api/drive/subir-a-reporte?nombreDeUsuario=${data.clientName}&idOrden=${data.orderID}&procesoDesarrollo=${data.fichaType}&esDeProduccion=${data.esDeProduccion}`,
     { method: "POST", body: data.formData }
   )
     .then((res) => (res.ok ? res.json() : errorHandle(res)))

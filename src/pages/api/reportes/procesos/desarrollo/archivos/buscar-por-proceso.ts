@@ -8,10 +8,12 @@ export default async function obtener(
 ) {
   try {
     const idProcesoDesarrollo = req.query.idProcesoDesarrollo as string;
+    const esDeProduccion = (req.query.esDeProduccion as string) === "true";
 
     const reportesDeArchivo = await prisma.reporteArchivo.findMany({
       where: {
         idProcesoDesarrolloOrden: idProcesoDesarrollo,
+        esDeProduccion: esDeProduccion,
       },
     });
 

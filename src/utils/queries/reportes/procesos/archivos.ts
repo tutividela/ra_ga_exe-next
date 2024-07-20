@@ -2,10 +2,11 @@ import { ReporteArchivo } from "@prisma/client";
 import { errorHandle } from "@utils/queries/cotizador";
 
 export async function obtenerReportesDeArchivosPorIdProcesoDesarrollo(
-  idProcesoDesarrollo: string
+  idProcesoDesarrollo: string,
+  esDeProduccion: boolean
 ): Promise<ReporteArchivo[]> {
   return fetch(
-    `/api/reportes/procesos/desarrollo/archivos/buscar-por-proceso?idProcesoDesarrollo=${idProcesoDesarrollo}`,
+    `/api/reportes/procesos/desarrollo/archivos/buscar-por-proceso?idProcesoDesarrollo=${idProcesoDesarrollo}&esDeProduccion=${esDeProduccion}`,
     {
       method: "GET",
     }

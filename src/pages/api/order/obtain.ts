@@ -38,13 +38,17 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
             usuarioDeServicio: true,
           },
         },
-        procesoProductivos: {
+        ordenProductiva: {
           include: {
-            estado: true,
-            proceso: true,
-            ReporteArchivo: true,
-            FichaTecnica: { include: { archivos: true, contenido: true } },
-            usuarioDeServicio: true,
+            procesos: {
+              include: {
+                estado: true,
+                proceso: true,
+                ReporteArchivo: true,
+                FichaTecnica: { include: { archivos: true, contenido: true } },
+                usuarioDeServicio: true,
+              },
+            },
           },
         },
         mensajes: { include: { user: true } },
@@ -52,8 +56,8 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       where: { id: id },
     });
 
-    const mapearProcesosProductivos = orders.procesoProductivos.map(
-      (proceso) => ({
+    const mapearProcesosProductivos =
+      orders.ordenProductiva?.procesos.map((proceso) => ({
         idEstado: proceso.idEstadoProceso,
         estado: proceso.estado.descripcion,
         proceso: proceso.proceso.nombre,
@@ -67,8 +71,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
           key: usuario.email,
           text: usuario.name,
         })),
-      })
-    );
+      })) || [];
 
     const formattedProcesses = orders.procesos.map((proc) => ({
       estado: proc.estado.descripcion,

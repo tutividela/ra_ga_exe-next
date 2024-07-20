@@ -1,10 +1,11 @@
 import { verifyUserOrder } from "@backend/dbcalls/order";
 import { obtainRole } from "@backend/dbcalls/user";
-import { Slide } from "@mui/material";
+import { Button, Slide } from "@mui/material";
 import { Session } from "@prisma/client";
 import Footer from "@UI/Generic/Footer";
 import HeaderBar from "@UI/Generic/HeaderBar";
 import PageTitle from "@UI/Generic/Utils/PageTitle";
+import { GenerarOrdenProductivaDialog } from "@UI/orden/GenerarOrdenProductivaDialog";
 import OrderHeader from "@UI/orden/OrderHeader";
 import OrderProcessSidebar from "@UI/orden/OrderProcessSidebar";
 import OrderProcessContent from "@UI/orden/Process/OrderProcessContent";
@@ -14,15 +15,18 @@ import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import OrderViewProvider from "@utils/Order/OrderViewContext";
 import { errorHandle } from "@utils/queries/cotizador";
+import { adminRole, ayudanteRole, clienteRole } from "@utils/roles/SiteRoles";
 import type { GetServerSideProps, NextPage } from "next";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   const { addError } = useContext(ErrorHandlerContext);
+  const [seGeneraOrenProductiva, setSeGeneraOrdenProductiva] =
+    useState<boolean>(false);
   const { query } = useRouter();
   const { orderId: id } = query;
 
@@ -47,6 +51,15 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
       onError: () => addError("Error al traer orden"),
       refetchOnWindowFocus: false,
     }
+  );
+
+  const laOrdenDeDesarrolloFueFinalizada = useMemo(
+    () =>
+      orderData?.cantidad === 1 &&
+      orderData?.procesos
+        .filter((proceso) => proceso.idEstado !== 3)
+        .every((proceso) => proceso.idEstado === 6),
+    [orderData?.procesos]
   );
 
   const [selectedProcess, setSelectedProcess] = useState("general");
@@ -75,6 +88,23 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                 {orderData?.id && (
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
+                    {laOrdenDeDesarrolloFueFinalizada &&
+                      [adminRole, clienteRole, ayudanteRole].includes(role) && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => setSeGeneraOrdenProductiva(true)}
+                        >
+                          Pedir una produccion
+                        </Button>
+                      )}
+                    {seGeneraOrenProductiva && (
+                      <GenerarOrdenProductivaDialog
+                        idOrden={orderData?.id}
+                        precioPrendaBase={orderData?.prenda.precioBase}
+                        onClose={() => setSeGeneraOrdenProductiva(false)}
+                        open={seGeneraOrenProductiva}
+                      />
+                    )}
                     <div className="m-6 p-4 border-2 min-h-screen flex flex-row">
                       <div className="w-full md:w-1/3">
                         <OrderProcessSidebar

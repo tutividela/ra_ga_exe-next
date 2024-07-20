@@ -35,6 +35,10 @@ const update = (req: NextApiRequest, res: NextApiResponse) => {
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
   const { nombreDeUsuario, idOrden, procesoDesarrollo } = req.query;
+  const esDeProduccion = (req.query.esDeProduccion as string) === "true";
+  const nombreDeCarpetaDeReporte = esDeProduccion
+    ? "Reporte Produccion"
+    : "Reporte Desarrollo";
   let fichaFolder: string;
   const nombreDeUsuarioString = Array.isArray(nombreDeUsuario)
     ? nombreDeUsuario[0]
@@ -65,13 +69,13 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         const idCarpetaReporteDesarrollo = await findFolderId(
           service,
-          "Reporte Desarrollo",
+          nombreDeCarpetaDeReporte,
           idCarpetaDeOrden
         );
         if (!idCarpetaReporteDesarrollo) {
           const idCarpetaReporteDesarrolloNuevo = await createFolder(
             service,
-            "Reporte Desarrollo",
+            nombreDeCarpetaDeReporte,
             idCarpetaDeOrden
           );
           fichaFolder = await createFolder(

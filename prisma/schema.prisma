@@ -142,30 +142,39 @@ model PrecioDelDolar {
 }
 
 model Orden {
-  id                 String                   @id @default(cuid())
-  prenda             PrecioPrenda             @relation(fields: [idPrenda], references: [id], onDelete: Cascade)
-  idPrenda           String
-  nombre             String?
-  cantidad           Int?
-  idEstado           Int?
-  estado             EstadoOrden?             @relation(fields: [idEstado], references: [id], onDelete: Cascade)
-  user               User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String?
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @default(now())
-  expiresAt          DateTime                 @default(now())
-  servicios          Servicio[]
-  archivos           Archivo[]
-  cotizacionOrden    CotizacionOrden[]
-  detallesPrenda     DetallesPrenda?
-  idDetallesPrenda   String?
-  procesos           ProcesoDesarrolloOrden[]
-  mensajes           Mensaje[]
-  procesoProductivos ProcesoProductivoOrden[]
+  id               String                   @id @default(cuid())
+  prenda           PrecioPrenda             @relation(fields: [idPrenda], references: [id], onDelete: Cascade)
+  idPrenda         String
+  nombre           String?
+  cantidad         Int?
+  idEstado         Int?
+  estado           EstadoOrden?             @relation(fields: [idEstado], references: [id], onDelete: Cascade)
+  user             User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @default(now())
+  expiresAt        DateTime                 @default(now())
+  servicios        Servicio[]
+  archivos         Archivo[]
+  cotizacionOrden  CotizacionOrden[]
+  detallesPrenda   DetallesPrenda?
+  idDetallesPrenda String?
+  procesos         ProcesoDesarrolloOrden[]
+  mensajes         Mensaje[]
+  ordenProductiva  OrdenProductiva?
 
   @@index([idPrenda])
   @@index([userId])
   @@index([idEstado])
+}
+
+model OrdenProductiva {
+  id             String                   @id @default(cuid())
+  cantidad       Int                      @default(0)
+  precioEstimado Float                    @default(0)
+  idOrden        String                   @unique
+  orden          Orden                    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  procesos       ProcesoProductivoOrden[]
 }
 
 model Mensaje {
@@ -251,18 +260,18 @@ model ProcesoProductivoOrden {
   precioActualizado Float                   @default(0)
   idProceso         Int
   idEstadoProceso   Int
-  idOrden           String
+  idOrdenProductiva String
   lastUpdated       DateTime                @default(now())
   usuarioDeServicio User[]
   proceso           ProcesoDesarrollo       @relation(fields: [idProceso], references: [id], onDelete: Cascade)
   ReporteArchivo    ReporteArchivo[]
   estado            EstadoProcesoDesarrollo @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
-  orden             Orden                   @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  orden             OrdenProductiva         @relation(fields: [idOrdenProductiva], references: [id], onDelete: Cascade)
   FichaTecnica      FichaTecnica[]
 
   @@index([idProceso])
   @@index([idEstadoProceso])
-  @@index([idOrden])
+  @@index([idOrdenProductiva])
 }
 
 model Servicio {

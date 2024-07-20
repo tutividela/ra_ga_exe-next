@@ -316,7 +316,6 @@ async function calcularPrecioCorte(
         },
       },
     });
-    console.log("Servicios: ", servicios);
     factorMultiplicador = servicios.factorMultiplicador;
   }
 
