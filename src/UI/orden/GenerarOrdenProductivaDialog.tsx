@@ -1,4 +1,3 @@
-import { OrdenProductivaSchemaDTOType } from "@backend/schemas/OrdenProductivaDTOSchema";
 import {
   Alert,
   Button,
