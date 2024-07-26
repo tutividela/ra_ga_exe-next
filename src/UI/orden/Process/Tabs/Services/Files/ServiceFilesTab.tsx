@@ -15,10 +15,13 @@ type Props = {
 };
 
 const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
-  const currProcess = useMemo(
-    () => orderData?.procesos.find((el) => el.id === selectedProcess),
-    [selectedProcess, orderData?.procesos]
-  );
+  const currProcess = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    return procesosABuscar.find((el) => el.id === selectedProcess);
+  }, [selectedProcess, orderData?.procesos]);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const { data } = useSession();
   const { role } = useGetRole(data.user.email);

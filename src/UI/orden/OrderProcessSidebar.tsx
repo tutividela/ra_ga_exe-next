@@ -28,11 +28,11 @@ const OrderProcessSidebar = ({
       .filter((proceso) => proceso.idEstado === 6)
       .map((proceso) => proceso.precioActualizado)
       .reduce((acumulador, precio) => acumulador + precio, 0);
-  }, [orderData?.procesos]);
+  }, [orderData]);
 
   const laOrdenEstaEnProduccion = useMemo(
     () => orderData.idEstado === 3,
-    [orderData?.procesos]
+    [orderData]
   );
 
   function validarHabilitacionCambioEstado(idProceso: number): boolean {
@@ -41,13 +41,13 @@ const OrderProcessSidebar = ({
     }
     const procesosPedidosYOrdenados =
       orderData.idEstado === 3
-        ? orderData?.procesosProductivos
+        ? orderData.procesosProductivos
             .filter((procesoProductivo) => procesoProductivo.idEstado !== 3)
             .sort(
               (procesoAnterior, procesoPosterior) =>
                 procesoAnterior.idProceso - procesoPosterior.idProceso
             )
-        : orderData?.procesos
+        : orderData.procesos
             .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
             .sort(
               (procesoAnterior, procesoPosterior) =>
@@ -59,10 +59,14 @@ const OrderProcessSidebar = ({
         (procesoDesarrollo) => procesoDesarrollo.idProceso === idProceso
       );
 
-    return posicionEnProcesosPedidosYOrdenados !== -1
-      ? procesosPedidosYOrdenados[posicionEnProcesosPedidosYOrdenados - 1]
-          .idEstado === 6
-      : true;
+    if (posicionEnProcesosPedidosYOrdenados === 0) {
+      return true;
+    } else {
+      return posicionEnProcesosPedidosYOrdenados !== -1
+        ? procesosPedidosYOrdenados[posicionEnProcesosPedidosYOrdenados - 1]
+            .idEstado === 6
+        : true;
+    }
   }
 
   return (
@@ -94,7 +98,7 @@ const OrderProcessSidebar = ({
           onSelect={onSelect}
           selected={selectedProcess === "general"}
           habilitarCambioEstado={true}
-          prenda={orderData?.prenda}
+          prenda={orderData.prenda}
           esProductiva={laOrdenEstaEnProduccion}
         />
       </div>
@@ -104,7 +108,7 @@ const OrderProcessSidebar = ({
       </div>
       <div className="flex flex-col max-h-screen overflow-y-auto">
         {!laOrdenEstaEnProduccion &&
-          orderData?.procesos
+          orderData.procesos
             .filter((proceso) => {
               if (role === clienteRole) return proceso.estado !== "No Pedido";
               if (role === prestadorDeServiciosRole)
@@ -130,7 +134,7 @@ const OrderProcessSidebar = ({
               />
             ))}
         {laOrdenEstaEnProduccion &&
-          orderData?.procesosProductivos
+          orderData.procesosProductivos
             .filter((proceso) => {
               if (role === clienteRole) return proceso.estado !== "No Pedido";
               if (role === prestadorDeServiciosRole)
@@ -142,7 +146,7 @@ const OrderProcessSidebar = ({
             .map((proceso, index) => (
               <SelectableOrderProcessItem
                 key={proceso.id}
-                proceso={{ ...proceso, idOrden: orderData?.id }}
+                proceso={{ ...proceso, idOrden: orderData.id }}
                 role={role || "Cliente"}
                 onSelect={onSelect}
                 selected={selectedProcess === proceso.id}
@@ -151,7 +155,7 @@ const OrderProcessSidebar = ({
                     ? validarHabilitacionCambioEstado(proceso.idProceso)
                     : true || false
                 }
-                prenda={orderData?.prenda}
+                prenda={orderData.prenda}
                 esProductiva={laOrdenEstaEnProduccion}
               />
             ))}

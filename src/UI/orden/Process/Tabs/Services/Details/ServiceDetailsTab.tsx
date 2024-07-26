@@ -54,10 +54,14 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
   const { data } = useSession();
   const { role } = useGetRole(data?.user?.email);
 
-  const currProcess = useMemo(
-    () => orderData?.procesos.find((el) => el.id === selectedProcess),
-    [selectedProcess, orderData?.procesos]
-  );
+  const currProcess = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    return procesosABuscar.find((el) => el.id === selectedProcess);
+  }, [selectedProcess, orderData?.procesos]);
+
   const ultimaActualizacion =
     new Date(currProcess?.lastUpdated).toLocaleDateString("es-AR") +
     " " +

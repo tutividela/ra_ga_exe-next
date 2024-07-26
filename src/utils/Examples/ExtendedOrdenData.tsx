@@ -46,6 +46,10 @@ export type ExtendedOrdenData = Orden & {
     };
     recursos: { key: string; text: string }[];
   }[];
+  ordenProductiva: {
+    cantidad: number;
+    precioEstimado: number;
+  };
   procesosProductivos: {
     estado: string;
     idEstado: number;

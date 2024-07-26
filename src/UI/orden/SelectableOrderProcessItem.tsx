@@ -173,12 +173,14 @@ const SelectableOrderProcessItem = ({
     return (
       <>
         <OrderProcessItemChangeDialog
+          esDeProduccion={esProductiva}
           process={proceso}
           open={statusDialogOpen}
           onClose={handleStatusDialogClose}
           onHandleTerminarProceso={handleTerminarProceso}
         />
         <OrderProcessItemResourcesDialog
+          esDeProduccion={esProductiva}
           process={proceso}
           open={resourceDialogOpen}
           onClose={handleResourceDialogClose}

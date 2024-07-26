@@ -17,7 +17,7 @@ import OrderViewProvider from "@utils/Order/OrderViewContext";
 import { errorHandle } from "@utils/queries/cotizador";
 import { adminRole, ayudanteRole, clienteRole } from "@utils/roles/SiteRoles";
 import type { GetServerSideProps, NextPage } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useMemo, useState } from "react";
@@ -44,14 +44,14 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
         throw error;
       });
 
-  const { data: orderData, isFetching: isFetchingOrders } = useQuery(
-    ["order"],
-    fetchOrder,
-    {
-      onError: () => addError("Error al traer orden"),
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: orderData,
+    isFetching: isFetchingOrders,
+    isRefetching: seEstaActualizandoLaOrden,
+  } = useQuery(["order"], fetchOrder, {
+    onError: () => addError("Error al traer orden"),
+    refetchOnWindowFocus: false,
+  });
 
   const laOrdenDeDesarrolloFueFinalizada = useMemo(
     () =>
@@ -84,7 +84,9 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
             <ErrorAlerter />
             <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
               <PageTitle title={"Detalles de orden"} hasBack size="medium" />
-              <LoadingIndicator show={isFetchingOrders}>
+              <LoadingIndicator
+                show={isFetchingOrders || seEstaActualizandoLaOrden}
+              >
                 {orderData?.id && (
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
@@ -93,14 +95,15 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                         <Button
                           variant="outlined"
                           onClick={() => setSeGeneraOrdenProductiva(true)}
+                          disabled={orderData?.idEstado === 3}
                         >
                           Pedir una produccion
                         </Button>
                       )}
                     {seGeneraOrenProductiva && (
                       <GenerarOrdenProductivaDialog
-                        idOrden={orderData?.id}
-                        precioPrendaBase={orderData?.prenda.precioBase}
+                        idOrden={orderData.id}
+                        precioPrendaBase={orderData.prenda.precioBase}
                         onClose={() => setSeGeneraOrdenProductiva(false)}
                         open={seGeneraOrenProductiva}
                       />

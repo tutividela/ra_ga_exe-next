@@ -35,6 +35,28 @@ const updateOrderFields = async (req: NextApiRequest, res: NextApiResponse) => {
         data: procesos,
       });
 
+    const procesosProductivosDeOrdenCreada =
+      await prisma.procesoProductivoOrden.findMany({
+        where: {
+          idOrdenProductiva: ordenCreada.id,
+        },
+      });
+
+    await prisma.fichaTecnica.createMany({
+      data: procesosProductivosDeOrdenCreada.map((proc) => ({
+        procesoProductivoId: proc.id,
+      })),
+    });
+
+    await prisma.orden.update({
+      data: {
+        idEstado: 3,
+      },
+      where: {
+        id: idOrden,
+      },
+    });
+
     res
       .status(200)
       .json({ ...ordenCreada, procesos: procesosProductivosCreados });

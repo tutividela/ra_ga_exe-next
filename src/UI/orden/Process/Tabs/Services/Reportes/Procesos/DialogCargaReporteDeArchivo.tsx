@@ -68,10 +68,6 @@ export default function DialogCargaReporteDeArchivo({
     isLoading: seEstaCargandoReporteDeArchivo,
   } = useMutation(cargarReporteDeArchivoPorProcesoDesarrollo, {
     onSuccess: () => {
-      queryClient.invalidateQueries([
-        "reportes-de-archivo",
-        idProcesoDesarrolloOrden,
-      ]);
       addError("Se ha subido el reporte con exito!", "success");
       onClose();
     },
@@ -100,11 +96,13 @@ export default function DialogCargaReporteDeArchivo({
         : updateFileURL(data, archivosSubidos);
       await cargarReporteDeArchivoAsync({
         idProcesoDesarrollo: idProcesoDesarrolloOrden,
+        esDeProduccion: laOrdenEstaEnProduccion,
         data,
       });
     } else {
       console.log("No se cargaron archivos");
     }
+    await queryClient.invalidateQueries(["reportesArchivo"]);
   }
 
   return (

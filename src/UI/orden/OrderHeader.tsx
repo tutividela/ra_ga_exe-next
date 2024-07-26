@@ -38,7 +38,14 @@ const OrderHeader = ({ orderData }: Props) => {
             <p>Precio estimado</p>
           </div>
           <div className="text-sm">
-            <span>{orderData.cotizacionOrden[0].precio.toFixed(2)} $</span>
+            {
+              <span>
+                {orderData.idEstado === 3
+                  ? orderData.ordenProductiva.precioEstimado.toFixed(2)
+                  : orderData.cotizacionOrden[0].precio.toFixed(2)}{" "}
+                $
+              </span>
+            }
           </div>
         </div>
         <div className="flex flex-col items-start">

@@ -13,51 +13,108 @@ const updateProcessState = async (
       id: processID,
       estado,
       estimatedAt,
+      esDeProduccion,
     } = ProcessUpdateSchema.parse(req.body);
 
-    const proceso = await prisma.procesoDesarrolloOrden.update({
-      include: {
-        orden: {
-          include: { user: true },
-        },
-        proceso: true,
-      },
-      where: { id: processID },
-      data: {
-        estado: {
-          connect: { descripcion: estado },
-        },
-        FichaTecnica: {
-          update: {
-            estimatedAt: estimatedAt ? new Date(estimatedAt) : null,
-            updatedAt: new Date(),
+    if (esDeProduccion) {
+      const proceso = await prisma.procesoProductivoOrden.update({
+        include: {
+          orden: {
+            include: { orden: { include: { user: true } } },
           },
+          proceso: true,
         },
-        lastUpdated: new Date(Date.now()),
-      },
-    });
-    const idOrden = proceso.orden.id;
-    const idProcesoDesarrolloActualizado = proceso.proceso.id;
+        where: { id: processID },
+        data: {
+          estado: {
+            connect: { descripcion: estado },
+          },
+          lastUpdated: new Date(Date.now()),
+        },
+      });
+      await prisma.fichaTecnica.updateMany({
+        where: {
+          procesoProductivoId: processID,
+        },
+        data: {
+          estimatedAt: estimatedAt ? new Date(estimatedAt) : null,
+          updatedAt: new Date(),
+        },
+      });
+      console.log("llegue");
+      const idOrden = proceso.orden.id;
+      const idProcesoDesarrolloActualizado = proceso.proceso.id;
 
-    await prisma.procesoDesarrolloOrden.updateMany({
-      where: {
-        idOrden: idOrden,
-        AND: {
-          idProceso: {
-            gt: idProcesoDesarrolloActualizado,
+      await prisma.procesoProductivoOrden.updateMany({
+        where: {
+          orden: {
+            idOrden: idOrden,
           },
-          idEstadoProceso: {
-            not: {
-              equals: 3,
+          AND: {
+            idProceso: {
+              gt: idProcesoDesarrolloActualizado,
+            },
+            idEstadoProceso: {
+              not: {
+                equals: 3,
+              },
             },
           },
         },
-      },
-      data: {
-        idEstadoProceso: 1,
-        lastUpdated: new Date(),
-      },
-    });
+        data: {
+          idEstadoProceso: 1,
+          lastUpdated: new Date(),
+        },
+      });
+      res.status(200).json(proceso);
+      return;
+    } else {
+      const proceso = await prisma.procesoDesarrolloOrden.update({
+        include: {
+          orden: {
+            include: { user: true },
+          },
+          proceso: true,
+        },
+        where: { id: processID },
+        data: {
+          estado: {
+            connect: { descripcion: estado },
+          },
+          FichaTecnica: {
+            update: {
+              estimatedAt: estimatedAt ? new Date(estimatedAt) : null,
+              updatedAt: new Date(),
+            },
+          },
+          lastUpdated: new Date(Date.now()),
+        },
+      });
+      const idOrden = proceso.orden.id;
+      const idProcesoDesarrolloActualizado = proceso.proceso.id;
+
+      await prisma.procesoDesarrolloOrden.updateMany({
+        where: {
+          idOrden: idOrden,
+          AND: {
+            idProceso: {
+              gt: idProcesoDesarrolloActualizado,
+            },
+            idEstadoProceso: {
+              not: {
+                equals: 3,
+              },
+            },
+          },
+        },
+        data: {
+          idEstadoProceso: 1,
+          lastUpdated: new Date(),
+        },
+      });
+      res.status(200).json(proceso);
+      return;
+    }
 
     /* const { sendEmail } = generateEmailer({
             password: process.env.MAILGUN_SMTP_PASS,
@@ -71,8 +128,8 @@ const updateProcessState = async (
             subject: 'Modificación pedido orden - HS-Taller',
             html: updateProcessStateHTML({ name: proceso.orden.user.name, newProcessState: estado, orderId: proceso.orden.id, processName: proceso.proceso.nombre })
         })*/
-    res.status(200).json(proceso);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error });
     throw error;
   }

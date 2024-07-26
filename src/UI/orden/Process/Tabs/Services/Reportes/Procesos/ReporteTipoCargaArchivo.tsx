@@ -17,16 +17,12 @@ export default function ReporteDeArchivo({
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
   const { idProceso } = useMemo(() => {
     const procesosABuscar =
-      orderData?.idEstado === 3
+      orderData.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
 
     return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
-  }, [
-    idProcesoDesarrollo,
-    orderData?.procesos,
-    orderData?.procesosProductivos,
-  ]);
+  }, [idProcesoDesarrollo, orderData.procesos, orderData.procesosProductivos]);
   const laOrdenEstaEnProduccion = useMemo(
     () => orderData?.idEstado === 3,
     [orderData]
@@ -34,9 +30,9 @@ export default function ReporteDeArchivo({
 
   const {
     data: reportesDeArchivos,
-    isLoading: seEstaBuscandoLosReportesDeArchivo,
+    isFetching: seEstaBuscandoLosReportesDeArchivo,
     isRefetching: seEstaRecargandoLosReportesDeArchivo,
-  } = useQuery(["reportes-de-archivo"], () =>
+  } = useQuery(["reportesArchivo"], () =>
     obtenerReportesDeArchivosPorIdProcesoDesarrollo(
       idProcesoDesarrollo,
       laOrdenEstaEnProduccion
@@ -46,23 +42,13 @@ export default function ReporteDeArchivo({
   const imagenes = reportesDeArchivos?.filter((reporteDeArchivo) =>
     reporteDeArchivo.type.includes("image")
   );
-
-  const pdfs = useMemo(
-    () =>
-      reportesDeArchivos?.filter((reporteDeArchivo) =>
-        reporteDeArchivo.type.includes("pdf")
-      ),
-    [reportesDeArchivos]
+  const pdfs = reportesDeArchivos?.filter((reporteDeArchivo) =>
+    reporteDeArchivo.type.includes("pdf")
   );
-
-  const otros = useMemo(
-    () =>
-      reportesDeArchivos?.filter(
-        (reporteDeArchivo) =>
-          !reporteDeArchivo.type.includes("pdf") &&
-          !reporteDeArchivo.type.includes("image")
-      ),
-    [reportesDeArchivos]
+  const otros = reportesDeArchivos?.filter(
+    (reporteDeArchivo) =>
+      !reporteDeArchivo.type.includes("pdf") &&
+      !reporteDeArchivo.type.includes("image")
   );
 
   return (

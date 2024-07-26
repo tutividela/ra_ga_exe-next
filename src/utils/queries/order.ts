@@ -33,7 +33,7 @@ export const fetchAllOrders = (): Promise<ExtendedOrdenData[]> =>
 export function generarOrdenProductiva(
   ordenProductivaDTO: OrdenProductivaSchemaDTOType
 ) {
-  fetch("/api/order/generar-orden-productiva", {
+  return fetch("/api/order/generar-orden-productiva", {
     method: "POST",
     body: JSON.stringify(ordenProductivaDTO),
     headers: {

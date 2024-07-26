@@ -252,7 +252,8 @@ export const updateProcessState = (data: {
   proceso: string;
   icon: string;
   id: string;
-  estimatedAt: string;
+  estimatedAt?: string;
+  esDeProduccion?: boolean;
 }): Promise<
   ProcesoDesarrolloOrden & {
     orden: Orden & {
