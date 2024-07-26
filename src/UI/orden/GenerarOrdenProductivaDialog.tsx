@@ -113,8 +113,7 @@ export function GenerarOrdenProductivaDialog({
         <DialogTitle>Generar una produccion</DialogTitle>
         <Alert severity="info" className="mx-3">
           Especifique una cantidad y verifique el precio aproximado. En caso de
-          cambiar la cantidad, cerrar y volver a presionar "PEDIR UNA
-          PRODUCCION".
+          cambiar la cantidad, cerrar y volver a presionar PEDIR UNA PRODUCCION
         </Alert>
         <HookForm defaultValues={layout} onSubmit={handleSubmit}>
           <DialogContent>

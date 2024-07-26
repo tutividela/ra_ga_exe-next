@@ -58,7 +58,7 @@ export default async function calcular(
       },
     });
 
-    let precioAproximado: number = 0;
+    let precioAproximado = 0;
     parametrosDeCalculo.forEach((parametroDeConsulta) => {
       precioAproximado += calcularPrecioPorProceso(
         parametroDeConsulta,
