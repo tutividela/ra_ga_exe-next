@@ -32,6 +32,7 @@ const updateProcessState = async (
           lastUpdated: new Date(Date.now()),
         },
       });
+
       await prisma.fichaTecnica.updateMany({
         where: {
           procesoProductivoId: processID,
@@ -41,8 +42,7 @@ const updateProcessState = async (
           updatedAt: new Date(),
         },
       });
-      console.log("llegue");
-      const idOrden = proceso.orden.id;
+      const idOrden = proceso.orden.orden.id;
       const idProcesoDesarrolloActualizado = proceso.proceso.id;
 
       await prisma.procesoProductivoOrden.updateMany({
