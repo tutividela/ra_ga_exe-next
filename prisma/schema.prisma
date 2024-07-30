@@ -411,7 +411,7 @@ model ReporteDeDigitalizacion {
 model ReporteDeImpresion {
   id                       String                 @id @default(cuid())
   idProcesoDesarrolloOrden String
-  cantidadDeMetros         Int
+  cantidadDeMetros         Float
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@unique([idProcesoDesarrolloOrden])

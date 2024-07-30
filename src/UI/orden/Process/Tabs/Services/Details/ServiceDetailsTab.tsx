@@ -67,7 +67,7 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
     " " +
     new Date(currProcess?.lastUpdated).toLocaleTimeString();
 
-  const recursos = currProcess.recursos.map((el) => el.text);
+  const recursos = currProcess?.recursos.map((el) => el.text);
 
   return (
     <div className="flex flex-col mt-4">

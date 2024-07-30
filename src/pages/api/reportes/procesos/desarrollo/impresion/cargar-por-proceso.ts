@@ -8,8 +8,9 @@ export default async function cargar(
   res: NextApiResponse
 ) {
   try {
+    console.log("llegue");
     const cargaDeReporte = ProcesoImpresionSchema.parse(JSON.parse(req.body));
-
+    //console.log("llegue");
     const reporte = await prisma.reporteDeImpresion.findFirst({
       where: {
         idProcesoDesarrolloOrden: cargaDeReporte.idProcesoDesarrolloOrden,

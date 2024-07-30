@@ -22,7 +22,7 @@ export default function ReporteDeArchivo({
         : orderData.procesos;
 
     return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
-  }, [idProcesoDesarrollo, orderData.procesos, orderData.procesosProductivos]);
+  }, [idProcesoDesarrollo, orderData]);
   const laOrdenEstaEnProduccion = useMemo(
     () => orderData?.idEstado === 3,
     [orderData]

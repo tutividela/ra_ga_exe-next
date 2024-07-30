@@ -11,7 +11,7 @@ export default async function buscar(
     const idProcesoDesarrollo = (req.query.idProcesoDesarrollo as string) || "";
     const precioPrendaBase =
       parseInt(req.query.precioPrendaBase as string) || 0;
-    const cantidad = parseInt(req.query.cantidad as string) || 0;
+    const cantidad = parseInt(req.query.cantidad as string) || 1;
     const esDeProduccion =
       (req.query.esDeProduccion as string) === "true" || false;
     let response: any = null;
@@ -128,7 +128,8 @@ async function calcularPrecioPorProceso(
       return await calcularPrecioPreConfeccion(
         emailDePrestador,
         precioDeDolar,
-        idProceso
+        idProceso,
+        cantidad
       );
     case 11:
       return await calcularPrecioConfeccion(
@@ -144,7 +145,8 @@ async function calcularPrecioPorProceso(
         emailDePrestador,
         precioDeDolar,
         idProceso,
-        precioPrendaBase
+        precioPrendaBase,
+        cantidad
       );
     case 13:
       return 0;
@@ -325,7 +327,8 @@ async function calcularPrecioCorte(
 async function calcularPrecioPreConfeccion(
   emailPrestador: string,
   precioDeDolar: number,
-  idProceso: number
+  idProceso: number,
+  cantidad: number
 ): Promise<number> {
   const servicios = await prisma.serviciosPorUsuario.findMany({
     where: {
@@ -345,9 +348,12 @@ async function calcularPrecioPreConfeccion(
     },
   });
 
-  return servicios
-    .map((servicio) => servicio.factorMultiplicador)
-    .reduce((acumulador, factor) => acumulador + factor * precioDeDolar, 0);
+  return (
+    cantidad *
+    servicios
+      .map((servicio) => servicio.factorMultiplicador)
+      .reduce((acumulador, factor) => acumulador + factor * precioDeDolar, 0)
+  );
 }
 
 async function calcularPrecioConfeccion(
@@ -390,24 +396,30 @@ async function calcularPrecioConfeccion(
     });
     factorMultiplicador = servicio?.factorMultiplicador || 0;
   } else {
-    const servicios = await prisma.servicio.findFirst({
-      select: {
-        factorMultiplicador: true,
+    const servicios = await prisma.serviciosPorUsuario.findFirst({
+      include: {
+        servicio: true,
+        usuario: true,
       },
       where: {
-        esDeDesarrollo: true,
-        AND: {
-          cantidadMinima: {
-            gte: cantidad,
+        servicio: {
+          esDeDesarrollo: true,
+          procesos: {
+            every: {
+              id: idProceso,
+            },
           },
-          cantidadMaxima: {
-            lte: cantidad,
+          AND: {
+            cantidadMinima: {
+              lte: cantidad,
+            },
+            cantidadMaxima: {
+              gte: cantidad,
+            },
           },
         },
-        procesos: {
-          every: {
-            id: idProceso,
-          },
+        usuario: {
+          email: emailPrestador,
         },
       },
     });
@@ -415,14 +427,15 @@ async function calcularPrecioConfeccion(
     factorMultiplicador = servicios?.factorMultiplicador || 0;
   }
 
-  return precioDeDolar * precioPrendaBase * factorMultiplicador;
+  return cantidad * (precioDeDolar * precioPrendaBase * factorMultiplicador);
 }
 
 async function calcularPrecioTerminado(
   emailDePrestador: string,
   precioDeDolar: number,
   idProceso: number,
-  precioPrendaBase: number
+  precioPrendaBase: number,
+  cantidad: number
 ): Promise<number> {
   const servicio = await prisma.serviciosPorUsuario.findFirst({
     where: {
@@ -442,5 +455,5 @@ async function calcularPrecioTerminado(
 
   const factorMultiplicador = servicio?.factorMultiplicador || 0;
 
-  return precioDeDolar * precioPrendaBase * factorMultiplicador;
+  return cantidad * (precioDeDolar * precioPrendaBase * factorMultiplicador);
 }
