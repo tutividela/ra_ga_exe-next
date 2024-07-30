@@ -17,7 +17,7 @@ const OrderProcessContent = ({ orderData, selectedProcess, rol }: Props) => {
         : orderData.procesos;
 
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData?.procesos, orderData?.procesosProductivos]);
+  }, [selectedProcess, orderData]);
 
   return (
     <>

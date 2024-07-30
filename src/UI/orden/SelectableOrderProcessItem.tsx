@@ -49,6 +49,7 @@ type Props = {
     tipo: TipoPrenda;
   };
   esProductiva: boolean;
+  cantidad?: number;
 };
 
 export const ProcessStateTextColors = (estado: string) => {
@@ -82,6 +83,7 @@ const SelectableOrderProcessItem = ({
   habilitarCambioEstado,
   prenda,
   esProductiva,
+  cantidad,
 }: Props) => {
   const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -121,6 +123,7 @@ const SelectableOrderProcessItem = ({
       idProceso: proceso.idProceso,
       idProcesoDesarrollo: proceso.id,
       precioPrendaBase: prenda.precioBase,
+      cantidad: cantidad,
       esDeProduccion: esProductiva,
     });
   }

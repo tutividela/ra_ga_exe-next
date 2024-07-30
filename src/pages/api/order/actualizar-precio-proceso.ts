@@ -360,7 +360,7 @@ async function calcularPrecioConfeccion(
 ): Promise<number> {
   let factorMultiplicador = 0;
 
-  if (!esDeProduccion) {
+  if (esDeProduccion) {
     const servicio = await prisma.serviciosPorUsuario.findFirst({
       include: {
         servicio: true,
@@ -368,10 +368,18 @@ async function calcularPrecioConfeccion(
       },
       where: {
         servicio: {
-          esDeDesarrollo: true,
+          esDeProduccion: true,
           procesos: {
             every: {
               id: idProceso,
+            },
+          },
+          AND: {
+            cantidadMinima: {
+              lte: cantidad,
+            },
+            cantidadMaxima: {
+              gte: cantidad,
             },
           },
         },
@@ -380,14 +388,14 @@ async function calcularPrecioConfeccion(
         },
       },
     });
-    factorMultiplicador = servicio.factorMultiplicador;
+    factorMultiplicador = servicio?.factorMultiplicador || 0;
   } else {
     const servicios = await prisma.servicio.findFirst({
       select: {
         factorMultiplicador: true,
       },
       where: {
-        esDeDesarrollo: false,
+        esDeDesarrollo: true,
         AND: {
           cantidadMinima: {
             gte: cantidad,
@@ -403,7 +411,8 @@ async function calcularPrecioConfeccion(
         },
       },
     });
-    factorMultiplicador = servicios.factorMultiplicador;
+
+    factorMultiplicador = servicios?.factorMultiplicador || 0;
   }
 
   return precioDeDolar * precioPrendaBase * factorMultiplicador;

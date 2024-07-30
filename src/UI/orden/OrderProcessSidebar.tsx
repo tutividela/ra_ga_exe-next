@@ -157,6 +157,7 @@ const OrderProcessSidebar = ({
                 }
                 prenda={orderData.prenda}
                 esProductiva={laOrdenEstaEnProduccion}
+                cantidad={orderData.ordenProductiva.cantidad}
               />
             ))}
       </div>

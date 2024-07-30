@@ -60,7 +60,7 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
         ? orderData.procesosProductivos
         : orderData.procesos;
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData?.procesos]);
+  }, [selectedProcess, orderData]);
 
   const ultimaActualizacion =
     new Date(currProcess?.lastUpdated).toLocaleDateString("es-AR") +
