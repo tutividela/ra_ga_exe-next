@@ -169,12 +169,13 @@ model Orden {
 }
 
 model OrdenProductiva {
-  id             String                   @id @default(cuid())
-  cantidad       Int                      @default(0)
-  precioEstimado Float                    @default(0)
-  idOrden        String                   @unique
-  orden          Orden                    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
-  procesos       ProcesoProductivoOrden[]
+  id              String                   @id @default(cuid())
+  cantidad        Int                      @default(0)
+  precioEstimado  Float                    @default(0)
+  idOrden         String                   @unique
+  orden           Orden                    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  procesos        ProcesoProductivoOrden[]
+  fechaDeCreacion DateTime                 @default(now())
 }
 
 model Mensaje {

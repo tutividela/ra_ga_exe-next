@@ -131,10 +131,12 @@ const SelectableOrderProcessItem = ({
   if (id === "general")
     return (
       <>
-        <OrderGeneralChangeDialog
-          open={generalDialogOpen}
-          onClose={handleGeneralDialogClose}
-        />
+        {!esProductiva && (
+          <OrderGeneralChangeDialog
+            open={generalDialogOpen}
+            onClose={handleGeneralDialogClose}
+          />
+        )}
         <div
           className={`py-2 px-4 flex flex-row justify-between items-center space-x-4 text-2 m-2 border-2 transition-all ${backgroundColor}`}
           onClick={handleSelectProcess}
@@ -152,7 +154,7 @@ const SelectableOrderProcessItem = ({
                 <div className="text-gray-400 text-xs">
                   Precio Total:{" "}
                   <span>
-                    {proceso.precioActualizado}
+                    {proceso.precioActualizado.toFixed(2)}
                     {" $"}
                   </span>
                 </div>
@@ -163,7 +165,11 @@ const SelectableOrderProcessItem = ({
           {role === adminRole && (
             <div className="flex flex-row">
               <div>
-                <IconButton type="button" onClick={handleGeneralDialogOpen}>
+                <IconButton
+                  type="button"
+                  onClick={handleGeneralDialogOpen}
+                  disabled={esProductiva}
+                >
                   <EditIcon />
                 </IconButton>
               </div>
@@ -215,7 +221,7 @@ const SelectableOrderProcessItem = ({
                   <div className="text-gray-400 text-xs">
                     Precio Actualizado:{" "}
                     <span>
-                      {proceso.precioActualizado}
+                      {proceso.precioActualizado.toFixed(2)}
                       {" $"}
                     </span>
                   </div>

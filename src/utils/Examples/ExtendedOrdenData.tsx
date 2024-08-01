@@ -49,6 +49,7 @@ export type ExtendedOrdenData = Orden & {
   ordenProductiva: {
     cantidad: number;
     precioEstimado: number;
+    fechaDeCreacion: Date;
   };
   procesosProductivos: {
     estado: string;

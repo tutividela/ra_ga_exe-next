@@ -22,6 +22,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useMemo, useState } from "react";
 import { useQuery } from "react-query";
+import UpgradeIcon from "@mui/icons-material/Upgrade";
 
 const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   const { addError } = useContext(ErrorHandlerContext);
@@ -92,13 +93,16 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                     <OrderHeader orderData={orderData} />
                     {laOrdenDeDesarrolloFueFinalizada &&
                       [adminRole, clienteRole, ayudanteRole].includes(role) && (
-                        <Button
-                          variant="outlined"
-                          onClick={() => setSeGeneraOrdenProductiva(true)}
-                          disabled={orderData?.idEstado === 3}
-                        >
-                          Pedir una produccion
-                        </Button>
+                        <div className="ml-4 pl-4">
+                          <Button
+                            variant="outlined"
+                            onClick={() => setSeGeneraOrdenProductiva(true)}
+                            disabled={orderData?.idEstado === 3}
+                            endIcon={<UpgradeIcon />}
+                          >
+                            Pedir una produccion
+                          </Button>
+                        </div>
                       )}
                     {seGeneraOrenProductiva && (
                       <GenerarOrdenProductivaDialog
