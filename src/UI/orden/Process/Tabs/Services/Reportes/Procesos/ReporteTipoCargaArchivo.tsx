@@ -59,65 +59,71 @@ export default function ReporteDeArchivo({
       }
     >
       <div className="h-full border-2 flex justify-center items-center p-4">
-        <div className="flex flex-col space-y-4 items-center">
-          {imagenes && [5, 2, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
-            <>
-              <div>
-                <p className="underline">Imagenes</p>
-              </div>
-              {imagenes.map((imagen) => (
-                <OrderImageItem archivo={imagen} key={imagen.id} />
-              ))}
-              <div hidden={imagenes.length > 0}>
-                <p className="text-m font-semibold">No hay imagenes cargadas</p>
-              </div>
-            </>
-          )}
-          {pdfs && [2, 3, 8, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
-            <>
-              <div>
-                <p className="underline">{"PDF's"}</p>
-              </div>
-              {pdfs.map((pdf) => (
-                <OrderImageItem archivo={pdf} key={pdf.id} />
-              ))}
-              <div hidden={pdfs.length > 0}>
-                <p className="text-m font-semibold">
-                  No hay archivos PDF cargados
-                </p>
-              </div>
-            </>
-          )}
-          {otros && (
-            <>
-              <div>
-                <p className="underline">Otros</p>
-              </div>
-              {otros.map((otro) => (
-                <OrderImageItem archivo={otro} key={otro.id} />
-              ))}
-              <div hidden={otros.length > 0}>
-                <p className="text-m font-semibold">No hay archivos cargados</p>
-              </div>
-            </>
-          )}
-          <div>
-            <Button
-              variant="outlined"
-              onClick={() => setShowCargaReprote(true)}
-            >
-              Subir nuevo reporte
-            </Button>
+        {idProceso && (
+          <div className="flex flex-col space-y-4 items-center">
+            {imagenes && [5, 2, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
+              <>
+                <div>
+                  <p className="underline">Imagenes</p>
+                </div>
+                {imagenes.map((imagen) => (
+                  <OrderImageItem archivo={imagen} key={imagen.id} />
+                ))}
+                <div hidden={imagenes.length > 0}>
+                  <p className="text-m font-semibold">
+                    No hay imagenes cargadas
+                  </p>
+                </div>
+              </>
+            )}
+            {pdfs && [2, 3, 8, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
+              <>
+                <div>
+                  <p className="underline">{"PDF's"}</p>
+                </div>
+                {pdfs.map((pdf) => (
+                  <OrderImageItem archivo={pdf} key={pdf.id} />
+                ))}
+                <div hidden={pdfs.length > 0}>
+                  <p className="text-m font-semibold">
+                    No hay archivos PDF cargados
+                  </p>
+                </div>
+              </>
+            )}
+            {otros && (
+              <>
+                <div>
+                  <p className="underline">Otros</p>
+                </div>
+                {otros.map((otro) => (
+                  <OrderImageItem archivo={otro} key={otro.id} />
+                ))}
+                <div hidden={otros.length > 0}>
+                  <p className="text-m font-semibold">
+                    No hay archivos cargados
+                  </p>
+                </div>
+              </>
+            )}
+            <div>
+              <Button
+                variant="outlined"
+                onClick={() => setShowCargaReprote(true)}
+              >
+                Subir nuevo reporte
+              </Button>
+            </div>
+            {showCargaReporte && (
+              <DialogCargaReporteDeArchivo
+                onClose={() => setShowCargaReprote(false)}
+                open={showCargaReporte}
+                idProcesoDesarrolloOrden={idProcesoDesarrollo}
+                orderData={orderData}
+              />
+            )}
           </div>
-          {showCargaReporte && (
-            <DialogCargaReporteDeArchivo
-              onClose={() => setShowCargaReprote(false)}
-              open={showCargaReporte}
-              idProcesoDesarrolloOrden={idProcesoDesarrollo}
-              orderData={orderData}
-            />
-          )}
-        </div>
+        )}
       </div>
     </LoadingIndicator>
   );

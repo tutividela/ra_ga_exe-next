@@ -38,7 +38,6 @@ const Home: NextPage = () => {
     ErrorMessage
   >(["userInfo", userId], () => getUserInfo(userId), {
     onError: () => addError("Error al traer información del usuario"),
-    refetchOnWindowFocus: false,
   });
 
   const handleUserInfoSubmit = function (data: UserInfoSchemaType) {
@@ -48,7 +47,10 @@ const Home: NextPage = () => {
     modifyUserInfoMutation(data);
   };
 
-  const { mutate: modifyUserInfoMutation } = useMutation<
+  const {
+    mutateAsync: modifyUserInfoMutation,
+    isLoading: seEstaEditandoInformacionDeUsuario,
+  } = useMutation<
     UserInfoUpdateSchemaType,
     ErrorMessage,
     UserInfoUpdateSchemaType
@@ -58,8 +60,11 @@ const Home: NextPage = () => {
       addError("Información modificada exitosamente", "info");
       queryClient.invalidateQueries(["userInfo", userId]);
       queryClient.invalidateQueries(["reducedUserInfo"]);
+      router.back();
     },
   });
+
+  console.log(seEstaEditandoInformacionDeUsuario);
 
   return (
     <div className="bg-split-white-black">
@@ -78,10 +83,12 @@ const Home: NextPage = () => {
           <div>
             <ErrorAlerter />
             <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
-              <LoadingIndicator show={isFetchingUserInfo && !userInfo}>
+              <LoadingIndicator
+                show={isFetchingUserInfo || seEstaEditandoInformacionDeUsuario}
+              >
                 <PageTitle title="Mis datos" hasBack={false} />
                 <div className="flex justify-center items-center">
-                  {!isFetchingUserInfo && userInfo && (
+                  {userInfo && (
                     <div className="md:w-1/4 w-3/4">
                       <HookForm
                         defaultValues={userInfo}

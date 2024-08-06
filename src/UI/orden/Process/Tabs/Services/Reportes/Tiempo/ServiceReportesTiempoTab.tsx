@@ -85,7 +85,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
     fechaDeCreacionOrden: Date
   ): any[] {
     return procesosTerminados.map((procesoTerminado, index) => {
-      if (procesoTerminado.idProceso === 1) {
+      if (index === 0) {
         const fechaUltimaActualizacion = new Date(
           procesoTerminado?.lastUpdated
         );
