@@ -13,6 +13,8 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     factorMultiplicador: 0,
     esDeDesarrollo: true,
     esDeProduccion: true,
+    cantidadMinima: null,
+    cantidadMaxima: null,
     precioFijo: precioDelDolar[0].precio,
   };
 

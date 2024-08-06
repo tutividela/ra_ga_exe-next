@@ -28,15 +28,22 @@ const OrderProcessContentService = ({
 }: Props) => {
   const [value, setValue] = useState(0);
   const [slide, setSlide] = useState(true);
-  const { idProceso } = useMemo(
-    () =>
-      orderData?.procesos.find(
-        (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
-      ),
-    [selectedProcess]
-  );
+  const { idProceso } = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+
+    return procesosABuscar.find(
+      (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+    );
+  }, [selectedProcess]);
   const tieneReportes = useMemo(() => {
-    const proceso = orderData?.procesos.find(
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    const proceso = procesosABuscar.find(
       (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
     );
     return ![4, 7].includes(proceso.idProceso);
@@ -86,9 +93,18 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
+            {orderData?.idEstado === 3 && (
+              <div hidden={value !== 3} className="w-full">
+                <ReporteDeArchivo
+                  idProcesoDesarrollo={selectedProcess}
+                  orderData={orderData}
+                />
+              </div>
+            )}
             {[adminRole, ayudanteRole, prestadorDeServiciosRole].includes(
               rol
             ) &&
+              orderData?.idEstado !== 3 &&
               tieneReportes && (
                 <div hidden={value !== 3} className="w-full">
                   {[1].includes(idProceso) && (

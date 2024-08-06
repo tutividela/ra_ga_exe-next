@@ -3,14 +3,18 @@ export async function actualizarPrecio({
   idProceso,
   idProcesoDesarrollo,
   precioPrendaBase,
+  esDeProduccion,
+  cantidad,
 }: {
   emailDePrestador: string;
   idProceso: number;
   idProcesoDesarrollo: string;
   precioPrendaBase: number;
+  esDeProduccion: boolean;
+  cantidad?: number;
 }): Promise<{ id: string; precioActualizado: number }> {
   return fetch(
-    `/api/order/actualizar-precio-proceso?emailDePrestador=${emailDePrestador}&idProceso=${idProceso}&idProcesoDesarrollo=${idProcesoDesarrollo}&precioPrendaBase=${precioPrendaBase}`
+    `/api/order/actualizar-precio-proceso?emailDePrestador=${emailDePrestador}&idProceso=${idProceso}&idProcesoDesarrollo=${idProcesoDesarrollo}&precioPrendaBase=${precioPrendaBase}&esDeProduccion=${esDeProduccion}&cantidad=${cantidad}`
   )
     .then((response: Response) => response.json())
     .catch((error) => {

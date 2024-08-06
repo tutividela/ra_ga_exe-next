@@ -9,9 +9,11 @@ const updateProcessResources = async (
   res: NextApiResponse
 ) => {
   try {
-    const { id: processID, recursos } = ProcessUpdateResourcesSchema.parse(
-      req.body
-    );
+    const {
+      id: processID,
+      recursos,
+      esDeProduccion,
+    } = ProcessUpdateResourcesSchema.parse(req.body);
 
     const { sendEmail } = generateEmailer({
       password: process.env.MAILGUN_SMTP_PASS,
@@ -25,6 +27,53 @@ const updateProcessResources = async (
     const users = await prisma.user.findMany({
       where: { email: { in: userEmails } },
     });
+
+    if (esDeProduccion) {
+      await prisma.procesoProductivoOrden.update({
+        where: { id: processID },
+        data: {
+          usuarioDeServicio: { set: [] },
+          lastUpdated: new Date(Date.now()),
+        },
+      });
+
+      const proceso = await prisma.procesoProductivoOrden.update({
+        include: {
+          orden: { include: { orden: { include: { user: true } } } },
+          proceso: true,
+        },
+        where: { id: processID },
+        data: {
+          usuarioDeServicio: {
+            connect: users.map((el) => ({ email: el.email })),
+          },
+          FichaTecnica: {
+            updateMany: {
+              data: {
+                updatedAt: new Date(),
+              },
+              where: {
+                procesoId: processID,
+              },
+            },
+          },
+          lastUpdated: new Date(),
+        },
+      });
+
+      sendEmail({
+        to: proceso.orden.orden.user.email,
+        subject: "Modificación pedido orden - HS-Taller",
+        html: updateProcessResourcesHTML({
+          name: proceso.orden.orden.user.name,
+          orderId: proceso.orden.id,
+          processName: proceso.proceso.nombre,
+        }),
+      })
+        .then(() => res.status(200).json(proceso))
+        .catch((err) => res.status(400).json({ error: err }));
+      return;
+    }
 
     //remove all resources from process
     await prisma.procesoDesarrolloOrden.update({

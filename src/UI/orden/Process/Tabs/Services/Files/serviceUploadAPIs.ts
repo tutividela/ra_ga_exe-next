@@ -11,6 +11,7 @@ type FileUploadData = {
   orderID: string;
   formData: FormData;
   fichaType: string;
+  esDeProduccion: boolean;
 };
 
 export const updateFileURL = (
@@ -53,13 +54,15 @@ export const updateFichaFiles = ({
 
 export async function cargarReporteDeArchivoPorProcesoDesarrollo({
   idProcesoDesarrollo,
+  esDeProduccion,
   data,
 }: {
   idProcesoDesarrollo: string;
+  esDeProduccion: boolean;
   data: ValidatedFichaTecnicaFileUploadSchema;
 }): Promise<any> {
   fetch(
-    `/api/reportes/procesos/desarrollo/archivos/actualizar-archivos-reportes?idProcesoDesarrolloOrden=${idProcesoDesarrollo}`,
+    `/api/reportes/procesos/desarrollo/archivos/actualizar-archivos-reportes?idProcesoDesarrolloOrden=${idProcesoDesarrollo}&esDeProduccion=${esDeProduccion}`,
     {
       method: "POST",
       body: JSON.stringify(data),
@@ -78,7 +81,7 @@ export async function subirArchivoDeReporte(
   data: FileUploadData
 ): Promise<DriveUploadResponse> {
   return fetch(
-    `/api/drive/subir-a-reporte?nombreDeUsuario=${data.clientName}&idOrden=${data.orderID}&procesoDesarrollo=${data.fichaType}`,
+    `/api/drive/subir-a-reporte?nombreDeUsuario=${data.clientName}&idOrden=${data.orderID}&procesoDesarrollo=${data.fichaType}&esDeProduccion=${data.esDeProduccion}`,
     { method: "POST", body: data.formData }
   )
     .then((res) => (res.ok ? res.json() : errorHandle(res)))

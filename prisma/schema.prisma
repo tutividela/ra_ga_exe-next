@@ -49,25 +49,25 @@ model ResetToken {
 }
 
 model User {
-  id                                         String                                       @id @default(cuid())
-  name                                       String?
-  email                                      String?                                      @unique
-  emailVerified                              DateTime?
-  image                                      String?
-  accounts                                   Account[]
-  sessions                                   Session[]
-  role                                       Role?                                        @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId                                     Int?                                         @default(1)
-  password                                   String?
-  ResetToken                                 ResetToken[]
-  orders                                     Orden[]
-  Mensaje                                    Mensaje[]
-  serviciosAsignados                         ProcesoDesarrolloOrden[]
-  available                                  Boolean?                                     @default(true)
-  userPersonalDataId                         String?                                      @unique
-  userPersonalData                           UserPersonalData?                            @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
-  RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
-  servicios                                  ServiciosPorUsuario[]
+  id                            String                   @id @default(cuid())
+  name                          String?
+  email                         String?                  @unique
+  emailVerified                 DateTime?
+  image                         String?
+  accounts                      Account[]
+  sessions                      Session[]
+  role                          Role?                    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId                        Int?                     @default(1)
+  password                      String?
+  ResetToken                    ResetToken[]
+  orders                        Orden[]
+  Mensaje                       Mensaje[]
+  serviciosAsignados            ProcesoDesarrolloOrden[]
+  serviciosProductivosAsignados ProcesoProductivoOrden[]
+  available                     Boolean?                 @default(true)
+  userPersonalDataId            String?                  @unique
+  userPersonalData              UserPersonalData?        @relation(fields: [userPersonalDataId], references: [id], onDelete: Cascade)
+  servicios                     ServiciosPorUsuario[]
 
   @@index([roleId])
 }
@@ -160,10 +160,21 @@ model Orden {
   idDetallesPrenda String?
   procesos         ProcesoDesarrolloOrden[]
   mensajes         Mensaje[]
+  ordenProductiva  OrdenProductiva?
 
   @@index([idPrenda])
   @@index([userId])
   @@index([idEstado])
+}
+
+model OrdenProductiva {
+  id              String                   @id @default(cuid())
+  cantidad        Int                      @default(0)
+  precioEstimado  Float                    @default(0)
+  idOrden         String                   @unique
+  orden           Orden                    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  procesos        ProcesoProductivoOrden[]
+  fechaDeCreacion DateTime                 @default(now())
 }
 
 model Mensaje {
@@ -201,42 +212,64 @@ model ProcesoDesarrollo {
   id                     Int                      @id @default(autoincrement())
   nombre                 String
   icono                  String
+  esDeDesarrollo         Boolean                  @default(true)
+  esDeProduccion         Boolean                  @default(false)
+  esExterno              Boolean                  @default(false)
   procesoDesarrolloOrden ProcesoDesarrolloOrden[]
+  procesoProductivoOrden ProcesoProductivoOrden[]
   servicio               Servicio[]
   servicioId             String?
 }
 
 model EstadoProcesoDesarrollo {
-  id                                         Int                                          @id @default(autoincrement())
-  descripcion                                String                                       @unique
-  color                                      String
-  ProcesoDesarrolloOrden                     ProcesoDesarrolloOrden[]
-  RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
+  id                     Int                      @id @default(autoincrement())
+  descripcion            String                   @unique
+  color                  String
+  ProcesoDesarrolloOrden ProcesoDesarrolloOrden[]
+  ProcesoProductivoOrden ProcesoProductivoOrden[]
 }
 
 model ProcesoDesarrolloOrden {
-  id                                         String                                       @id @default(cuid())
-  orden                                      Orden                                        @relation(fields: [idOrden], references: [id], onDelete: Cascade)
-  idOrden                                    String
-  proceso                                    ProcesoDesarrollo                            @relation(fields: [idProceso], references: [id], onDelete: Cascade)
-  idProceso                                  Int
-  estado                                     EstadoProcesoDesarrollo                      @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
-  idEstadoProceso                            Int
-  FichaTecnica                               FichaTecnica?                                @relation()
-  idFichaTecnica                             String?
-  usuarioDeServicio                          User[]
-  lastUpdated                                DateTime                                     @default(now())
-  precioActualizado                          Float                                        @default(0)
-  RegistroCambioEstadoProcesoDesarrolloOrden RegistroCambioEstadoProcesoDesarrolloOrden[]
-  ReportesDeDisenio                          ReporteDeDisenio?
-  ReportesDeDigitalizacion                   ReporteDeDigitalizacion?
-  ReportesDeImpresion                        ReporteDeImpresion?
-  ReportesArchivo                            ReporteArchivo[]
-  ReporteDeCorte                             ReporteDeCorteMuestra[]
+  id                       String                   @id @default(cuid())
+  orden                    Orden                    @relation(fields: [idOrden], references: [id], onDelete: Cascade)
+  idOrden                  String
+  proceso                  ProcesoDesarrollo        @relation(fields: [idProceso], references: [id], onDelete: Cascade)
+  idProceso                Int
+  estado                   EstadoProcesoDesarrollo  @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
+  idEstadoProceso          Int
+  FichaTecnica             FichaTecnica?            @relation()
+  idFichaTecnica           String?
+  usuarioDeServicio        User[]
+  lastUpdated              DateTime                 @default(now())
+  precioActualizado        Float                    @default(0)
+  ReportesDeDisenio        ReporteDeDisenio?
+  ReportesDeDigitalizacion ReporteDeDigitalizacion?
+  ReportesDeImpresion      ReporteDeImpresion?
+  ReportesArchivo          ReporteArchivo[]
+  ReporteDeCorte           ReporteDeCorteMuestra[]
 
   @@index([idOrden])
   @@index([idProceso])
   @@index([idEstadoProceso])
+}
+
+model ProcesoProductivoOrden {
+  id                String                  @id @default(cuid())
+  precioActualizado Float                   @default(0)
+  idProceso         Int
+  idEstadoProceso   Int
+  idOrdenProductiva String
+  lastUpdated       DateTime                @default(now())
+  usuarioDeServicio User[]
+  proceso           ProcesoDesarrollo       @relation(fields: [idProceso], references: [id], onDelete: Cascade)
+  ReporteArchivo    ReporteArchivo[]
+  estado            EstadoProcesoDesarrollo @relation(fields: [idEstadoProceso], references: [id], onDelete: Cascade)
+  orden             OrdenProductiva         @relation(fields: [idOrdenProductiva], references: [id], onDelete: Cascade)
+  FichaTecnica      FichaTecnica[]
+
+  @@index([idProceso])
+  @@index([idEstadoProceso])
+  @@index([idOrdenProductiva])
 }
 
 model Servicio {
@@ -247,6 +280,8 @@ model Servicio {
   factorMultiplicador Float                 @default(0)
   esDeDesarrollo      Boolean               @default(true)
   esDeProduccion      Boolean               @default(false)
+  cantidadMinima      Int?
+  cantidadMaxima      Int?
   ordenes             Orden[]
   procesos            ProcesoDesarrollo[]
   usuarios            ServiciosPorUsuario[]
@@ -283,16 +318,19 @@ model AtributoPrenda {
 }
 
 model FichaTecnica {
-  id          String                 @id @default(cuid())
-  proceso     ProcesoDesarrolloOrden @relation(fields: [procesoId], references: [id], onDelete: Cascade)
-  procesoId   String                 @unique
-  contenido   ContenidoFichaTencica? @relation()
-  contenidoId String?                @unique
-  archivos    ArchivoFichaTecnica[]
-  updatedAt   DateTime               @default(now())
-  estimatedAt DateTime               @default(now())
+  id                  String                  @id @default(cuid())
+  proceso             ProcesoDesarrolloOrden? @relation(fields: [procesoId], references: [id], onDelete: Cascade)
+  procesoId           String?                 @unique
+  procesoProductivoId String?
+  procesoProductivo   ProcesoProductivoOrden? @relation(fields: [procesoProductivoId], references: [id], onDelete: Cascade)
+  contenido           ContenidoFichaTencica?  @relation()
+  contenidoId         String?                 @unique
+  archivos            ArchivoFichaTecnica[]
+  updatedAt           DateTime                @default(now())
+  estimatedAt         DateTime                @default(now())
 
   @@index([procesoId])
+  @@index([procesoProductivoId])
 }
 
 model ContenidoFichaTencica {
@@ -314,22 +352,6 @@ model ArchivoFichaTecnica {
   @@index([fichaTecnicaId])
 }
 
-model RegistroCambioEstadoProcesoDesarrolloOrden {
-  id                             String                  @id @default(cuid())
-  idProcesoDesarrolloOrden       String
-  idEstadoProcesoDesarrolloOrden Int
-  idUsuario                      String
-  procesoDesarrolloOrden         ProcesoDesarrolloOrden  @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
-  usuarioDeCreacion              User                    @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  estadoProcesoDesarrollo        EstadoProcesoDesarrollo @relation(fields: [idEstadoProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
-  fechaDeCambio                  DateTime                @default(now())
-  fechaDeActualizacion           DateTime                @default(now())
-
-  @@index([idProcesoDesarrolloOrden])
-  @@index([idUsuario])
-  @@index([idEstadoProcesoDesarrolloOrden])
-}
-
 model ReporteDeDisenio {
   id                       String                 @id @default(cuid())
   idProcesoDesarrolloOrden String
@@ -341,14 +363,18 @@ model ReporteDeDisenio {
 }
 
 model ReporteArchivo {
-  id                       String                 @id @default(cuid())
-  idProcesoDesarrolloOrden String
-  procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
+  id                       String                  @id @default(cuid())
+  idProcesoDesarrolloOrden String?
+  idProcesoProductivoOrden String?
+  esDeProduccion           Boolean                 @default(false)
+  procesoProductivoOrden   ProcesoProductivoOrden? @relation(fields: [idProcesoProductivoOrden], references: [id], onDelete: Cascade)
+  procesoDesarrolloOrden   ProcesoDesarrolloOrden? @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
   name                     String
   urlID                    String
   type                     String
 
   @@index([idProcesoDesarrolloOrden])
+  @@index([idProcesoProductivoOrden])
 }
 
 model ReporteDeDigitalizacion {
@@ -367,7 +393,7 @@ model ReporteDeDigitalizacion {
 model ReporteDeImpresion {
   id                       String                 @id @default(cuid())
   idProcesoDesarrolloOrden String
-  cantidadDeMetros         Int
+  cantidadDeMetros         Float
   procesoDesarrolloOrden   ProcesoDesarrolloOrden @relation(fields: [idProcesoDesarrolloOrden], references: [id], onDelete: Cascade)
 
   @@unique([idProcesoDesarrolloOrden])

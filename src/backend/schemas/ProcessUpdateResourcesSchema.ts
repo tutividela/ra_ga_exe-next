@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const ProcessUpdateResourcesSchema = z.object({
   id: z.string(),
+  esDeProduccion: z.boolean().optional().default(false),
   recursos: z.array(
     z.object({
       key: z.string(),

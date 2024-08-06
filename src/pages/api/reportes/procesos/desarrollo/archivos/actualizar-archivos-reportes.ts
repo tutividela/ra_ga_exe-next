@@ -7,11 +7,13 @@ export default async function post(req: NextApiRequest, res: NextApiResponse) {
   try {
     const idProcesoDesarrolloOrden = req.query
       .idProcesoDesarrolloOrden as string;
+    const esDeProduccion = (req.query.esDeProduccion as string) === "true";
     const { fichaFiles } = FichaTecnicaFileUploadSchema.parse(req.body);
 
     const archivos = fichaFiles.files.map((file) => ({
       idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
       name: file.name,
+      esDeProduccion: esDeProduccion,
       urlID: file.urlID,
       type: file.type,
     }));

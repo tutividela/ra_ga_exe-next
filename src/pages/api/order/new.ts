@@ -90,7 +90,7 @@ const handleOrderCreation = async (
             fromTitle: 'Soporte HS-Taller'
         }) */
 
-    await updateExpiredOrders();
+    //await updateExpiredOrders();
 
     const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(
       data.tipoPrenda.id,
@@ -102,8 +102,9 @@ const handleOrderCreation = async (
     );
 
     const atributosDeProducto = await getAtributosPrenda(data);
-    const { id: idEstadoAguardandoConfirmacion } =
-      await prisma.estadoOrden.findFirst({ where: { id: 1 } });
+    const { id: idEstadoEnDesarrollo } = await prisma.estadoOrden.findFirst({
+      where: { id: 9 },
+    });
     const usuarioActual = await checkIfUserExists({ email: data.user.email });
     const cantidad = data.cantidad === "desarrollo" ? 0 : 1;
 
@@ -122,7 +123,7 @@ const handleOrderCreation = async (
         cantidad: cantidad,
         expiresAt: fromToday(60 * 60 * 24 * 15),
         estado: {
-          connect: { id: idEstadoAguardandoConfirmacion },
+          connect: { id: idEstadoEnDesarrollo },
         },
         prenda: {
           connect: { id: prendaPrecio.id },

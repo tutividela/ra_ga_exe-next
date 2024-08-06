@@ -1,5 +1,6 @@
 import { ExtendedOrdenData } from "@utils/Examples/ExtendedOrdenData";
 import { errorHandle } from "./cotizador";
+import { OrdenProductivaSchemaDTOType } from "@backend/schemas/OrdenProductivaDTOSchema";
 
 // Fetch orders based on email
 export const fetchOrderFromEmail = (
@@ -28,3 +29,40 @@ export const fetchAllOrders = (): Promise<ExtendedOrdenData[]> =>
     .catch((error) => {
       throw error;
     });
+
+export function generarOrdenProductiva(
+  ordenProductivaDTO: OrdenProductivaSchemaDTOType
+) {
+  return fetch("/api/order/generar-orden-productiva", {
+    method: "POST",
+    body: JSON.stringify(ordenProductivaDTO),
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  })
+    .then((response) => (response.ok ? response.json() : errorHandle(response)))
+    .catch((error) => {
+      throw error;
+    });
+}
+
+export async function calcularOrdenProductiva(
+  cantidad: number,
+  precioPrendaBase: number
+): Promise<{ precio: number }> {
+  return fetch(
+    `/api/order/calcular-precio-aproximado-produccion?cantidad=${cantidad}&precioPrendaBase=${precioPrendaBase}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+    }
+  )
+    .then((response) => (response.ok ? response.json() : errorHandle(response)))
+    .catch((error) => {
+      throw error;
+    });
+}

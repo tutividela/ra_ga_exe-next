@@ -23,7 +23,11 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
   const pieChartRef = useRef(null);
 
   useEffect(() => {
-    const ordenDesarrolloFinalizada = orderData?.procesos
+    const procesosAEvaluar =
+      orderData.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    const ordenDesarrolloFinalizada = procesosAEvaluar
       ?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
     setShowReporteTiempo(ordenDesarrolloFinalizada);
@@ -45,7 +49,10 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
 
   function generarDatoReporteDeTiempo() {
     const procesosTerminados = obtenerProcesosTerminados();
-    const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+    const fechaDeCreacionOrden =
+      orderData?.idEstado === 3
+        ? new Date(orderData?.ordenProductiva.fechaDeCreacion)
+        : new Date(orderData?.createdAt);
     const datosReporteDeTiempo = calcularDuracionesPorProcesoDesarrollo(
       procesosTerminados,
       fechaDeCreacionOrden
@@ -59,8 +66,12 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
   }
 
   function obtenerProcesosTerminados() {
+    const procesosAEvaluar =
+      orderData.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
     return (
-      orderData?.procesos
+      procesosAEvaluar
         .filter((procesoTerminado) => procesoTerminado.idEstado === 6)
         .sort(
           (procesoAnterior, procesoPosterior) =>
@@ -74,7 +85,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
     fechaDeCreacionOrden: Date
   ): any[] {
     return procesosTerminados.map((procesoTerminado, index) => {
-      if (procesoTerminado.idProceso === 1) {
+      if (index === 0) {
         const fechaUltimaActualizacion = new Date(
           procesoTerminado?.lastUpdated
         );

@@ -10,10 +10,14 @@ type Props = {
 };
 
 const OrderProcessContent = ({ orderData, selectedProcess, rol }: Props) => {
-  const currProcess = useMemo(
-    () => orderData?.procesos.find((el) => el.id === selectedProcess),
-    [selectedProcess, orderData?.procesos]
-  );
+  const currProcess = useMemo(() => {
+    const procesosABuscar =
+      orderData.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+
+    return procesosABuscar.find((el) => el.id === selectedProcess);
+  }, [selectedProcess, orderData]);
 
   return (
     <>

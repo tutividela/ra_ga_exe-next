@@ -44,13 +44,12 @@ type Props = {
   selected?: boolean;
   onSelect?: (processID: string) => void;
   habilitarCambioEstado: boolean;
-  /* servicios: (Servicio & {
-    procesos: ProcesoDesarrollo[];
-  })[]; */
   prenda: PrecioPrenda & {
     complejidad: ComplejidadConfeccion;
     tipo: TipoPrenda;
   };
+  esProductiva: boolean;
+  cantidad?: number;
 };
 
 export const ProcessStateTextColors = (estado: string) => {
@@ -83,6 +82,8 @@ const SelectableOrderProcessItem = ({
   onSelect,
   habilitarCambioEstado,
   prenda,
+  esProductiva,
+  cantidad,
 }: Props) => {
   const { estado, proceso: nombreProceso, lastUpdated, icon, id } = proceso;
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -122,16 +123,20 @@ const SelectableOrderProcessItem = ({
       idProceso: proceso.idProceso,
       idProcesoDesarrollo: proceso.id,
       precioPrendaBase: prenda.precioBase,
+      cantidad: cantidad,
+      esDeProduccion: esProductiva,
     });
   }
 
   if (id === "general")
     return (
       <>
-        <OrderGeneralChangeDialog
-          open={generalDialogOpen}
-          onClose={handleGeneralDialogClose}
-        />
+        {!esProductiva && (
+          <OrderGeneralChangeDialog
+            open={generalDialogOpen}
+            onClose={handleGeneralDialogClose}
+          />
+        )}
         <div
           className={`py-2 px-4 flex flex-row justify-between items-center space-x-4 text-2 m-2 border-2 transition-all ${backgroundColor}`}
           onClick={handleSelectProcess}
@@ -149,7 +154,7 @@ const SelectableOrderProcessItem = ({
                 <div className="text-gray-400 text-xs">
                   Precio Total:{" "}
                   <span>
-                    {proceso.precioActualizado}
+                    {proceso.precioActualizado.toFixed(2)}
                     {" $"}
                   </span>
                 </div>
@@ -160,7 +165,11 @@ const SelectableOrderProcessItem = ({
           {role === adminRole && (
             <div className="flex flex-row">
               <div>
-                <IconButton type="button" onClick={handleGeneralDialogOpen}>
+                <IconButton
+                  type="button"
+                  onClick={handleGeneralDialogOpen}
+                  disabled={esProductiva}
+                >
                   <EditIcon />
                 </IconButton>
               </div>
@@ -173,12 +182,14 @@ const SelectableOrderProcessItem = ({
     return (
       <>
         <OrderProcessItemChangeDialog
+          esDeProduccion={esProductiva}
           process={proceso}
           open={statusDialogOpen}
           onClose={handleStatusDialogClose}
           onHandleTerminarProceso={handleTerminarProceso}
         />
         <OrderProcessItemResourcesDialog
+          esDeProduccion={esProductiva}
           process={proceso}
           open={resourceDialogOpen}
           onClose={handleResourceDialogClose}
@@ -210,7 +221,7 @@ const SelectableOrderProcessItem = ({
                   <div className="text-gray-400 text-xs">
                     Precio Actualizado:{" "}
                     <span>
-                      {proceso.precioActualizado}
+                      {proceso.precioActualizado.toFixed(2)}
                       {" $"}
                     </span>
                   </div>
@@ -257,6 +268,14 @@ const SelectableOrderProcessItem = ({
           <div className="font-bold text-lg">{nombreProceso}</div>
           <div className="text-gray-400 text-xs">
             Estado: <span className={`${color}`}>{estado}</span>
+          </div>
+          <div className="text-gray-400 text-xs">
+            Actualizado el:{" "}
+            <span>{new Date(lastUpdated).toLocaleDateString("es-AR")}</span>
+          </div>
+          <div className="text-gray-400 text-xs">
+            Precio actualizado:{" "}
+            <span>{proceso.precioActualizado.toFixed(2)} $</span>
           </div>
         </li>
       </div>

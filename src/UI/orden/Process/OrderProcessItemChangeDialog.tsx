@@ -39,6 +39,7 @@ type Process = {
 
 type Props = {
   process: Process;
+  esDeProduccion: boolean;
   open: boolean;
   onClose: () => void;
   onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<void>;
@@ -82,9 +83,10 @@ const OrderProcessItemChangeDialog = (props: Props) => {
     await mutateAsync({
       estado: data.estado,
       icon: data.icon,
-      estimatedAt: data.ficha.estimatedAt.toLocaleString(),
+      estimatedAt: new Date().toLocaleString(),
       id: data.id,
       proceso: data.proceso,
+      esDeProduccion: props.esDeProduccion,
     });
     if (data.estado === "Terminado") {
       await props.onHandleTerminarProceso(props.process.recursos[0]?.key || "");

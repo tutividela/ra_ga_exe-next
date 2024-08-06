@@ -64,6 +64,7 @@ export function ReporteDeDigitalizacion({
       idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
+      esDeProduccion: false,
     });
     queryClient.invalidateQueries(["order"]);
   }
@@ -74,6 +75,7 @@ export function ReporteDeDigitalizacion({
       idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
+      esDeProduccion: false,
     });
   }
 

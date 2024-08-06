@@ -5,6 +5,7 @@ export const ProcessUpdateSchema = z.object({
   estado: z.string(),
   icon: z.string(),
   proceso: z.string(),
+  esDeProduccion: z.boolean(),
   estimatedAt: z.string(),
 });
 

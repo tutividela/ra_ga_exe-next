@@ -33,15 +33,19 @@ const OrderProcessContentGeneral = ({
     setTimeout(() => setSlide(true), 200);
   }, [selectedProcess]);
 
-  function validarOrdenDesarrolloFinalizada(): boolean {
-    return orderData?.procesos
-      ?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
+  function validarFinalizacionDeOrden(): boolean {
+    const procesosAEvaluar =
+      orderData.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    return procesosAEvaluar
+      .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
   }
 
-  const ordenDesarrolloFinalizada = useMemo(
-    () => validarOrdenDesarrolloFinalizada(),
-    [orderData?.procesos]
+  const todosLosProcesosEstanFinalizados = useMemo(
+    () => validarFinalizacionDeOrden(),
+    [orderData?.procesos, orderData?.procesosProductivos]
   );
 
   const precioDesarrolloTotal = orderData.procesos
@@ -62,7 +66,7 @@ const OrderProcessContentGeneral = ({
                 )}
                 <Tab label="Mensajes" value={2} />
                 {[adminRole, ayudanteRole].includes(rol) &&
-                  ordenDesarrolloFinalizada && (
+                  todosLosProcesosEstanFinalizados && (
                     <Tab label="Tiempos por Proceso" value={3} />
                   )}
               </Tabs>
@@ -82,11 +86,11 @@ const OrderProcessContentGeneral = ({
                 selectedProcess={selectedProcess}
               />
             </div>
-            {
+            {todosLosProcesosEstanFinalizados && (
               <div hidden={value !== 3} className="w-full">
                 <ServiceReportesTiempoTab orderData={orderData} />
               </div>
-            }
+            )}
           </div>
         </div>
       </div>

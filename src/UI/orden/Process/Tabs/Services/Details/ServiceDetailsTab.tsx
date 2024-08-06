@@ -54,16 +54,20 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
   const { data } = useSession();
   const { role } = useGetRole(data?.user?.email);
 
-  const currProcess = useMemo(
-    () => orderData?.procesos.find((el) => el.id === selectedProcess),
-    [selectedProcess, orderData?.procesos]
-  );
+  const currProcess = useMemo(() => {
+    const procesosABuscar =
+      orderData?.idEstado === 3
+        ? orderData.procesosProductivos
+        : orderData.procesos;
+    return procesosABuscar.find((el) => el.id === selectedProcess);
+  }, [selectedProcess, orderData]);
+
   const ultimaActualizacion =
     new Date(currProcess?.lastUpdated).toLocaleDateString("es-AR") +
     " " +
     new Date(currProcess?.lastUpdated).toLocaleTimeString();
 
-  const recursos = currProcess.recursos.map((el) => el.text);
+  const recursos = currProcess?.recursos.map((el) => el.text);
 
   return (
     <div className="flex flex-col mt-4">

@@ -11,10 +11,5 @@ export const processItemChangeLayout: LayoutElement<ProcesoFicha> = {
       label: "Estado",
       options: { optionsName: "states" },
     },
-    /* {
-            type: 'DatePicker',
-            scope: 'ficha.estimatedAt',
-            label: 'Fecha Estimada',
-        } */
   ],
 };

@@ -78,7 +78,7 @@ const OrderGeneralChangeDialog = (props: Props) => {
     .map((el) => ({ key: el.id, text: el.complejidad.name }));
 
   const estadosOrden = orderStateData
-    .filter((estado) => ![1, 2, 6, 8].includes(estado.id))
+    .filter((estado) => ![1, 2, 3, 6, 8].includes(estado.id))
     .map((estado) => ({ key: estado.id, text: estado.nombre }));
 
   const handleSubmit = async (data: { prendaID: string; idEstado: number }) => {

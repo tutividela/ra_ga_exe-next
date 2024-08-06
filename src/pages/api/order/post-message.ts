@@ -26,10 +26,12 @@ const postMessage = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (body.section !== "general") {
-      await prisma.fichaTecnica.update({
-        include: { proceso: true },
+      await prisma.fichaTecnica.updateMany({
         where: {
-          procesoId: message.seccion,
+          OR: {
+            procesoId: message.seccion,
+            procesoProductivoId: message.seccion,
+          },
         },
         data: { updatedAt: new Date() },
       });
