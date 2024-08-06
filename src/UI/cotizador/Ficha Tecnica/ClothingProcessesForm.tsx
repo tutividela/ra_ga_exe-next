@@ -1,31 +1,84 @@
 import { Alert } from "@mui/material";
-import FormItem from '@UI/Forms/FormItem';
-import { clothingProcessesLayout } from './forms/clothingProcessesForm.layout';
+import FormItem from "@UI/Forms/FormItem";
+import {
+  clothingProcessesLayout,
+  procesosDeDesarrolloLayout,
+} from "./forms/clothingProcessesForm.layout";
+import { useFormContext } from "react-hook-form";
+import { OrderCreationData } from "@backend/schemas/OrderCreationSchema";
+import { useEffect } from "react";
 
 const ClothingProcessesForm = () => {
+  const { watch, setValue } = useFormContext<OrderCreationData>();
+  const cantidadAProducir = watch("cantidad");
+  const valorDeProcesoDesarrolloMateriales = watch(
+    "procesosDesarrolloSeleccionados.Materiales.selected"
+  );
+  const valorDeProcesoDesarrolloImpresion = watch(
+    "procesosDesarrolloSeleccionados.Impresion.selected"
+  );
+  const valorDeProcesoDesarrolloCorte = watch(
+    "procesosDesarrolloSeleccionados.Corte.selected"
+  );
+  const valorDeProcesoDesarrolloFichaTecnica = watch(
+    "procesosDesarrolloSeleccionados.Geometral.selected"
+  );
 
+  function corregirSwitchesPorProcesoFichaTecnica(): void {
+    if (valorDeProcesoDesarrolloImpresion) {
+      setValue("procesosDesarrolloSeleccionados.Impresion.selected", false);
+    }
+  }
+  function corregirSwitchesPorProcesoImpresion(): void {
+    if (valorDeProcesoDesarrolloMateriales) {
+      setValue("procesosDesarrolloSeleccionados.Materiales.selected", false);
+    }
+  }
+  function corregirSwitchesPorProcesoMateriales(): void {
+    if (valorDeProcesoDesarrolloCorte) {
+      setValue("procesosDesarrolloSeleccionados.Corte.selected", false);
+    }
+  }
 
+  useEffect(() => {
+    setValue("procesosDesarrolloSeleccionados.Diseño.selected", true);
+    setValue("procesosDesarrolloSeleccionados.Molderia.selected", true);
+    setValue("procesosDesarrolloSeleccionados.Digitalización.selected", true);
+  }, []);
+  useEffect(() => {
+    if (cantidadAProducir === "muestra") {
+      corregirSwitchesPorProcesoImpresion();
+    }
+  }, [valorDeProcesoDesarrolloImpresion]);
+  useEffect(() => {
+    corregirSwitchesPorProcesoMateriales();
+  }, [valorDeProcesoDesarrolloMateriales]);
+  useEffect(() => {
+    corregirSwitchesPorProcesoFichaTecnica();
+  }, [valorDeProcesoDesarrolloFichaTecnica]);
+  useEffect(() => {
+    setValue("procesosDesarrolloSeleccionados.Pre-confección.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Confección.selected", false);
+    setValue("procesosDesarrolloSeleccionados.Terminado.selected", false);
+  }, [valorDeProcesoDesarrolloCorte]);
 
-    return (
-        <div className="flex md:w-6/12 flex-col justify-center items-baseline mt-10 md:mt-0">
-            <Alert severity='info'>Seleccione los procesos que desea agregar al desarollo</Alert>
-            <div className="form-input-section">
-                <FormItem layout={clothingProcessesLayout} selectOptions={{
-                    cantidades: [
-                        { key: 'none', text: 'Sólo Desarrollo' },
-                        { key: 'Muestra', text: 'Muestrario ( 1 a 5 prendas )' },
-                        { key: 'Nano', text: 'Nano Producción ( 5 a 20 prendas )' },
-                        { key: 'Micro', text: 'Micro Producción ( 20 a 80 prendas )' },
-                        { key: 'Mini', text: 'Mini Producción ( 80 a 250 prendas )' },
-                        { key: 'Medio', text: 'Producción Media ( 250 a 1000 prendas )' },
-                        { key: 'Alto', text: 'Gran Producción ( 1000 o más prendas )' }
-                    ]
-                }} />
+  return (
+    <div className="flex md:w-6/12 flex-col justify-center items-baseline mt-10 md:mt-0">
+      <Alert severity="info">
+        Seleccione los procesos que desea agregar al desarollo
+      </Alert>
+      <div className="form-input-section">
+        <FormItem
+          layout={
+            cantidadAProducir === "desarrollo"
+              ? procesosDeDesarrolloLayout
+              : clothingProcessesLayout
+          }
+        />
+      </div>
+    </div>
+  );
+};
 
-            </div>
-
-        </div>
-    )
-}
-
-export default ClothingProcessesForm
+export default ClothingProcessesForm;

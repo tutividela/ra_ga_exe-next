@@ -1,102 +1,121 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
-import { ArchivoFichaTecnica, ContenidoFichaTencica, FichaTecnica } from '@prisma/client';
-import FormItem from '@UI/Forms/FormItem';
-import HookForm from '@UI/Forms/HookForm';
-import { ErrorHandlerContext } from '@utils/ErrorHandler/error';
-import LoadingIndicator from '@utils/LoadingIndicator/LoadingIndicator';
-import { fetchProcessStates, updateProcessState } from '@utils/queries/cotizador';
-import React, { useContext } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { processItemChangeLayout } from '../forms/processItemChange.layout';
-
-
-
+import {
+  ArchivoFichaTecnica,
+  ContenidoFichaTencica,
+  FichaTecnica,
+} from "@prisma/client";
+import HookForm from "@UI/Forms/HookForm";
+import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
+import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
+import {
+  fetchProcessStates,
+  updateProcessState,
+} from "@utils/queries/cotizador";
+import React, { useContext } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import DialogCambioEstadoProceso from "./DialogCambioEstadoProceso";
+import { Dialog, Slide } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
 
 const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-        children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>,
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>
 ) {
-    return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 type Process = {
-    estado: string;
-    proceso: string;
-    icon: string;
-    id: string;
-    ficha: FichaTecnica & {
-        archivos: ArchivoFichaTecnica[];
-        contenido: ContenidoFichaTencica;
-    };
-}
+  estado: string;
+  proceso: string;
+  icon: string;
+  id: string;
+  ficha: FichaTecnica & {
+    archivos: ArchivoFichaTecnica[];
+    contenido: ContenidoFichaTencica;
+  };
+  recursos: { key: string; text: string }[];
+};
 
 type Props = {
-    process: Process
-    open: boolean,
-    onClose: () => void,
-}
+  process: Process;
+  esDeProduccion: boolean;
+  open: boolean;
+  onClose: () => void;
+  onHandleTerminarProceso: (emailRecursoNuevo?: string) => Promise<void>;
+};
 
 const OrderProcessItemChangeDialog = (props: Props) => {
+  const queryClient = useQueryClient();
+  const { addError } = useContext(ErrorHandlerContext);
 
-    const queryClient = useQueryClient()
-
-    const { addError } = useContext(ErrorHandlerContext)
-
-    const { data } = useQuery(['processStates'], fetchProcessStates, {
-        initialData: [],
-        onError: (err) => addError(JSON.stringify(err))
-    })
-
-    const { mutateAsync, isLoading: isUpdatingState } = useMutation(updateProcessState, {
-        onSuccess: () => { props.onClose(); queryClient.invalidateQueries(['order']) },
-        onError: (err) => addError(JSON.stringify(err))
-    })
-
-    const states = data.map(el => ({ key: el.descripcion, text: el.descripcion }))
-
-    const handleSubmit = async (data: Process) => {
-        await mutateAsync({
-            estado: data.estado,
-            icon: data.icon,
-            estimatedAt: data.ficha.estimatedAt.toLocaleString(),
-            id: data.id,
-            proceso: data.proceso
-        })
+  const { data: estadosProcesoDesarrollo } = useQuery(
+    ["processStates"],
+    fetchProcessStates,
+    {
+      initialData: [],
+      onError: (err) => addError(JSON.stringify(err)),
     }
+  );
+  const { mutateAsync, isLoading: isUpdatingState } = useMutation(
+    updateProcessState,
+    {
+      onSuccess: () => {
+        props.onClose();
+      },
+      onError: (err) => addError(JSON.stringify(err)),
+    }
+  );
+  const states = estadosProcesoDesarrollo
+    .filter(
+      (estadoProcesoDesarrollo) => ![7, 8].includes(estadoProcesoDesarrollo.id)
+    )
+    .map((estadoProcesoDesarrollo) => ({
+      key: estadoProcesoDesarrollo.descripcion,
+      text: estadoProcesoDesarrollo.descripcion,
+    }));
+  function sePuedeHabilitarCambioEstado(
+    estadoProcesoDesarrolloActual: string
+  ): boolean {
+    return props.process.estado === estadoProcesoDesarrolloActual;
+  }
+  const handleSubmit = async (data: Process) => {
+    await mutateAsync({
+      estado: data.estado,
+      icon: data.icon,
+      estimatedAt: new Date().toLocaleString(),
+      id: data.id,
+      proceso: data.proceso,
+      esDeProduccion: props.esDeProduccion,
+    });
+    if (data.estado === "Terminado") {
+      await props.onHandleTerminarProceso(props.process.recursos[0]?.key || "");
+    }
+    queryClient.invalidateQueries(["order"]);
+  };
+  const handleClose = () => props.onClose();
 
-    const handleClose = () => props.onClose()
+  return (
+    <div>
+      <Dialog
+        open={props.open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+      >
+        <HookForm defaultValues={props.process} onSubmit={handleSubmit}>
+          <LoadingIndicator show={isUpdatingState}>
+            <DialogCambioEstadoProceso
+              onClose={handleClose}
+              open={props.open}
+              states={states}
+              habilitarCambioEstado={sePuedeHabilitarCambioEstado}
+            />
+          </LoadingIndicator>
+        </HookForm>
+      </Dialog>
+    </div>
+  );
+};
 
-    return <div>
-        <Dialog
-            open={props.open}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleClose}
-        >
-            <HookForm defaultValues={props.process} onSubmit={handleSubmit} >
-                <LoadingIndicator show={isUpdatingState}>
-                    <div className="p-4" >
-                        <DialogTitle>{"Cambiar el estado para el proceso?"}</DialogTitle>
-                        <div className='my-4 mx-4'>
-                            <FormItem layout={processItemChangeLayout} selectOptions={{ states }} />
-                        </div>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-slide-description">
-                                Confirmar que desea cambiar el estado del proceso
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions >
-                            <Button onClick={handleClose}>Cancelar</Button>
-                            <Button type="submit">Confirmar</Button>
-                        </DialogActions>
-                    </div>
-                </LoadingIndicator>
-            </HookForm>
-        </Dialog>
-    </div >
-}
-
-export default OrderProcessItemChangeDialog
+export default OrderProcessItemChangeDialog;
