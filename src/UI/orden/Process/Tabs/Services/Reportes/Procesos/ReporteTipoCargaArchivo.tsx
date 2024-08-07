@@ -32,11 +32,14 @@ export default function ReporteDeArchivo({
     data: reportesDeArchivos,
     isFetching: seEstaBuscandoLosReportesDeArchivo,
     isRefetching: seEstaRecargandoLosReportesDeArchivo,
-  } = useQuery(["reportesArchivo"], () =>
-    obtenerReportesDeArchivosPorIdProcesoDesarrollo(
-      idProcesoDesarrollo,
-      laOrdenEstaEnProduccion
-    )
+  } = useQuery(
+    ["reportesArchivo", idProceso],
+    () =>
+      obtenerReportesDeArchivosPorIdProcesoDesarrollo(
+        idProcesoDesarrollo,
+        laOrdenEstaEnProduccion
+      ),
+    { refetchOnWindowFocus: false }
   );
 
   const imagenes = reportesDeArchivos?.filter((reporteDeArchivo) =>
