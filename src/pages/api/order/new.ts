@@ -19,7 +19,7 @@ const handleOrderCreation = async (
 ) => {
   try {
     const data = OrderCreationDataSchema.parse(req.body);
-    console.log("Data: ", data);
+    const cantidad = data.cantidad === "desarrollo" ? 0 : 1;
     const idsPlanchadoEntregadoAprobadoPedidos = [
       {
         idProceso: 4,
@@ -27,7 +27,7 @@ const handleOrderCreation = async (
       },
       {
         idProceso: 13,
-        idEstadoProceso: 1,
+        idEstadoProceso: data.cantidad === "desarrollo" ? 3 : 1,
       },
       {
         idProceso: 14,
@@ -109,7 +109,6 @@ const handleOrderCreation = async (
       where: { id: 9 },
     });
     const usuarioActual = await checkIfUserExists({ email: data.user.email });
-    const cantidad = data.cantidad === "desarrollo" ? 0 : 1;
 
     const ordenCreada = await prisma.orden.create({
       include: {

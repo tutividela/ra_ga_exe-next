@@ -101,8 +101,7 @@ const SelectableOrderProcessItem = ({
 
   const color = ProcessStateTextColors(estado);
 
-  const selectable =
-    estado !== "No Pedido" || ["Modlería", "Geometral"].includes(nombreProceso);
+  const selectable = estado !== "No Pedido";
 
   const backgroundColor = selected
     ? "bg-blue-100 border-blue-100"

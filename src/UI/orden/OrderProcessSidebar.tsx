@@ -104,7 +104,7 @@ const OrderProcessSidebar = ({
       </div>
       <div className="m-2 font-bold text-lg">
         Procesos de{" "}
-        {orderData?.estado.id === 3 ? "Produccion" : "Diseño/Desarrollo"}
+        {orderData?.estado.id === 3 ? "Producción" : "Diseño/Desarrollo"}
       </div>
       <div className="flex flex-col max-h-screen overflow-y-auto">
         {!laOrdenEstaEnProduccion &&
