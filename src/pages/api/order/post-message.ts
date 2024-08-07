@@ -10,8 +10,8 @@ const postMessage = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { sendEmail } = generateEmailer({
       password: process.env.MAILGUN_SMTP_PASS,
-      user: "postmaster@gasppo.lol",
-      from: "soporte@gasppo.lol",
+      user: "postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+      from: "brad@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
       fromTitle: "Soporte HS-Taller",
     });
 
@@ -47,13 +47,13 @@ const postMessage = async (req: NextApiRequest, res: NextApiResponse) => {
           sender: message.user.name,
         }),
       })
-        .then(() =>
+        .then(() => {
           res.json({
             mensaje: message.mensaje,
             from: message.user.email,
             createdAt: message.createdAt,
-          })
-        )
+          });
+        })
         .catch((err) => {
           throw err;
         });
@@ -68,6 +68,7 @@ const postMessage = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ error: error });
     throw error;
   }
+  return;
 };
 
 export default postMessage;

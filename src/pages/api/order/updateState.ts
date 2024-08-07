@@ -13,8 +13,8 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     // send email
     const { sendEmail } = generateEmailer({
       password: process.env.MAILGUN_SMTP_PASS,
-      user: "postmaster@gasppo.lol",
-      from: "soporte@gasppo.lol",
+      user: "postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+      from: "brad@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
       fromTitle: "Soporte HS-Taller",
     });
 

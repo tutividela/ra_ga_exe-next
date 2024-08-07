@@ -7,6 +7,8 @@ import {
 import { checkIfUserExists, fromToday } from "@backend/dbcalls/user";
 import { OrderCreationDataSchema } from "@backend/schemas/OrderCreationSchema";
 import { prisma } from "@server/db/client";
+import { generateEmailer } from "@utils/email/generateEmailer";
+import { newOrderNotificationHTML } from "@utils/email/newOrderNotification";
 import { generateOrderID } from "@utils/generateOrderID";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ZodError } from "zod";
@@ -17,6 +19,7 @@ const handleOrderCreation = async (
 ) => {
   try {
     const data = OrderCreationDataSchema.parse(req.body);
+    console.log("Data: ", data);
     const idsPlanchadoEntregadoAprobadoPedidos = [
       {
         idProceso: 4,
@@ -83,12 +86,12 @@ const handleOrderCreation = async (
 
     const idOrden = generateOrderID(data.user?.name, data.tipoPrenda?.name);
 
-    /* const { sendEmail } = generateEmailer({
-            password: process.env.MAILGUN_SMTP_PASS,
-            user: 'postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org',
-            from: 'soporte@gasppo.lol',
-            fromTitle: 'Soporte HS-Taller'
-        }) */
+    const { sendEmail } = generateEmailer({
+      password: process.env.MAILGUN_SMTP_PASS,
+      user: "postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+      from: "brad@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+      fromTitle: "Soporte HS-Taller",
+    });
 
     //await updateExpiredOrders();
 
@@ -184,11 +187,14 @@ const handleOrderCreation = async (
       })),
     });
 
-    /* await sendEmail({
-            html: newOrderNotificationHTML({ name: user.name, orderId: orden.id }),
-            to: user.email,
-            subject: 'Orden creada'
-        }) */
+    await sendEmail({
+      html: newOrderNotificationHTML({
+        name: data.user?.name,
+        orderId: ordenCreada.id,
+      }),
+      to: data.user?.email,
+      subject: "Orden creada",
+    });
 
     res
       .status(200)

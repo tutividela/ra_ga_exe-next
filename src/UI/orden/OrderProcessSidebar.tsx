@@ -109,6 +109,10 @@ const OrderProcessSidebar = ({
       <div className="flex flex-col max-h-screen overflow-y-auto">
         {!laOrdenEstaEnProduccion &&
           orderData.procesos
+            .sort(
+              (procesoAnterior, procesoPosterior) =>
+                procesoAnterior.idProceso - procesoPosterior.idProceso
+            )
             .filter((proceso) => {
               if (role === clienteRole) return proceso.estado !== "No Pedido";
               if (role === prestadorDeServiciosRole)
@@ -135,6 +139,10 @@ const OrderProcessSidebar = ({
             ))}
         {laOrdenEstaEnProduccion &&
           orderData.procesosProductivos
+            .sort(
+              (procesoAnterior, procesoPosterior) =>
+                procesoAnterior.idProceso - procesoPosterior.idProceso
+            )
             .filter((proceso) => {
               if (role === clienteRole) return proceso.estado !== "No Pedido";
               if (role === prestadorDeServiciosRole)
