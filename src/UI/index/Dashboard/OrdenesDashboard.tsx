@@ -50,7 +50,7 @@ const UsuariosDashboard = () => {
         field: "createdAt",
         headerName: "Fecha",
         flex: 1,
-        maxWidth: 100,
+        maxWidth: 95,
         align: "center",
         headerAlign: "center",
         valueFormatter: (params) => params.value.slice(0, 10),
@@ -70,7 +70,7 @@ const UsuariosDashboard = () => {
         align: "center",
         headerAlign: "center",
         flex: 1,
-        maxWidth: 1500,
+        maxWidth: 150,
         valueGetter: (params) => params.row.estado.nombre,
       },
       {

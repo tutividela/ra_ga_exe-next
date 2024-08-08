@@ -62,18 +62,6 @@ export function GenerarOrdenProductivaDialog({
       onClose();
     },
   });
-  /* const {
-    mutateAsync: calcularOrdenProductivaAsync,
-    isLoading: seEstaCalculandoOrdenProductiva,
-  } = useMutation(calcularOrdenProductiva, {
-    onSuccess: () => {},
-    onError: () => {
-      addError(
-        "A ocurrido un error con el calculo del precio de la orden productiva",
-        "warning"
-      );
-    },
-  }); */
 
   async function handleSubmit(data) {
     setSeEstaCalculandoPrecioEstimado(true);
