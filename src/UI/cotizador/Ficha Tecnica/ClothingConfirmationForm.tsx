@@ -35,12 +35,6 @@ const ClothingConfirmationForm = () => {
             ? cotizadorData.complejidad
             : "No selecciono complejidad"}
         </div>
-        <div>
-          Material:{" "}
-          {cotizadorData.atributosPrenda?.material?.observaciones
-            ? cotizadorData.atributosPrenda.material.observaciones
-            : "No anotó el material"}
-        </div>
       </div>
 
       <div className="border-gray-300 border-2 w-full md:w-2/4 mt-3"></div>

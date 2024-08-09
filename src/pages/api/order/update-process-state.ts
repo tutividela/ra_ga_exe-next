@@ -113,21 +113,27 @@ const updateProcessState = async (
         },
       });
       res.status(200).json(proceso);
+
+      const { sendEmail } = generateEmailer({
+        password: process.env.MAILGUN_SMTP_PASS,
+        user: "postmaster@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+        from: "brad@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
+        fromTitle: "Soporte HS-Taller",
+      });
+
+      sendEmail({
+        to: proceso.orden.user.email,
+        subject: "Modificación pedido orden - HS-Taller",
+        html: updateProcessStateHTML({
+          name: proceso.orden.user.name,
+          newProcessState: estado,
+          orderId: proceso.orden.id,
+          processName: proceso.proceso.nombre,
+        }),
+      });
+
       return;
     }
-
-    /* const { sendEmail } = generateEmailer({
-            password: process.env.MAILGUN_SMTP_PASS,
-            user: 'postmaster@gasppo.lol',
-            from: 'soporte@gasppo.lol',
-            fromTitle: 'Soporte HS-Taller'
-        });
-
-        sendEmail({
-            to: proceso.orden.user.email,
-            subject: 'Modificación pedido orden - HS-Taller',
-            html: updateProcessStateHTML({ name: proceso.orden.user.name, newProcessState: estado, orderId: proceso.orden.id, processName: proceso.proceso.nombre })
-        })*/
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error });

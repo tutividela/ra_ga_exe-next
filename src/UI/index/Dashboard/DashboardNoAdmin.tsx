@@ -53,8 +53,17 @@ const DashboardNoAdmin = ({ roleName }: Props) => {
         valueFormatter: (params) => params.value.slice(0, 10),
       },
       {
+        field: "estado",
+        headerName: "Estado",
+        align: "center",
+        headerAlign: "center",
+        flex: 1,
+        maxWidth: 120,
+        valueGetter: (params) => params.row.estado.nombre,
+      },
+      {
         field: "procesos",
-        headerName: "Diseño",
+        headerName: "Diseño/Desarrollo",
         flex: 1,
         disableColumnMenu: true,
         filterable: false,
@@ -90,7 +99,7 @@ const DashboardNoAdmin = ({ roleName }: Props) => {
       {
         field: "link",
         headerName: "Ver",
-        maxWidth: 75,
+        maxWidth: 50,
         disableColumnMenu: true,
         filterable: false,
         sortable: false,

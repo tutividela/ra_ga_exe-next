@@ -78,8 +78,30 @@ const OrderGeneralChangeDialog = (props: Props) => {
     .map((el) => ({ key: el.id, text: el.complejidad.name }));
 
   const estadosOrden = orderStateData
-    .filter((estado) => ![1, 2, 3, 6, 8].includes(estado.id))
+    .filter((estado) => ![3].includes(estado.id))
     .map((estado) => ({ key: estado.id, text: estado.nombre }));
+
+  function armarEstadosValidosAMostrar() {
+    switch (orderData?.idEstado) {
+      case 1:
+        return estadosOrden.filter((estado) => ![2].includes(estado.key));
+      case 2:
+        return estadosOrden.filter((estado) => ![9].includes(estado.key));
+      case 3:
+        return estadosOrden.filter((estado) => ![3].includes(estado.key));
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+      case 8:
+      case 9:
+        return estadosOrden.filter(
+          (estado) => ![1, 2, 4, 5, 6, 7, 8, 9].includes(estado.key)
+        );
+      default:
+        return estadosOrden;
+    }
+  }
 
   const handleSubmit = async (data: { prendaID: string; idEstado: number }) => {
     await mutateAsync({
