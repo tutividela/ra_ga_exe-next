@@ -93,7 +93,7 @@ const handleOrderCreation = async (
       fromTitle: "Soporte HS-Taller",
     });
 
-    //await updateExpiredOrders();
+    await updateExpiredOrders();
 
     const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(
       data.tipoPrenda.id,
