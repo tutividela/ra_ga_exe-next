@@ -26,6 +26,9 @@ export type ProcesoFicha = {
   idOrden: string;
   estado: string;
   proceso: string;
+  esDeDesarollo: boolean;
+  esDeProduccion: boolean;
+  esExterno: boolean;
   icon: string;
   id: string;
   lastUpdated: Date;
@@ -100,6 +103,9 @@ const SelectableOrderProcessItem = ({
   const handleResourceDialogOpen = () => setResourceDialogOpen(true);
 
   const color = ProcessStateTextColors(estado);
+  const elProcesoTieneUnCosto = [1, 2, 3, 5, 8, 9, 10, 11, 12].includes(
+    proceso.idProceso
+  );
 
   const selectable = estado !== "No Pedido";
 
@@ -216,30 +222,30 @@ const SelectableOrderProcessItem = ({
                     </span>
                   </div>
                 ) : null}
-                {estado.toLowerCase() === "terminado" && (
-                  <div className="text-gray-400 text-xs">
-                    Precio Actualizado:{" "}
-                    <span>
-                      {proceso.precioActualizado.toFixed(2)}
-                      {" $"}
-                    </span>
-                  </div>
-                )}
+                {estado.toLowerCase() === "terminado" &&
+                  elProcesoTieneUnCosto && (
+                    <div className="text-gray-400 text-xs">
+                      Precio Actualizado:{" "}
+                      <span>{proceso.precioActualizado.toFixed(2)} $</span>
+                    </div>
+                  )}
               </li>
             </div>
           </div>
           <div className="flex flex-row">
-            {role === adminRole && (
-              <div>
-                <IconButton
-                  type="button"
-                  onClick={handleResourceDialogOpen}
-                  disabled={!habilitarCambioEstado}
-                >
-                  <PersonAddIcon />
-                </IconButton>
-              </div>
-            )}
+            {role === adminRole &&
+              proceso.esExterno &&
+              proceso.estado !== "No Pedido" && (
+                <div>
+                  <IconButton
+                    type="button"
+                    onClick={handleResourceDialogOpen}
+                    disabled={!habilitarCambioEstado}
+                  >
+                    <PersonAddIcon />
+                  </IconButton>
+                </div>
+              )}
             <div>
               <IconButton
                 type="button"
@@ -273,8 +279,12 @@ const SelectableOrderProcessItem = ({
             <span>{new Date(lastUpdated).toLocaleDateString("es-AR")}</span>
           </div>
           <div className="text-gray-400 text-xs">
-            Precio actualizado:{" "}
-            <span>{proceso.precioActualizado.toFixed(2)} $</span>
+            {estado.toLowerCase() === "terminado" && elProcesoTieneUnCosto && (
+              <div className="text-gray-400 text-xs">
+                Precio Actualizado:{" "}
+                <span>{proceso.precioActualizado.toFixed(2)} $</span>
+              </div>
+            )}
           </div>
         </li>
       </div>

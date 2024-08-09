@@ -80,6 +80,9 @@ const OrderProcessSidebar = ({
             icon: "https://cdn-icons-png.flaticon.com/512/839/839599.png",
             lastUpdated: null,
             proceso: "General",
+            esDeDesarollo: false,
+            esDeProduccion: false,
+            esExterno: false,
             idProceso: -1,
             precioActualizado: precioTotal,
             ficha: {
@@ -124,7 +127,13 @@ const OrderProcessSidebar = ({
             .map((proceso, index) => (
               <SelectableOrderProcessItem
                 key={proceso.id}
-                proceso={{ ...proceso, idOrden: orderData?.id }}
+                proceso={{
+                  ...proceso,
+                  idOrden: orderData?.id,
+                  esDeDesarollo: proceso.esDeDesarrollo,
+                  esDeProduccion: proceso.esDeProduccion,
+                  esExterno: proceso.esExterno,
+                }}
                 role={role || "Cliente"}
                 onSelect={onSelect}
                 selected={selectedProcess === proceso.id}
@@ -154,7 +163,13 @@ const OrderProcessSidebar = ({
             .map((proceso, index) => (
               <SelectableOrderProcessItem
                 key={proceso.id}
-                proceso={{ ...proceso, idOrden: orderData.id }}
+                proceso={{
+                  ...proceso,
+                  idOrden: orderData.id,
+                  esDeDesarollo: proceso.esDeDesarrollo,
+                  esDeProduccion: proceso.esDeProduccion,
+                  esExterno: proceso.esExterno,
+                }}
                 role={role || "Cliente"}
                 onSelect={onSelect}
                 selected={selectedProcess === proceso.id}
