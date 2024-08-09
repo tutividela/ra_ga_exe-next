@@ -62,6 +62,10 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
     return procesosABuscar.find((el) => el.id === selectedProcess);
   }, [selectedProcess, orderData]);
 
+  const elProcesoTieneUnCosto = [1, 2, 3, 5, 8, 9, 10, 11, 12].includes(
+    currProcess.idProceso
+  );
+
   const ultimaActualizacion =
     new Date(currProcess?.lastUpdated).toLocaleDateString("es-AR") +
     " " +
@@ -80,7 +84,7 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
           title="Ultima modificacion"
           value={ultimaActualizacion}
         />
-        {currProcess?.idEstado === 6 && (
+        {currProcess?.idEstado === 6 && elProcesoTieneUnCosto && (
           <DetailsListElement
             title="Precio Actualizado"
             value={`${currProcess.precioActualizado.toFixed(2)} $`}

@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import { useContext, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
+import { generarMensajePorEstado } from "@utils/Order/generarMensajePorEstado";
 
 const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   const { addError } = useContext(ErrorHandlerContext);
@@ -53,6 +54,10 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
     onError: () => addError("Error al traer orden"),
     refetchOnWindowFocus: false,
   });
+
+  const laOrdenEstaFrenada = useMemo(() => {
+    return [1, 2, 6, 7, 8].includes(orderData?.idEstado) || false;
+  }, [orderData?.idEstado, orderData?.estado]);
 
   const laOrdenDeDesarrolloFueFinalizada = useMemo(
     () =>
@@ -92,6 +97,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
                     {laOrdenDeDesarrolloFueFinalizada &&
+                      !laOrdenEstaFrenada &&
                       [adminRole, clienteRole, ayudanteRole].includes(role) && (
                         <div className="ml-4 pl-4">
                           <Button
@@ -112,10 +118,16 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                         open={seGeneraOrenProductiva}
                       />
                     )}
+                    {laOrdenEstaFrenada && (
+                      <div className="flex flex-row justify-center text-2xl mb-20">
+                        {generarMensajePorEstado(orderData?.idEstado)}
+                      </div>
+                    )}
                     <div className="m-6 p-4 border-2 min-h-screen flex flex-row">
                       <div className="w-full md:w-1/3">
                         <OrderProcessSidebar
                           orderData={orderData}
+                          ordenFrenada={laOrdenEstaFrenada}
                           onSelect={handleSelectProcess}
                           role={role}
                           selectedProcess={selectedProcess}
@@ -124,6 +136,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       <div className="hidden md:w-2/3 m-6 p-4 md:flex flex-col items-center ">
                         <OrderProcessContent
                           orderData={orderData}
+                          ordenFrenada={laOrdenEstaFrenada}
                           selectedProcess={selectedProcess}
                           rol={role}
                         />

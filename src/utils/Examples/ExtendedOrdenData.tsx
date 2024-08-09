@@ -35,6 +35,9 @@ export type ExtendedOrdenData = Orden & {
     estado: string;
     idEstado: number;
     proceso: string;
+    esDeDesarrollo: boolean;
+    esDeProduccion: boolean;
+    esExterno: boolean;
     idProceso: number;
     icon: string;
     id: string;
@@ -55,6 +58,9 @@ export type ExtendedOrdenData = Orden & {
     estado: string;
     idEstado: number;
     proceso: string;
+    esDeDesarrollo: boolean;
+    esDeProduccion: boolean;
+    esExterno: boolean;
     idProceso: number;
     icon: string;
     id: string;

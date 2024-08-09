@@ -6,6 +6,7 @@ import { useMemo } from "react";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  ordenFrenada: boolean;
   selectedProcess: string;
   role: string;
   onSelect: (processID: string) => void;
@@ -13,6 +14,7 @@ type Props = {
 
 const OrderProcessSidebar = ({
   orderData,
+  ordenFrenada,
   role,
   selectedProcess,
   onSelect,
@@ -80,6 +82,9 @@ const OrderProcessSidebar = ({
             icon: "https://cdn-icons-png.flaticon.com/512/839/839599.png",
             lastUpdated: null,
             proceso: "General",
+            esDeDesarollo: false,
+            esDeProduccion: false,
+            esExterno: false,
             idProceso: -1,
             precioActualizado: precioTotal,
             ficha: {
@@ -102,65 +107,91 @@ const OrderProcessSidebar = ({
           esProductiva={laOrdenEstaEnProduccion}
         />
       </div>
-      <div className="m-2 font-bold text-lg">
-        Procesos de{" "}
-        {orderData?.estado.id === 3 ? "Produccion" : "Diseño/Desarrollo"}
-      </div>
-      <div className="flex flex-col max-h-screen overflow-y-auto">
-        {!laOrdenEstaEnProduccion &&
-          orderData.procesos
-            .filter((proceso) => {
-              if (role === clienteRole) return proceso.estado !== "No Pedido";
-              if (role === prestadorDeServiciosRole)
-                return proceso.recursos.some(
-                  (el) => el.key === data.user.email
-                );
-              return true;
-            })
-            .map((proceso, index) => (
-              <SelectableOrderProcessItem
-                key={proceso.id}
-                proceso={{ ...proceso, idOrden: orderData?.id }}
-                role={role || "Cliente"}
-                onSelect={onSelect}
-                selected={selectedProcess === proceso.id}
-                habilitarCambioEstado={
-                  index > 0
-                    ? validarHabilitacionCambioEstado(proceso.idProceso)
-                    : true || false
-                }
-                prenda={orderData?.prenda}
-                esProductiva={laOrdenEstaEnProduccion}
-              />
-            ))}
-        {laOrdenEstaEnProduccion &&
-          orderData.procesosProductivos
-            .filter((proceso) => {
-              if (role === clienteRole) return proceso.estado !== "No Pedido";
-              if (role === prestadorDeServiciosRole)
-                return proceso.recursos.some(
-                  (el) => el.key === data.user.email
-                );
-              return true;
-            })
-            .map((proceso, index) => (
-              <SelectableOrderProcessItem
-                key={proceso.id}
-                proceso={{ ...proceso, idOrden: orderData.id }}
-                role={role || "Cliente"}
-                onSelect={onSelect}
-                selected={selectedProcess === proceso.id}
-                habilitarCambioEstado={
-                  index > 0
-                    ? validarHabilitacionCambioEstado(proceso.idProceso)
-                    : true || false
-                }
-                prenda={orderData.prenda}
-                esProductiva={laOrdenEstaEnProduccion}
-                cantidad={orderData.ordenProductiva.cantidad}
-              />
-            ))}
-      </div>
+      {!ordenFrenada && (
+        <>
+          <div className="m-2 font-bold text-lg">
+            Procesos de{" "}
+            {orderData?.estado.id === 3 ? "Producción" : "Diseño/Desarrollo"}
+          </div>
+          <div className="flex flex-col max-h-screen overflow-y-auto">
+            {!laOrdenEstaEnProduccion &&
+              orderData.procesos
+                .sort(
+                  (procesoAnterior, procesoPosterior) =>
+                    procesoAnterior.idProceso - procesoPosterior.idProceso
+                )
+                .filter((proceso) => {
+                  if (role === clienteRole)
+                    return proceso.estado !== "No Pedido";
+                  if (role === prestadorDeServiciosRole)
+                    return proceso.recursos.some(
+                      (el) => el.key === data.user.email
+                    );
+                  return true;
+                })
+                .map((proceso, index) => (
+                  <SelectableOrderProcessItem
+                    key={proceso.id}
+                    proceso={{
+                      ...proceso,
+                      idOrden: orderData?.id,
+                      esDeDesarollo: proceso.esDeDesarrollo,
+                      esDeProduccion: proceso.esDeProduccion,
+                      esExterno: proceso.esExterno,
+                    }}
+                    role={role || "Cliente"}
+                    onSelect={onSelect}
+                    selected={selectedProcess === proceso.id}
+                    habilitarCambioEstado={
+                      index > 0
+                        ? validarHabilitacionCambioEstado(proceso.idProceso)
+                        : true || false
+                    }
+                    prenda={orderData?.prenda}
+                    esProductiva={laOrdenEstaEnProduccion}
+                  />
+                ))}
+            {laOrdenEstaEnProduccion &&
+              orderData.procesosProductivos
+                .sort(
+                  (procesoAnterior, procesoPosterior) =>
+                    procesoAnterior.idProceso - procesoPosterior.idProceso
+                )
+                .filter((proceso) => {
+                  if (role === clienteRole)
+                    return proceso.estado !== "No Pedido";
+                  if (role === prestadorDeServiciosRole)
+                    return proceso.recursos.some(
+                      (el) => el.key === data.user.email
+                    );
+                  return true;
+                })
+                .map((proceso, index) => (
+                  <SelectableOrderProcessItem
+                    key={proceso.id}
+                    proceso={{
+                      ...proceso,
+                      idOrden: orderData.id,
+                      esDeDesarollo: proceso.esDeDesarrollo,
+                      esDeProduccion: proceso.esDeProduccion,
+                      esExterno: proceso.esExterno,
+                    }}
+                    role={role || "Cliente"}
+                    onSelect={onSelect}
+                    selected={selectedProcess === proceso.id}
+                    habilitarCambioEstado={
+                      index > 0
+                        ? validarHabilitacionCambioEstado(proceso.idProceso)
+                        : true || false
+                    }
+                    prenda={orderData.prenda}
+                    esProductiva={laOrdenEstaEnProduccion}
+                    cantidad={orderData.ordenProductiva.cantidad}
+                  />
+                ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
