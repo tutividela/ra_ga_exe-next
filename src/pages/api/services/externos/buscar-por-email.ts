@@ -22,6 +22,11 @@ export default async function buscar(
           select: {
             name: true,
             description: true,
+            procesos: {
+              select: {
+                nombre: true,
+              },
+            },
           },
         },
         factorMultiplicador: true,
