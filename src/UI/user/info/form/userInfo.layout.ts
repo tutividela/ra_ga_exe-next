@@ -5,14 +5,14 @@ export const userInfoLayout: LayoutElement<UserInfoSchemaType> = {
   type: "Vertical",
   spacing: 2,
   elements: [
-    {
+    /* {
       type: "Input",
       label: "Nombre",
       scope: "name",
       width: 12,
       className: "mt-2",
       options: { size: "small", variant: "standard" },
-    },
+    }, */
     {
       type: "Input",
       label: "Teléfono",

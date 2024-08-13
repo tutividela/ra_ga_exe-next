@@ -205,8 +205,12 @@ export const calculateOrderTotal = async (
       }
     });
     preciosIndividuales.forEach(
-      (precioIndividual: { servicio: string; precioTotal: number }) =>
-        (precioTotal += precioIndividual.precioTotal)
+      (precioIndividual: { servicio: string; precioTotal: number }) => {
+        if (precioIndividual.servicio === "Diseño") {
+          precioIndividual.precioTotal = precioIndividual.precioTotal / 2;
+        }
+        precioTotal += precioIndividual.precioTotal;
+      }
     );
 
     return {

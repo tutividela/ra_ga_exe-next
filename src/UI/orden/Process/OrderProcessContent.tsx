@@ -5,11 +5,17 @@ import OrderProcessContentService from "./OrderProcessContentService";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  ordenFrenada: boolean;
   selectedProcess: string;
   rol: string;
 };
 
-const OrderProcessContent = ({ orderData, selectedProcess, rol }: Props) => {
+const OrderProcessContent = ({
+  orderData,
+  selectedProcess,
+  rol,
+  ordenFrenada,
+}: Props) => {
   const currProcess = useMemo(() => {
     const procesosABuscar =
       orderData.idEstado === 3
@@ -33,7 +39,7 @@ const OrderProcessContent = ({ orderData, selectedProcess, rol }: Props) => {
           rol={rol}
         />
       )}
-      {selectedProcess !== "general" && (
+      {selectedProcess !== "general" && !ordenFrenada && (
         <OrderProcessContentService
           orderData={orderData}
           selectedProcess={selectedProcess}

@@ -62,44 +62,39 @@ export function GenerarOrdenProductivaDialog({
       onClose();
     },
   });
-  /* const {
-    mutateAsync: calcularOrdenProductivaAsync,
-    isLoading: seEstaCalculandoOrdenProductiva,
-  } = useMutation(calcularOrdenProductiva, {
-    onSuccess: () => {},
-    onError: () => {
-      addError(
-        "A ocurrido un error con el calculo del precio de la orden productiva",
-        "warning"
-      );
-    },
-  }); */
 
   async function handleSubmit(data) {
-    setSeEstaCalculandoPrecioEstimado(true);
-    if (!seCalculoPrecioEstimado) {
-      const { precio } = await calcularOrdenProductiva(
-        data.cantidad,
-        precioPrendaBase
-      );
+    try {
       setSeEstaCalculandoPrecioEstimado(true);
-      setPrecioEstimado(precio);
-      setCantidad(data.cantidad);
-      setSeEstaCalculandoPrecioEstimado(false);
-      setSeCalculoPrecioEstimado(true);
-      return;
-    } else {
-      const { precio } = await calcularOrdenProductiva(
-        data.cantidad,
-        precioPrendaBase
+      if (!seCalculoPrecioEstimado) {
+        const { precio } = await calcularOrdenProductiva(
+          data.cantidad,
+          precioPrendaBase
+        );
+        setSeEstaCalculandoPrecioEstimado(true);
+        setPrecioEstimado(precio);
+        setCantidad(data.cantidad);
+        setSeEstaCalculandoPrecioEstimado(false);
+        setSeCalculoPrecioEstimado(true);
+        return;
+      } else {
+        const { precio } = await calcularOrdenProductiva(
+          data.cantidad,
+          precioPrendaBase
+        );
+        setPrecioEstimado(precio);
+        setCantidad(data.cantidad);
+        await generarOrdenProductivaAsync({
+          ...data,
+          cantidad: cantidad,
+          precioEstimado: precio,
+        });
+      }
+    } catch (error: any) {
+      addError(
+        "A ocurrido un error con la generacion de la orden productiva",
+        "error"
       );
-      setPrecioEstimado(precio);
-      setCantidad(data.cantidad);
-      await generarOrdenProductivaAsync({
-        ...data,
-        cantidad: cantidad,
-        precioEstimado: precio,
-      });
     }
     setSeEstaCalculandoPrecioEstimado(false);
   }
