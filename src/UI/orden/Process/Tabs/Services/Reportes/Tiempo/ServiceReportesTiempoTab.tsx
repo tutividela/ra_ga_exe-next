@@ -262,7 +262,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
   ];
   const datosParaPieChart = useMemo(
     () => armarDatosParaPieChart(),
-    [orderData.procesos]
+    [orderData]
   );
 
   function descargarPieChart() {
