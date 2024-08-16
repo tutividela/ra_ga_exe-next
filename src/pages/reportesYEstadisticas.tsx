@@ -3,6 +3,7 @@ import { Button, Slide } from "@mui/material";
 import { DataGrid, GridColumns } from "@mui/x-data-grid";
 import HeaderBar from "@UI/Generic/HeaderBar";
 import PageTitle from "@UI/Generic/Utils/PageTitle";
+import { DialogReporteDeProcesos } from "@UI/Reportes/DialogReporteDeProcesos";
 import { DialogReporteDeTiempos } from "@UI/Reportes/DialogReporteDeTiempos";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
@@ -17,6 +18,8 @@ import { useQuery } from "react-query";
 const Home: NextPage = () => {
   const { addError } = useContext(ErrorHandlerContext);
   const [abrirReporteTiempo, setAbrirReporteTiempo] = useState<boolean>(false);
+  const [abrirReportesProcesos, setAbrirReportesProcesos] =
+    useState<boolean>(false);
   const [idOrden, setIdOrden] = useState<string>("");
   const { data: ordenes, isFetching: seEstanBuscandoLasOrdenes } = useQuery(
     ["ordenes-reportes-estadisticas"],
@@ -90,6 +93,10 @@ const Home: NextPage = () => {
             <Button
               variant="contained"
               className="bg-sky-800 text-white rounded-lg"
+              onClick={() => {
+                setIdOrden(params.row.id);
+                setAbrirReportesProcesos(true);
+              }}
             >
               Reportes de Procesos
             </Button>
@@ -163,6 +170,13 @@ const Home: NextPage = () => {
               <DialogReporteDeTiempos
                 open={abrirReporteTiempo}
                 onClose={() => setAbrirReporteTiempo(false)}
+                idOrden={idOrden}
+              />
+            )}
+            {abrirReportesProcesos && (
+              <DialogReporteDeProcesos
+                open={abrirReportesProcesos}
+                onClose={() => setAbrirReportesProcesos(false)}
                 idOrden={idOrden}
               />
             )}

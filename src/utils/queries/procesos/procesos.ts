@@ -54,3 +54,18 @@ export async function buscarProcesosDesarrolloYProduccionPor(idOrden: string) {
       throw error;
     });
 }
+
+export async function buscarTodosLosReportesPor(idOrden: string) {
+  return fetch("/api/order/buscar-todos-reportes", {
+    method: "POST",
+    body: JSON.stringify({ idOrden: idOrden }),
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  })
+    .then((response) => (response.ok ? response.json() : errorHandle(response)))
+    .catch((error) => {
+      throw error;
+    });
+}
