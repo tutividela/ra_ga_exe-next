@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { buscarProcesosDesarrolloYProduccionPor } from "@utils/queries/procesos/procesos";
-import { useContext, useMemo, useRef } from "react";
+import { MutableRefObject, useContext, useMemo, useRef } from "react";
 import { useQuery } from "react-query";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
@@ -92,8 +92,8 @@ const coloresPorProceso = [
 
 export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
-  const pieChartRef = useRef(null);
-
+  const pieChartRefDesarrollo = useRef(null);
+  const pieChartRefProduccion = useRef(null);
   const {
     data: ordenConProcesos,
     isFetching: seEstadoBuscandoLaOrdenConProcesos,
@@ -111,8 +111,8 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
     }
   );
 
-  function descargarPieChart() {
-    const base64PieChart = pieChartRef.current.toBase64Image();
+  function descargarPieChart(referenciaPieChart: MutableRefObject<any>) {
+    const base64PieChart = referenciaPieChart.current.toBase64Image();
     const a = document.createElement("a");
 
     a.href = base64PieChart;
@@ -206,70 +206,162 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
         new Date(ordenConProcesos.createdAt)
       )
     : [];
+  const datosDeTiempoEnProduccion = ordenConProcesos?.ordenProductiva
+    ? generarDatoReporteDeTiempo(
+        ordenConProcesos.ordenProductiva.procesos
+          .filter((proceso) => proceso.idEstadoProceso !== 3)
+          .sort(
+            (procesoAnterior, procesoPosterior) =>
+              procesoAnterior.idProceso - procesoPosterior.idProceso
+          ),
+        new Date(ordenConProcesos.ordenProductiva.fechaDeCreacion)
+      )
+    : [];
 
   return (
     <Dialog open={open} onClose={onClose}>
       <LoadingIndicator show={seEstadoBuscandoLaOrdenConProcesos}>
         <DialogContent>
-          {laOrdenDeDesarrolloEstaFinalizada && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginTop: 15,
-                height: "auto",
-                width: "auto",
-              }}
-            >
-              <p className="font-semibold text-xl self-center mb-3">
-                Diseño/Desarrollo
-              </p>
-              <div style={{ height: 500, width: 500 }}>
-                <DataGrid
-                  rows={datosDeTiempoEnDesarrollo}
-                  columns={columnas}
-                  initialState={{
-                    pagination: {
-                      page: 0,
-                      pageSize: 6,
-                    },
-                  }}
-                  components={{
-                    Toolbar: () => (
-                      <GridToolbarContainer>
-                        <GridToolbarExport />
-                      </GridToolbarContainer>
-                    ),
-                  }}
-                />
-              </div>
-
+          <p className="flex flex-row font-semibold text-xl justify-center mb-3">
+            Diseño/Desarrollo
+          </p>
+          {laOrdenDeDesarrolloEstaFinalizada ? (
+            <>
               <div
                 style={{
-                  flex: 1,
+                  display: "flex",
                   flexDirection: "column",
-                  alignSelf: "center",
-                  marginTop: 20,
+                  marginTop: 15,
+                  height: "auto",
+                  width: "auto",
                 }}
               >
-                <div className="flex flex-row justify-center">
-                  <Button
-                    onClick={descargarPieChart}
-                    variant="outlined"
-                    endIcon={<Download />}
-                    className="text-xs m-3"
-                  >
-                    Descargar
-                  </Button>
+                <div
+                  style={{
+                    height: 500,
+                    width: 500,
+                  }}
+                >
+                  <DataGrid
+                    rows={datosDeTiempoEnDesarrollo}
+                    columns={columnas}
+                    initialState={{
+                      pagination: {
+                        page: 0,
+                        pageSize: 6,
+                      },
+                    }}
+                    className=""
+                    components={{
+                      Toolbar: () => (
+                        <GridToolbarContainer>
+                          <GridToolbarExport />
+                        </GridToolbarContainer>
+                      ),
+                    }}
+                  />
                 </div>
-                <Pie
-                  data={armarDatosParaPieChart(
-                    ordenConProcesos.procesos,
-                    new Date(ordenConProcesos.createdAt)
-                  )}
-                  ref={pieChartRef}
-                />
+                <div
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    alignSelf: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <div className="flex flex-row justify-center">
+                    <Button
+                      onClick={() => descargarPieChart(pieChartRefDesarrollo)}
+                      variant="outlined"
+                      endIcon={<Download />}
+                      className="text-xs m-3"
+                    >
+                      Descargar
+                    </Button>
+                  </div>
+                  <Pie
+                    data={armarDatosParaPieChart(
+                      ordenConProcesos.procesos,
+                      new Date(ordenConProcesos.createdAt)
+                    )}
+                    ref={pieChartRefDesarrollo}
+                  />
+                </div>
               </div>
+            </>
+          ) : (
+            <div className="flex align-middle m-3 justify-center h-auto">
+              <p className="font-semibold text-lg">
+                Actualmente no hay reporte de tiempo para la orden de desarrollo
+              </p>
+            </div>
+          )}
+          <p className="flex flex-row font-semibold text-xl justify-center mb-3 mt-10">
+            Produccion
+          </p>
+          {laOrdenDeProduccionEstaFinalizada ? (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: 15,
+                  height: "auto",
+                  width: "auto",
+                }}
+              >
+                <div style={{ height: 500, width: 500 }}>
+                  <DataGrid
+                    rows={datosDeTiempoEnProduccion}
+                    columns={columnas}
+                    initialState={{
+                      pagination: {
+                        page: 0,
+                        pageSize: 6,
+                      },
+                    }}
+                    components={{
+                      Toolbar: () => (
+                        <GridToolbarContainer>
+                          <GridToolbarExport />
+                        </GridToolbarContainer>
+                      ),
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    alignSelf: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <div className="flex flex-row justify-center">
+                    <Button
+                      onClick={() => descargarPieChart(pieChartRefProduccion)}
+                      variant="outlined"
+                      endIcon={<Download />}
+                      className="text-xs m-3"
+                    >
+                      Descargar
+                    </Button>
+                  </div>
+                  <Pie
+                    data={armarDatosParaPieChart(
+                      ordenConProcesos.ordenProductiva.procesos,
+                      new Date(ordenConProcesos.ordenProductiva.fechaDeCreacion)
+                    )}
+                    ref={pieChartRefProduccion}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex align-middle m-3 justify-center h-auto">
+              <p className="font-semibold text-lg">
+                Actualmente no hay reporte de tiempo para la orden de produccion
+              </p>
             </div>
           )}
         </DialogContent>
