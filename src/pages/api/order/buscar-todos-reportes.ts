@@ -15,6 +15,11 @@ export default async function buscarTodos(
       include: {
         procesos: {
           include: {
+            proceso: {
+              select: {
+                nombre: true,
+              },
+            },
             ReportesDeDisenio: true,
             ReportesDeDigitalizacion: true,
             ReportesDeImpresion: true,
@@ -26,6 +31,11 @@ export default async function buscarTodos(
           include: {
             procesos: {
               include: {
+                proceso: {
+                  select: {
+                    nombre: true,
+                  },
+                },
                 ReporteArchivo: true,
               },
             },
@@ -37,6 +47,7 @@ export default async function buscarTodos(
     const reportesDeDesarrollo = ordenConReportes.procesos.map((proceso) => ({
       id: proceso.id,
       idProceso: proceso.idProceso,
+      nombre: proceso.proceso.nombre,
       reportesDeDisenio: proceso.ReportesDeDisenio,
       reportesDeDigitalizacion: proceso.ReportesDeDigitalizacion,
       reportesDeImpresion: proceso.ReportesDeImpresion,
@@ -48,12 +59,14 @@ export default async function buscarTodos(
       ordenConReportes.ordenProductiva?.procesos.map((proceso) => ({
         id: proceso.id,
         idProceso: proceso.idProceso,
+        nombre: proceso.proceso.nombre,
         reportesDeArchivo: proceso.ReporteArchivo,
       })) || [];
 
     res.status(200).json({
       idOrden: ordenConReportes.id,
       estadoOrden: ordenConReportes.idEstado,
+      cantidad: ordenConReportes.cantidad,
       disenio: reportesDeDesarrollo,
       produccion: reportesDeProduccion,
     });
