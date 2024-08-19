@@ -1,5 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import {
   ReporteArchivo,
   ReporteDeCorteMuestra,
@@ -59,23 +64,27 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
     {
       headerName: "Nombre del Material",
       field: "nombre",
+      headerAlign: "center",
       width: 150,
       align: "center",
     },
     {
       field: "cantidad",
+      headerAlign: "center",
       headerName: "Consumo",
       width: 220,
       align: "center",
     },
     {
       field: "esAvio",
+      headerAlign: "center",
       headerName: "¿Es Avio?",
       width: 150,
       align: "center",
     },
     {
       field: "tipoDeAvio",
+      headerAlign: "center",
       headerName: "Tipo de avio",
       width: 180,
       align: "center",
@@ -149,18 +158,20 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
 
   const ReporteDeDiseño = () =>
     reporteDeDiseño ? (
-      <div className="flex flex-col">
-        <p>Diseño</p>
+      <div className="flex flex-col m-3">
+        <p className="font-semibold">Diseño</p>
         <div className="m-4 border-4 shadow-lg min-h-[16rem] max-h-[20rem] flex p-4 flex-col space-y-2">
           {reporteDeDiseño}
         </div>
       </div>
     ) : (
-      <p className="text-sm">No hay reporte de Diseño</p>
+      <div className="flex flex-col p-3 items-center">
+        <p>No hay reporte de Diseño</p>
+      </div>
     );
   const ReporteDeDigitalizacion = () => (
-    <div className="flex flex-col">
-      <p>Digitalizacion y Progresiones</p>
+    <div className="flex flex-col m-3">
+      <p className="font-semibold">Digitalización y Progresiones</p>
       <div>
         {reporteDeDigitalizacion ? (
           <DataGrid
@@ -168,12 +179,21 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
             rows={reporteDeDigitalizacion ? [reporteDeDigitalizacion] : []}
             pageSize={1}
             className="h-52"
+            components={{
+              Toolbar: () => (
+                <GridToolbarContainer>
+                  <GridToolbarExport />
+                </GridToolbarContainer>
+              ),
+            }}
           />
         ) : (
-          <p>
-            No hay cantidades de Moldes, Avios con medida, Talles y Materiales
-            cargadas
-          </p>
+          <div className="flex flex-col p-3 items-center">
+            <p>
+              No hay cantidades de Moldes, Avios con medida, Talles y Materiales
+              cargadas
+            </p>
+          </div>
         )}
       </div>
       <div className="">
@@ -182,14 +202,16 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
             <OrderImageItem archivo={reporte} key={reporte.id} />
           ))
         ) : (
-          <p>No hay reportes de archivo para Digitalizacion y Progresiones</p>
+          <div className="flex flex-col p-3 items-center">
+            <p>No hay reportes de archivo para Digitalización y Progresiones</p>
+          </div>
         )}
       </div>
     </div>
   );
   const ReporteDeImpresion = () => (
-    <div>
-      <p>Impresion</p>
+    <div className="m-3">
+      <p className="font-semibold">Impresión</p>
       {reporteDeImpresion ? (
         <div className="flex flex-col">
           <div>
@@ -198,11 +220,20 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
               rows={reporteDeImpresion ? [reporteDeImpresion] : []}
               pageSize={1}
               className="h-52"
+              components={{
+                Toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarExport />
+                  </GridToolbarContainer>
+                ),
+              }}
             />
           </div>
         </div>
       ) : (
-        <p>No hay reporte de Impresion</p>
+        <div className="flex flex-col p-3 items-center">
+          <p>No hay reporte de Impresión</p>
+        </div>
       )}
     </div>
   );
@@ -211,8 +242,8 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
     proceso: string
   ) {
     return (
-      <div>
-        <p>{proceso}</p>
+      <div className="m-3">
+        <p className="font-semibold">{proceso}</p>
         {reportesDeArchivos.length > 0 ? (
           <div className="flex flex-col">
             {reportesDeArchivos.map((reporte) => (
@@ -220,16 +251,16 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
             ))}
           </div>
         ) : (
-          <div>
-            <p>No hay archivos de reporte para el proceso {proceso}</p>
+          <div className="flex flex-col p-3 items-center">
+            <p>No hay archivos de reporte de {proceso}</p>
           </div>
         )}
       </div>
     );
   }
   const ReporteDeCorteMuestra = () => (
-    <div className="flex flex-col">
-      <p>Corte Muestra</p>
+    <div className="flex flex-col m-3">
+      <p className="font-semibold">Corte Muestra</p>
       <div>
         {reporteDeCorteMuestra.length > 0 ? (
           <DataGrid
@@ -239,7 +270,9 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
             className="h-96"
           />
         ) : (
-          <p>No hay partes cargadas</p>
+          <div className="flex flex-col p-3 items-center">
+            <p>No hay reporte de Corte Muestra cargado</p>
+          </div>
         )}
       </div>
     </div>
@@ -248,7 +281,7 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
     return laOrdenPuedeTenerUnaProduccion ? (
       reportes?.produccion.lenght > 0 ? (
         reportes.produccion.map((reporte, index) => (
-          <div key={index}>
+          <div key={index} className="m-3">
             <p>{reporte.nombre}</p>
             {reporte.reportesDeArchivo.map((archivo) => (
               <OrderImageItem archivo={archivo} key={archivo.id} />
@@ -256,75 +289,84 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
           </div>
         ))
       ) : (
-        <p>No hay reportes de produccion cargados aun</p>
+        <div className="flex flex-col p-3 items-center">
+          <p>No hay reportes de producción cargados aún</p>
+        </div>
       )
     ) : (
-      <p>La orden no tiene reportes de produccion</p>
+      <div className="flex flex-col p-3 items-center">
+        <p>La orden no tiene reportes de producción</p>
+      </div>
     );
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <LoadingIndicator show={seEstanBuscandoReportes}>
-        <DialogContent>
-          {reportes ? (
-            <div>
-              <p className="flex flex-row font-semibold text-xl justify-center mb-3">
-                Diseño/Desarrollo
-              </p>
+    <div className="max-w-full">
+      <Dialog open={open} onClose={onClose} fullWidth={true}>
+        <LoadingIndicator show={seEstanBuscandoReportes}>
+          <DialogContent>
+            {reportes ? (
               <div>
-                <div className="flex flex-col h-full w-full">
-                  <ReporteDeDiseño />
-                  {componentesReporteDeArchivos(reporteDeMolderia, "Molderia")}
-                  <ReporteDeDigitalizacion />
-                  {componentesReporteDeArchivos(
-                    reporteDeGeometral,
-                    "Geometral"
-                  )}
-                  <ReporteDeImpresion />
-                  {componentesReporteDeArchivos(reporteDeTizado, "Tizado")}
-                  <ReporteDeCorteMuestra />
-                  {componentesReporteDeArchivos(
-                    reporteDePreconfeccion,
-                    "Pre-confeccion"
-                  )}
-                  {componentesReporteDeArchivos(
-                    reporteDeConfeccion,
-                    "Confeccion Muestra"
-                  )}
-                  {componentesReporteDeArchivos(
-                    reporteDeTerminado,
-                    "Terminado"
-                  )}
-                  {componentesReporteDeArchivos(
-                    reporteDePlanchado,
-                    "Planchado"
-                  )}
-                  {componentesReporteDeArchivos(
-                    reporteDeEntregado,
-                    "Entregado"
-                  )}
+                <p className="flex flex-row font-semibold text-xl justify-center mb-3">
+                  Diseño/Desarrollo
+                </p>
+                <div>
+                  <div className="flex flex-col h-full w-full">
+                    <ReporteDeDiseño />
+                    {componentesReporteDeArchivos(
+                      reporteDeMolderia,
+                      "Molderia"
+                    )}
+                    <ReporteDeDigitalizacion />
+                    {componentesReporteDeArchivos(
+                      reporteDeGeometral,
+                      "Geometral"
+                    )}
+                    <ReporteDeImpresion />
+                    {componentesReporteDeArchivos(reporteDeTizado, "Tizado")}
+                    <ReporteDeCorteMuestra />
+                    {componentesReporteDeArchivos(
+                      reporteDePreconfeccion,
+                      "Pre-confeccion"
+                    )}
+                    {componentesReporteDeArchivos(
+                      reporteDeConfeccion,
+                      "Confeccion Muestra"
+                    )}
+                    {componentesReporteDeArchivos(
+                      reporteDeTerminado,
+                      "Terminado"
+                    )}
+                    {componentesReporteDeArchivos(
+                      reporteDePlanchado,
+                      "Planchado"
+                    )}
+                    {componentesReporteDeArchivos(
+                      reporteDeEntregado,
+                      "Entregado"
+                    )}
+                  </div>
                 </div>
+                <p className="flex flex-row font-semibold text-xl justify-center mb-3">
+                  Producción
+                </p>
+                <ReportesDeProduccion />
               </div>
-              <p className="flex flex-row font-semibold text-xl justify-center mb-3">
-                Produccion
-              </p>
-              <ReportesDeProduccion />
-            </div>
-          ) : (
-            seEstanBuscandoReportes && (
-              <div className="flex align-middle m-3 justify-center h-auto">
-                <p className="font-semibold text-lg">Cargando...</p>
-              </div>
-            )
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" onClick={onClose}>
-            Cerrar
-          </Button>
-        </DialogActions>
-      </LoadingIndicator>
-    </Dialog>
+            ) : (
+              seEstanBuscandoReportes && (
+                <div className="flex align-middle m-3 justify-center h-auto">
+                  <p className="font-semibold text-lg">Cargando...</p>
+                </div>
+              )
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button variant="text" onClick={onClose}>
+              Cerrar
+            </Button>
+          </DialogActions>
+        </LoadingIndicator>
+      </Dialog>
+    </div>
   );
 }

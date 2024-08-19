@@ -36,6 +36,7 @@ const Home: NextPage = () => {
     id: orden.id,
     createdAt: orden.createdAt,
     user: orden.user,
+    estado: orden.estado,
     //acciones: orden.id
   }));
 
@@ -76,7 +77,16 @@ const Home: NextPage = () => {
         valueGetter: (params) => params.row.user.name,
       },
       {
-        field: "acciones",
+        field: "estado",
+        headerName: "Estado",
+        flex: 1,
+        maxWidth: 150,
+        align: "center",
+        headerAlign: "center",
+        valueGetter: (params) => params.row.estado.nombre,
+      },
+      {
+        field: "",
         flex: 1,
         renderCell: (params) => (
           <div className="flex flex-row w-full justify-evenly">
@@ -154,16 +164,30 @@ const Home: NextPage = () => {
       <main>
         <Slide in={true} timeout={500} direction="up">
           <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
-            <PageTitle title="Reportes y Estadisticas" hasBack />
+            <PageTitle title="Reportes y Estadistícas" hasBack />
             <LoadingIndicator show={seEstanBuscandoLasOrdenes}>
-              <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  autoPageSize
-                  disableSelectionOnClick
-                  disableColumnSelector
-                />
+              <div className="">
+                <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    autoPageSize
+                    disableSelectionOnClick
+                    disableColumnSelector
+                  />
+                </div>
+              </div>
+
+              <div className="lg:hidden">
+                <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
+                  <DataGrid
+                    rows={rows}
+                    columns={mobileColumns}
+                    autoPageSize
+                    disableSelectionOnClick
+                    disableColumnSelector
+                  />
+                </div>
               </div>
             </LoadingIndicator>
             {abrirReporteTiempo && (

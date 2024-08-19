@@ -36,7 +36,7 @@ const OrderDetailsTab = ({ orderData, precioDesarrolloTotal }: Props) => {
 
       <div className="flex flex-col mt-4">
         <div className="text-gray-700 text-xl font-semibold">
-          Precio Total de desarrollo
+          Precio total de desarrollo
         </div>
         <div className="mx-1 text-gray-700">
           - {precioDesarrolloTotal.toFixed(2)} $

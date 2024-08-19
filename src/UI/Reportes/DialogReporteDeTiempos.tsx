@@ -111,12 +111,17 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
     }
   );
 
-  function descargarPieChart(referenciaPieChart: MutableRefObject<any>) {
+  function descargarPieChart(
+    referenciaPieChart: MutableRefObject<any>,
+    esDeProduccion?: boolean
+  ) {
     const base64PieChart = referenciaPieChart.current.toBase64Image();
     const a = document.createElement("a");
 
     a.href = base64PieChart;
-    a.download = "TallerHS_Grafico_Reporte_Tiempo";
+    a.download = esDeProduccion
+      ? "TallerHS_Grafico_Reporte_Tiempo_Produccion"
+      : "TallerHS_Grafico_Reporte_Tiempo_Desarrollo";
     a.click();
   }
 
@@ -219,7 +224,7 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
     : [];
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} fullWidth={true}>
       <LoadingIndicator show={seEstadoBuscandoLaOrdenConProcesos}>
         <DialogContent>
           <p className="flex flex-row font-semibold text-xl justify-center mb-3">
@@ -271,7 +276,9 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
                 >
                   <div className="flex flex-row justify-center">
                     <Button
-                      onClick={() => descargarPieChart(pieChartRefDesarrollo)}
+                      onClick={() =>
+                        descargarPieChart(pieChartRefDesarrollo, false)
+                      }
                       variant="outlined"
                       endIcon={<Download />}
                       className="text-xs m-3"
@@ -291,13 +298,13 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
             </>
           ) : (
             <div className="flex align-middle m-3 justify-center h-auto">
-              <p className="font-semibold text-lg">
+              <p className="">
                 Actualmente no hay reporte de tiempo para la orden de desarrollo
               </p>
             </div>
           )}
           <p className="flex flex-row font-semibold text-xl justify-center mb-3 mt-10">
-            Produccion
+            Producción
           </p>
           {laOrdenDeProduccionEstaFinalizada ? (
             <>
@@ -339,7 +346,9 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
                 >
                   <div className="flex flex-row justify-center">
                     <Button
-                      onClick={() => descargarPieChart(pieChartRefProduccion)}
+                      onClick={() =>
+                        descargarPieChart(pieChartRefProduccion, true)
+                      }
                       variant="outlined"
                       endIcon={<Download />}
                       className="text-xs m-3"
@@ -359,8 +368,8 @@ export function DialogReporteDeTiempos({ open, onClose, idOrden }: Props) {
             </>
           ) : (
             <div className="flex align-middle m-3 justify-center h-auto">
-              <p className="font-semibold text-lg">
-                Actualmente no hay reporte de tiempo para la orden de produccion
+              <p className="">
+                Actualmente no hay reporte de tiempo para la orden de producción
               </p>
             </div>
           )}

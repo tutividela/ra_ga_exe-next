@@ -1,6 +1,7 @@
 import PeopleIcon from "@mui/icons-material/People";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import PageTitle from "../../Generic/Utils/PageTitle";
 import LinkCard from "./LinkCard";
 
@@ -23,6 +24,12 @@ const DashboardAdmin = () => {
       description: "Modificación precios base",
       Icon: PriceChangeIcon,
       href: "/preciosBase",
+    },
+    {
+      title: "Reportes y Estadísticas",
+      description: "Visualización de reportes y estadísticas de las órdenes",
+      Icon: QueryStatsIcon,
+      href: "/reportesYEstadisticas",
     },
   ];
 
