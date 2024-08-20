@@ -10,7 +10,6 @@ import { Download } from "@mui/icons-material";
 import {
   calcularDuracionesPorProcesoDesarrollo,
   generarDatoReporteDeTiempo,
-  obtenerProcesosTerminados,
 } from "@utils/procesos/tiempos";
 import {
   DataGrid,
