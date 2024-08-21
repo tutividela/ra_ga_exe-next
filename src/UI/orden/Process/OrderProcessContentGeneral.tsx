@@ -48,10 +48,16 @@ const OrderProcessContentGeneral = ({
     [orderData?.procesos, orderData?.procesosProductivos]
   );
 
-  const precioDesarrolloTotal = orderData.procesos
-    .filter((proceso) => proceso.idEstado === 6)
-    .map((proceso) => proceso.precioActualizado)
-    .reduce((acumulador, precio) => acumulador + precio, 0);
+  const precioTotal =
+    orderData.idEstado === 3
+      ? orderData.procesosProductivos
+          .filter((proceso) => proceso.idEstado === 6)
+          .map((proceso) => proceso.precioActualizado)
+          .reduce((acumulador, precio) => acumulador + precio, 0)
+      : orderData.procesos
+          .filter((proceso) => proceso.idEstado === 6)
+          .map((proceso) => proceso.precioActualizado)
+          .reduce((acumulador, precio) => acumulador + precio, 0);
 
   return (
     <Slide direction="up" in={slide}>
@@ -74,7 +80,7 @@ const OrderProcessContentGeneral = ({
             <div hidden={value !== 0} className="w-full">
               <OrderDetailsTab
                 orderData={orderData}
-                precioDesarrolloTotal={precioDesarrolloTotal}
+                precioDesarrolloTotal={precioTotal}
               />
             </div>
             <div hidden={value !== 1} className="w-full">

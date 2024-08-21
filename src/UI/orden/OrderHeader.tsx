@@ -77,7 +77,7 @@ const OrderHeader = ({ orderData }: Props) => {
       <div className="flex flex-col items-start md:items-end p-4  w-full md:w-1/3  mx-2 space-y-2">
         <div className="flex flex-col items-start md:items-end">
           <div className="font-bold text-lg">
-            <p>Codigo de producto</p>
+            <p>Código de producto</p>
           </div>
           <div className="text-sm">
             <span>{orderData.id}</span>

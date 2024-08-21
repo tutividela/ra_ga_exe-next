@@ -211,7 +211,7 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
       type: "Switch",
       className: "mt-2",
       scope: "procesosDesarrolloSeleccionados.Pre-confección.selected",
-      label: "Pre-Confeccion",
+      label: "Pre-Confección",
       options: {
         labelPlacement: "end",
       },
