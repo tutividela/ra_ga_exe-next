@@ -27,10 +27,10 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
       orderData.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
-    const ordenDesarrolloFinalizada = procesosAEvaluar
+    const ordenFinalizada = procesosAEvaluar
       ?.filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
       .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
-    setShowReporteTiempo(ordenDesarrolloFinalizada);
+    setShowReporteTiempo(ordenFinalizada);
   }, [orderData]);
 
   function calcularDiasHorasMinutos(duracion: number) {
@@ -53,6 +53,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
       orderData?.idEstado === 3
         ? new Date(orderData?.ordenProductiva.fechaDeCreacion)
         : new Date(orderData?.createdAt);
+    console.log("Fecha de creacion orden productiva:", fechaDeCreacionOrden);
     const datosReporteDeTiempo = calcularDuracionesPorProcesoDesarrollo(
       procesosTerminados,
       fechaDeCreacionOrden
@@ -89,6 +90,10 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
         const fechaUltimaActualizacion = new Date(
           procesoTerminado?.lastUpdated
         );
+        console.log(
+          "Fecha de actualizacion primer proceso: ",
+          procesoTerminado.lastUpdated
+        );
         return {
           idProceso: procesoTerminado.idProceso,
           proceso: procesoTerminado.proceso,
@@ -119,7 +124,10 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
     minutos: string;
   } {
     const procesosTerminados = obtenerProcesosTerminados();
-    const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+    const fechaDeCreacionOrden =
+      orderData.idEstado === 3
+        ? new Date(orderData?.ordenProductiva?.fechaDeCreacion)
+        : new Date(orderData?.createdAt);
     const duracionTotal: number = calcularDuracionesPorProcesoDesarrollo(
       procesosTerminados,
       fechaDeCreacionOrden
@@ -170,7 +178,10 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
 
   function armarDatosParaPieChart() {
     const procesosTerminados = obtenerProcesosTerminados();
-    const fechaDeCreacionOrden = new Date(orderData?.createdAt);
+    const fechaDeCreacionOrden =
+      orderData?.idEstado === 3
+        ? new Date(orderData?.ordenProductiva.fechaDeCreacion)
+        : new Date(orderData?.createdAt);
     const duracionesDeProcesos = calcularDuracionesPorProcesoDesarrollo(
       procesosTerminados,
       fechaDeCreacionOrden
@@ -262,7 +273,7 @@ export function ServiceReportesTiempoTab({ orderData }: Props) {
   ];
   const datosParaPieChart = useMemo(
     () => armarDatosParaPieChart(),
-    [orderData.procesos]
+    [orderData]
   );
 
   function descargarPieChart() {

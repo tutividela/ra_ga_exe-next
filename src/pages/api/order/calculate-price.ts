@@ -4,11 +4,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@server/db/client";
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id: debugComplejidadID } =
-    await prisma.complejidadConfeccion.findFirst({ where: { name: "Básico" } });
-
   try {
     const data = OrderCreationDataSchema.parse(req.body);
+    const nombreComplejidad = data?.complejidad || "Básico";
+    const { id: debugComplejidadID } =
+      await prisma.complejidadConfeccion.findFirst({
+        where: { name: nombreComplejidad },
+      });
     const precio = await calculateOrderTotal(data, debugComplejidadID);
 
     res.status(200).json({

@@ -66,3 +66,30 @@ export async function calcularOrdenProductiva(
       throw error;
     });
 }
+
+export async function buscarTodasLasOrdenes(): Promise<
+  {
+    cantidad: number;
+    user: {
+      name: string;
+    };
+    id: string;
+    nombre: string;
+    estado: {
+      nombre: string;
+    };
+    createdAt: Date;
+  }[]
+> {
+  return fetch("/api/orders/obtainAll", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  })
+    .then((response) => (response.ok ? response.json() : errorHandle(response)))
+    .catch((error) => {
+      throw error;
+    });
+}

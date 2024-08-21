@@ -51,6 +51,13 @@ export function PreciosExternosTab({ email }: Props) {
       flex: 2,
     },
     {
+      field: "proceso",
+      headerName: "Proceso",
+      minWidth: 150,
+      headerAlign: "center",
+      flex: 2,
+    },
+    {
       field: "factorMultiplicador",
       headerName: "Factor Multiplicador",
       minWidth: 150,
@@ -90,6 +97,7 @@ export function PreciosExternosTab({ email }: Props) {
               id: servicioExterno.id,
               servicio: servicioExterno.servicio.name,
               factorMultiplicador: servicioExterno.factorMultiplicador,
+              proceso: servicioExterno.servicio.procesos[0].nombre,
             })) || []
           }
           columns={columns || []}
