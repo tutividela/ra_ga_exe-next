@@ -11,7 +11,7 @@
 
 ## Objetivos
 
-Este proyecto surgio como una alternativa de desarrollo planteada a los alumnos de la Universidad
+Este proyecto surgió como una alternativa de desarrollo planteada a los alumnos de la Universidad
 Católica Argentina en el marco de la materia Proyecto Integral de Desarrollo, cuyo objetivo es mejorar las
 prácticas de programación trabajando en diversos proyectos que otorguen y agreguen valor a los
 clientes.
