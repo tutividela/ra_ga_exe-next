@@ -113,6 +113,10 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                     {seGeneraOrenProductiva && (
                       <GenerarOrdenProductivaDialog
                         idOrden={orderData.id}
+                        usuarioCreadorOrden={{
+                          nombre: orderData.user.name,
+                          email: orderData.user.email,
+                        }}
                         precioPrendaBase={orderData.prenda.precioBase}
                         onClose={() => setSeGeneraOrdenProductiva(false)}
                         open={seGeneraOrenProductiva}
