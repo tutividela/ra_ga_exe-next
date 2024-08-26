@@ -87,6 +87,8 @@ const Home: NextPage = () => {
       },
       {
         field: "",
+        headerName: "Reportes",
+        headerAlign: "center",
         flex: 1,
         renderCell: (params) => (
           <div className="flex flex-row w-full justify-evenly">
@@ -98,7 +100,7 @@ const Home: NextPage = () => {
                 setAbrirReporteTiempo(true);
               }}
             >
-              Reportes de Tiempo
+              Tiempos
             </Button>
             <Button
               variant="contained"
@@ -108,7 +110,7 @@ const Home: NextPage = () => {
                 setAbrirReportesProcesos(true);
               }}
             >
-              Reportes de Procesos
+              Procesos
             </Button>
           </div>
         ),
@@ -123,25 +125,26 @@ const Home: NextPage = () => {
         field: "id",
         headerName: "Orden",
         flex: 1,
-        minWidth: 100,
         align: "center",
         headerAlign: "center",
       },
       {
         field: "",
+        flex: 3,
+        headerName: "Reportes",
         renderCell: () => (
           <div className="flex flex-row w-full justify-evenly">
             <Button
               variant="contained"
               className="bg-sky-800 text-white rounded-lg"
             >
-              Reportes de Tiempo
+              Tiempos
             </Button>
             <Button
               variant="contained"
               className="bg-sky-800 text-white rounded-lg"
             >
-              Reportes de Procesos
+              Procesos
             </Button>
           </div>
         ),
@@ -166,7 +169,7 @@ const Home: NextPage = () => {
           <div className="container mx-auto flex flex-col min-h-[80vh] md:min-h-screen p-4 bg-white mt-20 rounded-none md:rounded-3xl shadow-2xl">
             <PageTitle title="Reportes y Estadistícas" hasBack />
             <LoadingIndicator show={seEstanBuscandoLasOrdenes}>
-              <div className="">
+              <div className="hidden lg:flex flex-col">
                 <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
                   <DataGrid
                     rows={rows}
@@ -177,8 +180,7 @@ const Home: NextPage = () => {
                   />
                 </div>
               </div>
-
-              <div className="lg:hidden">
+              <div className="lg:hidden w-full flex-col">
                 <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
                   <DataGrid
                     rows={rows}

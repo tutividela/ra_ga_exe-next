@@ -278,16 +278,19 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
     </div>
   );
   const ReportesDeProduccion = () => {
+    const hayReportesDeProduccion =
+      reportes?.produccion?.some(
+        (proceso) => proceso.reportesDeArchivo.length > 0
+      ) || false;
+
     return laOrdenPuedeTenerUnaProduccion ? (
-      reportes?.produccion.lenght > 0 ? (
-        reportes.produccion.map((reporte, index) => (
-          <div key={index} className="m-3">
-            <p>{reporte.nombre}</p>
-            {reporte.reportesDeArchivo.map((archivo) => (
-              <OrderImageItem archivo={archivo} key={archivo.id} />
-            ))}
-          </div>
-        ))
+      hayReportesDeProduccion ? (
+        reportes.produccion.map((reporte) =>
+          componentesReporteDeArchivos(
+            reporte.reportesDeArchivo,
+            reporte.nombre
+          )
+        )
       ) : (
         <div className="flex flex-col p-3 items-center">
           <p>No hay reportes de producción cargados aún</p>

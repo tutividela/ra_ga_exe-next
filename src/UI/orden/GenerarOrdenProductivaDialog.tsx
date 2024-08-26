@@ -23,12 +23,14 @@ type Props = {
   onClose: () => void;
   idOrden: string;
   precioPrendaBase: number;
+  usuarioCreadorOrden: { nombre: string; email: string };
 };
 
 export function GenerarOrdenProductivaDialog({
   open,
   onClose,
   idOrden,
+  usuarioCreadorOrden,
   precioPrendaBase,
 }: Props) {
   const queryClient = useQueryClient();
@@ -88,6 +90,7 @@ export function GenerarOrdenProductivaDialog({
           ...data,
           cantidad: cantidad,
           precioEstimado: precio,
+          usuario: usuarioCreadorOrden,
         });
       }
     } catch (error: any) {

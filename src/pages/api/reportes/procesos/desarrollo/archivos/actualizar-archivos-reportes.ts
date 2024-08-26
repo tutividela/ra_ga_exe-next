@@ -5,13 +5,19 @@ import { prisma } from "@server/db/client";
 
 export default async function post(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const idProcesoDesarrolloOrden = req.query
-      .idProcesoDesarrolloOrden as string;
+    const idProcesoDesarrolloOProductivo =
+      (req.query.idProcesoDesarrolloOProductivo as string) || null;
+
     const esDeProduccion = (req.query.esDeProduccion as string) === "true";
     const { fichaFiles } = FichaTecnicaFileUploadSchema.parse(req.body);
 
     const archivos = fichaFiles.files.map((file) => ({
-      idProcesoDesarrolloOrden: idProcesoDesarrolloOrden,
+      idProcesoDesarrolloOrden: esDeProduccion
+        ? null
+        : idProcesoDesarrolloOProductivo,
+      idProcesoProductivoOrden: esDeProduccion
+        ? idProcesoDesarrolloOProductivo
+        : null,
       name: file.name,
       esDeProduccion: esDeProduccion,
       urlID: file.urlID,
