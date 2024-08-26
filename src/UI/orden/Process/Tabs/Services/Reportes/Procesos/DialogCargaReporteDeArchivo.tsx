@@ -95,7 +95,7 @@ export default function DialogCargaReporteDeArchivo({
           )
         : updateFileURL(data, archivosSubidos);
       await cargarReporteDeArchivoAsync({
-        idProcesoDesarrollo: idProcesoDesarrolloOrden,
+        idProcesoDesarrolloOProductivo: idProcesoDesarrolloOrden,
         esDeProduccion: laOrdenEstaEnProduccion,
         data,
       });

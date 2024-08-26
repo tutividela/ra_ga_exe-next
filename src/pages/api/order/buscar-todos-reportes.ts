@@ -44,6 +44,18 @@ export default async function buscarTodos(
       },
     });
 
+    const reportesArchivoDeProduccion = ordenConReportes.ordenProductiva
+      ? await prisma.reporteArchivo.findMany({
+          where: {
+            idProcesoProductivoOrden: {
+              in: ordenConReportes.ordenProductiva.procesos.map(
+                (proceso) => proceso.id
+              ),
+            },
+          },
+        })
+      : [];
+
     const reportesDeDesarrollo = ordenConReportes.procesos.map((proceso) => ({
       id: proceso.id,
       idProceso: proceso.idProceso,
@@ -60,7 +72,9 @@ export default async function buscarTodos(
         id: proceso.id,
         idProceso: proceso.idProceso,
         nombre: proceso.proceso.nombre,
-        reportesDeArchivo: proceso.ReporteArchivo,
+        reportesDeArchivo: reportesArchivoDeProduccion.filter(
+          (reporte) => reporte.idProcesoProductivoOrden === proceso.id
+        ),
       })) || [];
 
     res.status(200).json({

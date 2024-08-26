@@ -22,7 +22,36 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    res.status(200).json(servicesFromUser);
+    const serviciosProductivos = await prisma.procesoProductivoOrden.findMany({
+      where: {
+        usuarioDeServicio: {
+          some: {
+            email: email,
+          },
+        },
+      },
+      include: {
+        estado: true,
+        proceso: true,
+        orden: {
+          include: {
+            orden: true,
+          },
+        },
+      },
+    });
+
+    const serviciosProductivosMapeados = serviciosProductivos.map(
+      (servicio) => ({
+        ...servicio,
+        idOrden: servicio.orden.orden.id,
+        orden: { ...servicio.orden.orden },
+      })
+    );
+
+    res
+      .status(200)
+      .json([...servicesFromUser, ...serviciosProductivosMapeados]);
   } catch (error) {
     res.status(500).json({ error: error });
     throw error;
