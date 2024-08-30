@@ -23,7 +23,7 @@ export const clothingFilesLayout: LayoutElement<OrderCreationData> = {
         {
           type: "Input",
           scope: "orderFiles.observaciones",
-          label: "Observaciones Archivos",
+          label: "Observaciones de los archivos",
           options: {
             multiline: 6,
           },

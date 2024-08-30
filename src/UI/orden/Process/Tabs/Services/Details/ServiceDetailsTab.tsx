@@ -81,7 +81,7 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
       <div className="flex flex-col space-y-2 mt-2">
         <DetailsListElement title="Estado" value={currProcess?.estado} />
         <DetailsListElement
-          title="Ultima modificacion"
+          title="Última modificación"
           value={ultimaActualizacion}
         />
         {currProcess?.idEstado === 6 && elProcesoTieneUnCosto && (

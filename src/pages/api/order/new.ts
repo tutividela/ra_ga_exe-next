@@ -2,7 +2,6 @@ import {
   calculateOrderTotal,
   findPrendaPrecioByTypeAndComplexity,
   getAtributosPrenda,
-  updateExpiredOrders,
 } from "@backend/dbcalls/order";
 import { checkIfUserExists, fromToday } from "@backend/dbcalls/user";
 import { OrderCreationDataSchema } from "@backend/schemas/OrderCreationSchema";
@@ -92,8 +91,6 @@ const handleOrderCreation = async (
       from: "brad@sandbox5cd70f8d5603470a9ab44d2503b4ecfe.mailgun.org",
       fromTitle: "Soporte HS-Taller",
     });
-
-    await updateExpiredOrders();
 
     const prendaPrecio = await findPrendaPrecioByTypeAndComplexity(
       data.tipoPrenda.id,

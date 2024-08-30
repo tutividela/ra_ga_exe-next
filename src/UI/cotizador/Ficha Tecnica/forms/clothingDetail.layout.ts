@@ -13,7 +13,7 @@ export const clothingDetailLayout: LayoutElement<OrderCreationData> = {
         {
           type: "Autocomplete",
           scope: "atributosPrenda.genero.values",
-          label: "Genero",
+          label: "Género",
           options: {
             labelPlacement: "end",
             optionsName: "generos",
