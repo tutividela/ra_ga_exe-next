@@ -8,8 +8,8 @@ import LinkCard from "./LinkCard";
 const DashboardAdmin = () => {
   const sections = [
     {
-      title: "Ordenes",
-      description: "Acceso a ordenes de clientes",
+      title: "Órdenes",
+      description: "Acceso a órdenes de clientes",
       Icon: ReceiptIcon,
       href: "/ordenes",
     },

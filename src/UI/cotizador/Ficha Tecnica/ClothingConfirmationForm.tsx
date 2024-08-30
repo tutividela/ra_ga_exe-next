@@ -44,8 +44,8 @@ const ClothingConfirmationForm = () => {
           {cotizadorData.orderFiles.files?.length > 0 ? "✔️" : "❌"} Archivos{" "}
           {cotizadorData.orderFiles?.files?.length > 0
             ? " - " +
-              cotizadorData.orderFiles?.files?.length +
-              " archivos seleccionados"
+            cotizadorData.orderFiles?.files?.length +
+            " archivos seleccionados"
             : ""}
         </div>
         <div>
@@ -60,7 +60,7 @@ const ClothingConfirmationForm = () => {
 
       <div className="mt-3 w-full md:w-2/4">
         <div>
-          Genero:{" "}
+          Género:{" "}
           {cotizadorData.atributosPrenda?.genero?.observaciones
             ? cotizadorData.atributosPrenda.genero.observaciones
             : " - "}

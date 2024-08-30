@@ -21,7 +21,7 @@ export const reducedUserInfoLayout: LayoutElement<ReducedUserInfoSchemaType> = {
     },
     {
       type: "Input",
-      label: "Telefono",
+      label: "Télefono",
       scope: "user.userPersonalData.telefono",
       width: 12,
       options: { size: "small", disabled: true, variant: "standard" },

@@ -33,7 +33,7 @@ export default function ReporteDeArchivo({
     isFetching: seEstaBuscandoLosReportesDeArchivo,
     isRefetching: seEstaRecargandoLosReportesDeArchivo,
   } = useQuery(
-    ["reportesArchivo", idProceso],
+    ["reportesArchivo", idProcesoDesarrollo],
     () =>
       obtenerReportesDeArchivosPorIdProcesoDesarrollo(
         idProcesoDesarrollo,
