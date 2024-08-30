@@ -84,7 +84,7 @@ const HeaderBar = () => {
                 className="ml-5 px-2 py-1 underline"
                 onClick={() => signOut()}
               >
-                Cerrar Sesion
+                Cerrar Sesión
               </button>
             </div>
           </div>

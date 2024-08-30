@@ -63,7 +63,7 @@ const OrderProcessItemChangeDialog = (props: Props) => {
       onSuccess: () => {
         props.onClose();
       },
-      onError: (err) => addError(JSON.stringify(err)),
+      onError: () => addError("Error en la actualizacion del estado del proceso", "warning"),
     }
   );
   const states = estadosProcesoDesarrollo

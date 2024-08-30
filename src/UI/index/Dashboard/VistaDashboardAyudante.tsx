@@ -63,7 +63,7 @@ const VistaDashboardAyudante = (props: props) => {
     <>
       <div className="md:mt-4 flex flex-col md:mx-10 lg:mx-0">
         <div className="flex justify-between">
-          <PageTitle title="Administrar ordenes" hasBack={false} />
+          <PageTitle title="Administrar órdenes" hasBack={false} />
         </div>
       </div>
 

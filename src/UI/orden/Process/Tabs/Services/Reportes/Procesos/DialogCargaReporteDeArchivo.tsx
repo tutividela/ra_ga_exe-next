@@ -91,8 +91,8 @@ export default function DialogCargaReporteDeArchivo({
       });
       Array.isArray(archivosSubidos)
         ? archivosSubidos.map((archivosSubido: FileUploadResponse) =>
-            updateFileURL(data, archivosSubido)
-          )
+          updateFileURL(data, archivosSubido)
+        )
         : updateFileURL(data, archivosSubidos);
       await cargarReporteDeArchivoAsync({
         idProcesoDesarrolloOProductivo: idProcesoDesarrolloOrden,
@@ -102,7 +102,7 @@ export default function DialogCargaReporteDeArchivo({
     } else {
       console.log("No se cargaron archivos");
     }
-    await queryClient.invalidateQueries(["reportesArchivo"]);
+    await queryClient.invalidateQueries(["reportesArchivo", idProcesoDesarrolloOrden]);
   }
 
   return (

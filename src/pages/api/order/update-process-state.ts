@@ -38,7 +38,6 @@ const updateProcessState = async (
           procesoProductivoId: processID,
         },
         data: {
-          estimatedAt: estimatedAt ? new Date(estimatedAt) : null,
           updatedAt: new Date(),
         },
       });
@@ -83,7 +82,6 @@ const updateProcessState = async (
           },
           FichaTecnica: {
             update: {
-              estimatedAt: estimatedAt ? new Date(estimatedAt) : null,
               updatedAt: new Date(),
             },
           },
