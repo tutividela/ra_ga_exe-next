@@ -72,7 +72,7 @@ const updateOrderFields = async (req: NextApiRequest, res: NextApiResponse) => {
         orderId: ordenCreada.id,
       }),
       to: usuario.email,
-      subject: "Orden creada",
+      subject: "Orden productiva creada",
     });
 
     res

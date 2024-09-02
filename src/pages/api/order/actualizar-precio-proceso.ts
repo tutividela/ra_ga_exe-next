@@ -111,7 +111,7 @@ async function calcularPrecioPorProceso(
         idProceso
       );
     case 6:
-      return 0;
+      return await calcularPrecioImpresion(precioDeDolar, idProceso, idProcesoDesarrollo);
     case 7:
       return 0;
     case 8:
@@ -266,6 +266,36 @@ async function calcularPrecioTizado(
     .map((servicio) => servicio.precioFijo)
     .reduce(
       (acumulador, precioFijo) => acumulador + precioFijo * precioDeDolar,
+      0
+    );
+}
+
+async function calcularPrecioImpresion(precioDeDolar: number, idProceso: number, idProcesoDesarrollo: string): Promise<number> {
+  const servicios = await prisma.servicio.findMany({
+    select: {
+      precioFijo: true,
+    },
+    where: {
+      esDeDesarrollo: true,
+      procesos: {
+        every: {
+          id: idProceso,
+        },
+      },
+    },
+  });
+
+  const reporte = await prisma.reporteDeImpresion.findUnique({
+    where: {
+      idProcesoDesarrolloOrden: idProcesoDesarrollo
+    }
+  });
+  const cantidadDeMetros = reporte?.cantidadDeMetros || 0;
+
+  return servicios
+    .map((servicio) => servicio.precioFijo)
+    .reduce(
+      (acumulador, precioFijo) => acumulador + precioFijo * precioDeDolar * cantidadDeMetros,
       0
     );
 }

@@ -2,10 +2,11 @@ import { z } from "zod";
 
 export const ModifyPreciosServiciosSchema = z.object({
   id: z.string(),
-  precioBase: z.number().min(1, { message: "Se requiere un precio basico" }),
+  precioBase: z.number().nonnegative({ message: "Precio base no puede ser negativo" }),
   factorMultiplicador: z
-    .number()
-    .min(1, { message: "Se requiere un factor multiplicador" }),
+    .number().nonnegative({ message: "Factor multiplicador no puede ser negativo" }),
+}).refine((preciosServicioSchema) => preciosServicioSchema.factorMultiplicador !== 0 || preciosServicioSchema.precioBase !== 0, {
+  message: "Precio base y factor multiplicador no pueden ser ambos 0"
 });
 
 export type ModifyPreciosServiciosSchemaType = z.infer<

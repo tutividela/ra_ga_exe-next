@@ -21,6 +21,7 @@ type Props = {
   onClose: () => void;
   open: boolean;
   reporteActual: ReporteDeImpresion;
+  handleCalcularPrecioProceso: () => Promise<void>
 };
 
 export function DialogCargaReporteImpresion({
@@ -28,6 +29,7 @@ export function DialogCargaReporteImpresion({
   onClose,
   open,
   reporteActual,
+  handleCalcularPrecioProceso,
 }: Props) {
   const { addError } = useContext(ErrorHandlerContext);
   const queryClient = useQueryClient();
@@ -47,6 +49,12 @@ export function DialogCargaReporteImpresion({
     idProcesoDesarrolloOrden: idProcesoDesarrollo,
     cantidadDeMetros: 0,
   };
+
+  async function handleSubmit(reporteDeImpresion: Partial<ReporteDeImpresion>): Promise<void> {
+    await cargaReporteImpresionAsync(reporteDeImpresion);
+    await handleCalcularPrecioProceso();
+    queryClient.invalidateQueries(["order"]);
+  }
   return (
     <Dialog open={open} fullWidth={true}>
       <LoadingIndicator
@@ -55,7 +63,7 @@ export function DialogCargaReporteImpresion({
       >
         <HookForm
           defaultValues={reporteActual ? reporteActual : defaultLayoutValues}
-          onSubmit={cargaReporteImpresionAsync}
+          onSubmit={handleSubmit}
         >
           <DialogTitle>Carga de cantidad impresa</DialogTitle>
           <DialogContent>

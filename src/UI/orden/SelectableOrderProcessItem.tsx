@@ -103,7 +103,7 @@ const SelectableOrderProcessItem = ({
   const handleResourceDialogOpen = () => setResourceDialogOpen(true);
 
   const color = ProcessStateTextColors(estado);
-  const elProcesoTieneUnCosto = [1, 2, 3, 5, 8, 9, 10, 11, 12].includes(
+  const elProcesoTieneUnCosto = [1, 2, 3, 5, 6, 8, 9, 10, 11, 12].includes(
     proceso.idProceso
   );
 
@@ -112,8 +112,8 @@ const SelectableOrderProcessItem = ({
   const backgroundColor = selected
     ? "bg-blue-100 border-blue-100"
     : !selectable
-    ? "bg-gray-300"
-    : "hover:bg-gray-100 cursor-pointer";
+      ? "bg-gray-300"
+      : "hover:bg-gray-100 cursor-pointer";
 
   const handleSelectProcess = () => {
     if (selected || !selectable) return;
