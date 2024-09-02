@@ -12,7 +12,6 @@ const updateProcessState = async (
     const {
       id: processID,
       estado,
-      estimatedAt,
       esDeProduccion,
     } = ProcessUpdateSchema.parse(req.body);
 

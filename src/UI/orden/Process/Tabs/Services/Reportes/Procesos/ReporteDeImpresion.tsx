@@ -12,6 +12,7 @@ import { Button } from "@mui/material";
 import { DialogCargaReporteImpresion } from "./DialogCargaReporteImpresion";
 import { DialogBorrarCargaReporteImpresion } from "./DialogBorrarCargaReporteImpresion";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
+import { actualizarPrecio } from "@utils/queries/procesos/procesos";
 
 type Props = {
   idProcesoDesarrollo: string;
@@ -25,6 +26,9 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
     useState<boolean>(false);
   const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
+  const { idProceso } = orderData?.procesos.find(
+    (proceso) => proceso.id === idProcesoDesarrollo
+  );
 
   const {
     data: reporteDeImpresion,
@@ -58,6 +62,24 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
   async function onHandleBorrarReporteImpresion(): Promise<void> {
     setShowBorrarCargaDeCantidades(false);
     await borrarReporteImpresionAsync(reporteDeImpresion?.id);
+    await actualizarPrecio({
+      emailDePrestador: "",
+      idProceso,
+      idProcesoDesarrollo,
+      precioPrendaBase: orderData?.prenda.precioBase,
+      esDeProduccion: false,
+    });
+    queryClient.invalidateQueries(["order"]);
+  }
+
+  async function onHandleCalcularPrecioProceso(): Promise<void> {
+    await actualizarPrecio({
+      emailDePrestador: "",
+      idProceso,
+      idProcesoDesarrollo,
+      precioPrendaBase: orderData?.prenda.precioBase,
+      esDeProduccion: false,
+    });
   }
 
   const columns: GridColDef[] = [
@@ -133,6 +155,7 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
             onClose={() => setShowCargaDeCantidades(false)}
             open={showCargaDeCantidades}
             reporteActual={reporteDeImpresion}
+            handleCalcularPrecioProceso={onHandleCalcularPrecioProceso}
           />
         )}
         {showBorrarCargaDeCantidades && (
