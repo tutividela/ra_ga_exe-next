@@ -21,7 +21,8 @@ const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
         ? orderData.procesosProductivos
         : orderData.procesos;
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData?.procesos]);
+  }, [selectedProcess, orderData?.procesos, orderData?.procesosProductivos]);
+
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const { data } = useSession();
   const { role } = useGetRole(data.user.email);
@@ -29,19 +30,21 @@ const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
   const handleUploadDialogOpen = () => setUploadDialogOpen(true);
   const handleUploadDialogClose = () => setUploadDialogOpen(false);
 
-  const imagenes = currProcess?.ficha?.archivos?.filter((file) =>
+  const ficha = Array.isArray(currProcess?.ficha) ? currProcess?.ficha[0] : currProcess.ficha;
+
+  const imagenes = ficha?.archivos?.filter((file) =>
     file.type.includes("image")
   );
-  const pdfs = currProcess?.ficha?.archivos?.filter((file) =>
+  const pdfs = ficha?.archivos?.filter((file) =>
     file.type.includes("pdf")
   );
-  const otros = currProcess?.ficha?.archivos?.filter(
+  const otros = ficha?.archivos?.filter(
     (file) => !file.type.includes("pdf") && !file.type.includes("image")
   );
 
   return (
     <div className="flex flex-col mt-4">
-      <div hidden={currProcess?.ficha?.archivos?.length === 0}>
+      <div hidden={ficha?.archivos?.length === 0}>
         {role !== prestadorDeServiciosRole && (
           <div>
             <Button
@@ -90,7 +93,7 @@ const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
           </div>
         )}
       </div>
-      <div hidden={currProcess?.ficha?.archivos?.length !== 0}>
+      <div hidden={ficha?.archivos?.length !== 0}>
         <div className="h-full border-2 flex justify-center items-center p-4">
           <div className="flex flex-col space-y-4 items-center">
             <div className="text-2xl">
