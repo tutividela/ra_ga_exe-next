@@ -63,7 +63,7 @@ const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
   }, [selectedProcess, orderData]);
 
   const elProcesoTieneUnCosto = [1, 2, 3, 5, 8, 9, 10, 11, 12].includes(
-    currProcess.idProceso
+    currProcess?.idProceso
   );
 
   const ultimaActualizacion =
