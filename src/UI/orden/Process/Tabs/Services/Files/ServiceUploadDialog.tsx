@@ -73,13 +73,14 @@ const ServiceUploadDialog = ({ process, open, onClose, orderData }: Props) => {
     },
   });
   const handleUploadDocuments = async (data: FichaTecnicaUploadFormData) => {
+    const fichaId = Array.isArray(process.ficha) ? process.ficha[0].id : process.ficha.id;
     if (data?.files?.length > 0) {
       const uploadedFiles = await (await handleUploadFile(data.files)).data;
       Array.isArray(uploadedFiles)
         ? uploadedFiles.forEach((file) => updateFileURL(data, file))
         : updateFileURL(data, uploadedFiles);
     }
-    await updateFicha({ data, fichaID: process.ficha.id });
+    await updateFicha({ data, fichaID: fichaId });
   };
 
   const handleUploadFile = async (
