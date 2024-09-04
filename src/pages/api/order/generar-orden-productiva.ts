@@ -69,7 +69,7 @@ const updateOrderFields = async (req: NextApiRequest, res: NextApiResponse) => {
     await sendEmail({
       html: nuevaOrdenProductiva({
         name: usuario.nombre,
-        orderId: ordenCreada.id,
+        orderId: idOrden,
       }),
       to: usuario.email,
       subject: "Orden productiva creada",
