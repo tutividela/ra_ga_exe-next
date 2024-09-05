@@ -17,18 +17,30 @@ import { ReporteDeCorteMuestra } from "./Tabs/Services/Reportes/Procesos/Reporte
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   selectedProcess: string;
   rol: string;
 };
 
 const OrderProcessContentService = ({
   orderData,
+  idEstadoOrdenAPrevisualizar,
   selectedProcess,
   rol,
 }: Props) => {
   const [value, setValue] = useState(0);
   const [slide, setSlide] = useState(true);
   const { idProceso } = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+
+      return procesosABuscar.find(
+        (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+      );
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
@@ -39,6 +51,16 @@ const OrderProcessContentService = ({
     );
   }, [selectedProcess]);
   const tieneReportes = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+      const proceso = procesosABuscar.find(
+        (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+      );
+      return ![4, 7].includes(proceso.idProceso);
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos

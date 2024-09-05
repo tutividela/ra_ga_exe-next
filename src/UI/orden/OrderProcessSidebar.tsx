@@ -6,6 +6,7 @@ import { useMemo } from "react";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   ordenFrenada: boolean;
   selectedProcess: string;
   role: string;
@@ -14,6 +15,7 @@ type Props = {
 
 const OrderProcessSidebar = ({
   orderData,
+  idEstadoOrdenAPrevisualizar,
   ordenFrenada,
   role,
   selectedProcess,
@@ -36,6 +38,7 @@ const OrderProcessSidebar = ({
     () => orderData.idEstado === 3,
     [orderData]
   );
+  const seQuierePrevisualizarLosProcesos = idEstadoOrdenAPrevisualizar !== 0;
 
   function validarHabilitacionCambioEstado(idProceso: number): boolean {
     if (idProceso === 1) {
@@ -115,6 +118,7 @@ const OrderProcessSidebar = ({
           </div>
           <div className="flex flex-col max-h-screen overflow-y-auto">
             {!laOrdenEstaEnProduccion &&
+              !seQuierePrevisualizarLosProcesos &&
               orderData.procesos
                 .sort(
                   (procesoAnterior, procesoPosterior) =>
@@ -152,6 +156,7 @@ const OrderProcessSidebar = ({
                   />
                 ))}
             {laOrdenEstaEnProduccion &&
+              !seQuierePrevisualizarLosProcesos &&
               orderData.procesosProductivos
                 .sort(
                   (procesoAnterior, procesoPosterior) =>
@@ -189,6 +194,80 @@ const OrderProcessSidebar = ({
                     cantidad={orderData.ordenProductiva.cantidad}
                   />
                 ))}
+            {seQuierePrevisualizarLosProcesos &&
+              (idEstadoOrdenAPrevisualizar === 3
+                ? orderData.procesosProductivos
+                    .sort(
+                      (procesoAnterior, procesoPosterior) =>
+                        procesoAnterior.idProceso - procesoPosterior.idProceso
+                    )
+                    .filter((proceso) => {
+                      if (role === clienteRole)
+                        return proceso.estado !== "No Pedido";
+                      if (role === prestadorDeServiciosRole)
+                        return proceso.recursos.some(
+                          (el) => el.key === data.user.email
+                        );
+                      return true;
+                    })
+                    .map((proceso, index) => (
+                      <SelectableOrderProcessItem
+                        key={proceso.id}
+                        proceso={{
+                          ...proceso,
+                          idOrden: orderData?.id,
+                          esDeDesarollo: proceso.esDeDesarrollo,
+                          esDeProduccion: proceso.esDeProduccion,
+                          esExterno: proceso.esExterno,
+                        }}
+                        role={role || "Cliente"}
+                        onSelect={onSelect}
+                        selected={selectedProcess === proceso.id}
+                        habilitarCambioEstado={
+                          index > 0
+                            ? validarHabilitacionCambioEstado(proceso.idProceso)
+                            : true || false
+                        }
+                        prenda={orderData?.prenda}
+                        esProductiva={laOrdenEstaEnProduccion}
+                      />
+                    ))
+                : orderData.procesos
+                    .sort(
+                      (procesoAnterior, procesoPosterior) =>
+                        procesoAnterior.idProceso - procesoPosterior.idProceso
+                    )
+                    .filter((proceso) => {
+                      if (role === clienteRole)
+                        return proceso.estado !== "No Pedido";
+                      if (role === prestadorDeServiciosRole)
+                        return proceso.recursos.some(
+                          (el) => el.key === data.user.email
+                        );
+                      return true;
+                    })
+                    .map((proceso, index) => (
+                      <SelectableOrderProcessItem
+                        key={proceso.id}
+                        proceso={{
+                          ...proceso,
+                          idOrden: orderData?.id,
+                          esDeDesarollo: proceso.esDeDesarrollo,
+                          esDeProduccion: proceso.esDeProduccion,
+                          esExterno: proceso.esExterno,
+                        }}
+                        role={role || "Cliente"}
+                        onSelect={onSelect}
+                        selected={selectedProcess === proceso.id}
+                        habilitarCambioEstado={
+                          index > 0
+                            ? validarHabilitacionCambioEstado(proceso.idProceso)
+                            : true || false
+                        }
+                        prenda={orderData?.prenda}
+                        esProductiva={laOrdenEstaEnProduccion}
+                      />
+                    )))}
           </div>
         </>
       )}

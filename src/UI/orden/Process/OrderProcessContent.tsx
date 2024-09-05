@@ -5,6 +5,7 @@ import OrderProcessContentService from "./OrderProcessContentService";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   ordenFrenada: boolean;
   selectedProcess: string;
   rol: string;
@@ -12,6 +13,7 @@ type Props = {
 
 const OrderProcessContent = ({
   orderData,
+  idEstadoOrdenAPrevisualizar,
   selectedProcess,
   rol,
   ordenFrenada,
@@ -24,6 +26,8 @@ const OrderProcessContent = ({
 
     return procesosABuscar.find((el) => el.id === selectedProcess);
   }, [selectedProcess, orderData]);
+
+  const seQuierePrevisualizarLosProcesos = idEstadoOrdenAPrevisualizar !== 0;
 
   return (
     <>
@@ -42,6 +46,7 @@ const OrderProcessContent = ({
       {selectedProcess !== "general" && !ordenFrenada && (
         <OrderProcessContentService
           orderData={orderData}
+          idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
           selectedProcess={selectedProcess}
           rol={rol}
         />

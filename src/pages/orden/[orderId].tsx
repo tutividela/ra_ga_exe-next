@@ -1,6 +1,12 @@
 import { verifyUserOrder } from "@backend/dbcalls/order";
 import { obtainRole } from "@backend/dbcalls/user";
-import { Button, Slide } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Slide,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Session } from "@prisma/client";
 import Footer from "@UI/Generic/Footer";
 import HeaderBar from "@UI/Generic/HeaderBar";
@@ -20,7 +26,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import { generarMensajePorEstado } from "@utils/Order/generarMensajePorEstado";
@@ -31,6 +37,21 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
     useState<boolean>(false);
   const { query } = useRouter();
   const { orderId: id } = query;
+
+  const estadosDeOrden = [
+    {
+      label: "Del estado actual",
+      id: 0,
+    },
+    {
+      label: "Diseño/Desarrollo",
+      id: 9,
+    },
+    {
+      label: "Produccion",
+      id: 3,
+    },
+  ];
 
   const fetchOrder = (): Promise<ExtendedOrdenData> =>
     fetch(`/api/order/obtain`, {
@@ -69,9 +90,12 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   );
 
   const [selectedProcess, setSelectedProcess] = useState("general");
+  const [etapaDeOrden, setEtapaDeOrden] = useState(estadosDeOrden[0]);
   const handleSelectProcess = (processID: string) => {
     setSelectedProcess(processID);
   };
+
+  useEffect(() => setSelectedProcess("general"), [etapaDeOrden]);
 
   return (
     <div className="bg-split-white-black">
@@ -96,20 +120,43 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                 {orderData?.id && (
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
-                    {laOrdenDeDesarrolloFueFinalizada &&
-                      !laOrdenEstaFrenada &&
-                      [adminRole, clienteRole, ayudanteRole].includes(role) && (
-                        <div className="ml-4 pl-4">
-                          <Button
-                            variant="outlined"
-                            onClick={() => setSeGeneraOrdenProductiva(true)}
-                            disabled={orderData?.idEstado === 3}
-                            endIcon={<UpgradeIcon />}
-                          >
-                            Pedir una produccion
-                          </Button>
-                        </div>
-                      )}
+                    <div className="flex flex-row">
+                      <div className="ml-4 pl-4">
+                        <Autocomplete
+                          className="w-60"
+                          disableClearable={true}
+                          options={estadosDeOrden}
+                          onInputChange={(_, etapaNueva) => {
+                            const etapa = estadosDeOrden.find(
+                              (estadoOrden) => estadoOrden.label === etapaNueva
+                            );
+                            setEtapaDeOrden(etapa);
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Ver procesos por etapa"
+                            />
+                          )}
+                        />
+                      </div>
+                      {laOrdenDeDesarrolloFueFinalizada &&
+                        !laOrdenEstaFrenada &&
+                        [adminRole, clienteRole, ayudanteRole].includes(
+                          role
+                        ) && (
+                          <div className="ml-4 pl-4">
+                            <Button
+                              variant="outlined"
+                              onClick={() => setSeGeneraOrdenProductiva(true)}
+                              disabled={orderData?.idEstado === 3}
+                              endIcon={<UpgradeIcon />}
+                            >
+                              Pedir una produccion
+                            </Button>
+                          </div>
+                        )}
+                    </div>
                     {seGeneraOrenProductiva && (
                       <GenerarOrdenProductivaDialog
                         idOrden={orderData.id}
@@ -131,6 +178,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       <div className="w-full md:w-1/3">
                         <OrderProcessSidebar
                           orderData={orderData}
+                          idEstadoOrdenAPrevisualizar={etapaDeOrden.id}
                           ordenFrenada={laOrdenEstaFrenada}
                           onSelect={handleSelectProcess}
                           role={role}
@@ -140,6 +188,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       <div className="hidden md:w-2/3 m-6 p-4 md:flex flex-col items-center ">
                         <OrderProcessContent
                           orderData={orderData}
+                          idEstadoOrdenAPrevisualizar={etapaDeOrden.id}
                           ordenFrenada={laOrdenEstaFrenada}
                           selectedProcess={selectedProcess}
                           rol={role}
