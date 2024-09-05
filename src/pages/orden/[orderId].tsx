@@ -1,12 +1,6 @@
 import { verifyUserOrder } from "@backend/dbcalls/order";
 import { obtainRole } from "@backend/dbcalls/user";
-import {
-  Autocomplete,
-  Button,
-  Slide,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, Button, Slide, TextField } from "@mui/material";
 import { Session } from "@prisma/client";
 import Footer from "@UI/Generic/Footer";
 import HeaderBar from "@UI/Generic/HeaderBar";
@@ -40,7 +34,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
 
   const estadosDeOrden = [
     {
-      label: "Del estado actual",
+      label: "Estado actual",
       id: 0,
     },
     {
@@ -89,6 +83,9 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
     [orderData?.procesos]
   );
 
+  const sePuedePrevisualizarLosProcesosDesarrollo =
+    (orderData?.idEstado === 3 && [adminRole].includes(role)) || false;
+
   const [selectedProcess, setSelectedProcess] = useState("general");
   const [etapaDeOrden, setEtapaDeOrden] = useState(estadosDeOrden[0]);
   const handleSelectProcess = (processID: string) => {
@@ -122,23 +119,23 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                     <OrderHeader orderData={orderData} />
                     <div className="flex flex-row">
                       <div className="ml-4 pl-4">
-                        <Autocomplete
-                          className="w-60"
-                          disableClearable={true}
-                          options={estadosDeOrden}
-                          onInputChange={(_, etapaNueva) => {
-                            const etapa = estadosDeOrden.find(
-                              (estadoOrden) => estadoOrden.label === etapaNueva
-                            );
-                            setEtapaDeOrden(etapa);
-                          }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Ver procesos por etapa"
-                            />
-                          )}
-                        />
+                        {sePuedePrevisualizarLosProcesosDesarrollo && (
+                          <Autocomplete
+                            className="w-60"
+                            disableClearable={true}
+                            options={estadosDeOrden}
+                            onInputChange={(_, etapaNueva) => {
+                              const etapa = estadosDeOrden.find(
+                                (estadoOrden) =>
+                                  estadoOrden.label === etapaNueva
+                              );
+                              setEtapaDeOrden(etapa);
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} label="Ver procesos de" />
+                            )}
+                          />
+                        )}
                       </div>
                       {laOrdenDeDesarrolloFueFinalizada &&
                         !laOrdenEstaFrenada &&

@@ -23,6 +23,17 @@ const OrderProcessSidebar = ({
 }: Props) => {
   const { data } = useSession();
   const precioTotal = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesoAUtilizar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+
+      return procesoAUtilizar
+        .filter((proceso) => proceso.idEstado === 6)
+        .map((proceso) => proceso.precioActualizado)
+        .reduce((acumulador, precio) => acumulador + precio, 0);
+    }
     const procesoAUtilizar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
@@ -32,19 +43,61 @@ const OrderProcessSidebar = ({
       .filter((proceso) => proceso.idEstado === 6)
       .map((proceso) => proceso.precioActualizado)
       .reduce((acumulador, precio) => acumulador + precio, 0);
-  }, [orderData]);
+  }, [orderData, idEstadoOrdenAPrevisualizar]);
 
   const laOrdenEstaEnProduccion = useMemo(
-    () => orderData.idEstado === 3,
+    () => orderData?.idEstado === 3,
     [orderData]
   );
   const seQuierePrevisualizarLosProcesos = idEstadoOrdenAPrevisualizar !== 0;
 
+  function renderizarTituloDeProcesos(): string {
+    if (seQuierePrevisualizarLosProcesos) {
+      return idEstadoOrdenAPrevisualizar === 3
+        ? "Producción"
+        : "Diseño/Desarrollo";
+    }
+    return laOrdenEstaEnProduccion ? "Producción" : "Diseño/Desarrollo";
+  }
+
   function validarHabilitacionCambioEstado(idProceso: number): boolean {
+    let procesosPedidosYOrdenados;
     if (idProceso === 1) {
       return true;
     }
-    const procesosPedidosYOrdenados =
+
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      procesosPedidosYOrdenados =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+              .filter((procesoProductivo) => procesoProductivo.idEstado !== 3)
+              .sort(
+                (procesoAnterior, procesoPosterior) =>
+                  procesoAnterior.idProceso - procesoPosterior.idProceso
+              )
+          : orderData.procesos
+              .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
+              .sort(
+                (procesoAnterior, procesoPosterior) =>
+                  procesoAnterior.idProceso - procesoPosterior.idProceso
+              );
+    } else {
+      procesosPedidosYOrdenados =
+        orderData.idEstado === 3
+          ? orderData.procesosProductivos
+              .filter((procesoProductivo) => procesoProductivo.idEstado !== 3)
+              .sort(
+                (procesoAnterior, procesoPosterior) =>
+                  procesoAnterior.idProceso - procesoPosterior.idProceso
+              )
+          : orderData.procesos
+              .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
+              .sort(
+                (procesoAnterior, procesoPosterior) =>
+                  procesoAnterior.idProceso - procesoPosterior.idProceso
+              );
+    }
+    /*     const procesosPedidosYOrdenados =
       orderData.idEstado === 3
         ? orderData.procesosProductivos
             .filter((procesoProductivo) => procesoProductivo.idEstado !== 3)
@@ -57,7 +110,7 @@ const OrderProcessSidebar = ({
             .sort(
               (procesoAnterior, procesoPosterior) =>
                 procesoAnterior.idProceso - procesoPosterior.idProceso
-            );
+            ); */
 
     const posicionEnProcesosPedidosYOrdenados =
       procesosPedidosYOrdenados.findIndex(
@@ -89,7 +142,7 @@ const OrderProcessSidebar = ({
             esDeProduccion: false,
             esExterno: false,
             idProceso: -1,
-            precioActualizado: precioTotal,
+            precioActualizado: precioTotal || 0,
             ficha: {
               archivos: [],
               contenido: null,
@@ -113,8 +166,7 @@ const OrderProcessSidebar = ({
       {!ordenFrenada && (
         <>
           <div className="m-2 font-bold text-lg">
-            Procesos de{" "}
-            {orderData?.estado.id === 3 ? "Producción" : "Diseño/Desarrollo"}
+            Procesos de {renderizarTituloDeProcesos()}
           </div>
           <div className="flex flex-col max-h-screen overflow-y-auto">
             {!laOrdenEstaEnProduccion &&

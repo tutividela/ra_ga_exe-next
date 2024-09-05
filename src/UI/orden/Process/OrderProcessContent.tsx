@@ -19,15 +19,21 @@ const OrderProcessContent = ({
   ordenFrenada,
 }: Props) => {
   const currProcess = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+
+      return procesosABuscar.find((el) => el.id === selectedProcess);
+    }
     const procesosABuscar =
       orderData.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
 
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData]);
-
-  const seQuierePrevisualizarLosProcesos = idEstadoOrdenAPrevisualizar !== 0;
+  }, [selectedProcess, orderData, idEstadoOrdenAPrevisualizar]);
 
   return (
     <>
@@ -39,6 +45,7 @@ const OrderProcessContent = ({
       {selectedProcess === "general" && (
         <OrderProcessContentGeneral
           orderData={orderData}
+          idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
           selectedProcess={selectedProcess}
           rol={rol}
         />

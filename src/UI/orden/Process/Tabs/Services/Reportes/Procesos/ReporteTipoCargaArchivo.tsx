@@ -9,13 +9,23 @@ import OrderImageItem from "../../../General/Files/OrderImageItem";
 type Props = {
   idProcesoDesarrollo: string;
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
 };
 export default function ReporteDeArchivo({
   idProcesoDesarrollo,
   orderData,
+  idEstadoOrdenAPrevisualizar,
 }: Props) {
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
   const { idProceso } = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+
+      return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
+    }
     const procesosABuscar =
       orderData.idEstado === 3
         ? orderData.procesosProductivos
@@ -68,20 +78,19 @@ export default function ReporteDeArchivo({
               <div>
                 <p className="underline">Imagenes</p>
               </div>
-              {imagenes && imagenes.length > 0 ? imagenes.map((imagen) => (
-                <OrderImageItem archivo={imagen} key={imagen.id} />
-              )) : (
-                <p className="text-m font-semibold">
-                  No hay imagenes cargadas
-                </p>
-              )
-              }
+              {imagenes && imagenes.length > 0 ? (
+                imagenes.map((imagen) => (
+                  <OrderImageItem archivo={imagen} key={imagen.id} />
+                ))
+              ) : (
+                <p className="text-m font-semibold">No hay imagenes cargadas</p>
+              )}
               <div>
                 <p className="underline">{"PDF's"}</p>
               </div>
-              {pdfs && pdfs.length > 0 ? pdfs.map((pdf) => (
-                <OrderImageItem archivo={pdf} key={pdf.id} />
-              )) : (
+              {pdfs && pdfs.length > 0 ? (
+                pdfs.map((pdf) => <OrderImageItem archivo={pdf} key={pdf.id} />)
+              ) : (
                 <p className="text-m font-semibold">
                   No hay archivos PDF cargados
                 </p>
@@ -89,12 +98,12 @@ export default function ReporteDeArchivo({
               <div>
                 <p className="underline">Otros</p>
               </div>
-              {otros && otros.length > 0 ? otros.map((otro) => (
-                <OrderImageItem archivo={otro} key={otro.id} />
-              )) : (
-                <p className="text-m font-semibold">
-                  No hay archivos cargados
-                </p>
+              {otros && otros.length > 0 ? (
+                otros.map((otro) => (
+                  <OrderImageItem archivo={otro} key={otro.id} />
+                ))
+              ) : (
+                <p className="text-m font-semibold">No hay archivos cargados</p>
               )}
             </>
             <div>
