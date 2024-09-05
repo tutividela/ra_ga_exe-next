@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 import { obtenerReportesDeArchivosPorIdProcesoDesarrollo } from "@utils/queries/reportes/procesos/archivos";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import OrderImageItem from "../../../General/Files/OrderImageItem";
+import OrderDownloadItem from "../../../General/Files/OrderDownloadItem";
 type Props = {
   idProcesoDesarrollo: string;
   orderData: ExtendedOrdenData;
@@ -89,7 +90,9 @@ export default function ReporteDeArchivo({
                 <p className="underline">{"PDF's"}</p>
               </div>
               {pdfs && pdfs.length > 0 ? (
-                pdfs.map((pdf) => <OrderImageItem archivo={pdf} key={pdf.id} />)
+                pdfs.map((pdf) => (
+                  <OrderDownloadItem archivo={pdf} key={pdf.id} />
+                ))
               ) : (
                 <p className="text-m font-semibold">
                   No hay archivos PDF cargados
@@ -100,7 +103,7 @@ export default function ReporteDeArchivo({
               </div>
               {otros && otros.length > 0 ? (
                 otros.map((otro) => (
-                  <OrderImageItem archivo={otro} key={otro.id} />
+                  <OrderDownloadItem archivo={otro} key={otro.id} />
                 ))
               ) : (
                 <p className="text-m font-semibold">No hay archivos cargados</p>
