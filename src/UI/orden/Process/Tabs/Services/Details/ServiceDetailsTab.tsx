@@ -7,6 +7,7 @@ import { useMemo } from "react";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   selectedProcess: string;
 };
 
@@ -50,17 +51,28 @@ const DetailsListElement = ({
     </div>
   );
 };
-const ServiceDetailsTab = ({ orderData, selectedProcess }: Props) => {
+const ServiceDetailsTab = ({
+  orderData,
+  idEstadoOrdenAPrevisualizar,
+  selectedProcess,
+}: Props) => {
   const { data } = useSession();
   const { role } = useGetRole(data?.user?.email);
 
   const currProcess = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+      return procesosABuscar.find((el) => el.id === selectedProcess);
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData]);
+  }, [selectedProcess, orderData, idEstadoOrdenAPrevisualizar]);
 
   const elProcesoTieneUnCosto = [1, 2, 3, 5, 8, 9, 10, 11, 12].includes(
     currProcess?.idProceso
