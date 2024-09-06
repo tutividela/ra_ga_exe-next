@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import { ErrorHandlerContext } from "@utils/ErrorHandler/error";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { obtenerReporteDiseñoPorProcesoDesarrollo } from "@utils/queries/reportes/procesos/diseño";
@@ -24,6 +25,16 @@ export default function ReporteDeDisenio({ idProcesoDesarrollo }: Props) {
       }
     );
 
+  function descargarReporteDisenio(comentario: string): void {
+    const anchorComponent = document.createElement("a");
+    const blob = new Blob([comentario], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    anchorComponent.href = url;
+    anchorComponent.download = `Reporte_Diseño.txt`;
+    anchorComponent.click();
+  }
+
   return (
     <LoadingIndicator variant="blocking" show={seEstaBuscandoReporteDeDiseño}>
       <div className="m-4 text-gray-700 text-xl font-semibold">Resumen</div>
@@ -38,13 +49,23 @@ export default function ReporteDeDisenio({ idProcesoDesarrollo }: Props) {
             No hay reporte de diseño, carga uno!
           </p>
         )}
-        <Button
-          variant="outlined"
-          className="mr-4 text-xs w-1/5 self-center"
-          onClick={() => setShowCargaReporte(true)}
-        >
-          {reporteDeDiseño ? "Editar reporte" : "Cargar reporte"}
-        </Button>
+        <div className="flex flex-row justify-center">
+          <Button
+            variant="outlined"
+            className="mr-4 text-xs w-1/5 self-center"
+            onClick={() => setShowCargaReporte(true)}
+          >
+            {reporteDeDiseño ? "Editar reporte" : "Cargar reporte"}
+          </Button>
+          {reporteDeDiseño?.comentario && <Button
+            variant="outlined"
+            className="mr-4 text-xs w-1/5 self-center"
+            onClick={() => descargarReporteDisenio(reporteDeDiseño?.comentario)}
+            endIcon={<DownloadIcon />}
+          >
+            Descargar
+          </Button>}
+        </div>
       </div>
 
       {showCargaReporte && (

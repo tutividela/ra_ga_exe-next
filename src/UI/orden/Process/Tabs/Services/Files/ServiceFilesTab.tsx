@@ -11,17 +11,34 @@ import ServiceUploadDialog from "./ServiceUploadDialog";
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   selectedProcess: string;
 };
 
-const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
+const ServiceFilesTab = ({
+  orderData,
+  idEstadoOrdenAPrevisualizar,
+  selectedProcess,
+}: Props) => {
   const currProcess = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+      return procesosABuscar.find((el) => el.id === selectedProcess);
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
     return procesosABuscar.find((el) => el.id === selectedProcess);
-  }, [selectedProcess, orderData?.procesos, orderData?.procesosProductivos]);
+  }, [
+    selectedProcess,
+    orderData?.procesos,
+    orderData?.procesosProductivos,
+    idEstadoOrdenAPrevisualizar,
+  ]);
 
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const { data } = useSession();
@@ -30,14 +47,14 @@ const ServiceFilesTab = ({ orderData, selectedProcess }: Props) => {
   const handleUploadDialogOpen = () => setUploadDialogOpen(true);
   const handleUploadDialogClose = () => setUploadDialogOpen(false);
 
-  const ficha = Array.isArray(currProcess?.ficha) ? currProcess?.ficha[0] : currProcess.ficha;
+  const ficha = Array.isArray(currProcess?.ficha)
+    ? currProcess?.ficha[0]
+    : currProcess?.ficha;
 
   const imagenes = ficha?.archivos?.filter((file) =>
     file.type.includes("image")
   );
-  const pdfs = ficha?.archivos?.filter((file) =>
-    file.type.includes("pdf")
-  );
+  const pdfs = ficha?.archivos?.filter((file) => file.type.includes("pdf"));
   const otros = ficha?.archivos?.filter(
     (file) => !file.type.includes("pdf") && !file.type.includes("image")
   );

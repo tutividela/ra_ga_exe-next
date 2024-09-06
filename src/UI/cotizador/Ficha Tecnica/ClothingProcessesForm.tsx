@@ -23,6 +23,9 @@ const ClothingProcessesForm = () => {
   const valorDeProcesoDesarrolloFichaTecnica = watch(
     "procesosDesarrolloSeleccionados.Geometral.selected"
   );
+  const valorDeProcesoDesarrolloTizado = watch(
+    "procesosDesarrolloSeleccionados.Tizado.selected"
+  );
 
   function corregirSwitchesPorProcesoFichaTecnica(): void {
     if (valorDeProcesoDesarrolloImpresion) {
@@ -30,12 +33,19 @@ const ClothingProcessesForm = () => {
     }
   }
   function corregirSwitchesPorProcesoImpresion(): void {
-    if (valorDeProcesoDesarrolloMateriales) {
+    if (valorDeProcesoDesarrolloMateriales || valorDeProcesoDesarrolloTizado) {
       setValue("procesosDesarrolloSeleccionados.Materiales.selected", false);
+      setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
     }
   }
   function corregirSwitchesPorProcesoMateriales(): void {
     if (valorDeProcesoDesarrolloCorte) {
+      setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
+      setValue("procesosDesarrolloSeleccionados.Corte.selected", false);
+    }
+  }
+  function corregirSwitchesPorProcesoCorte(): void {
+    if ((!valorDeProcesoDesarrolloTizado) && valorDeProcesoDesarrolloCorte) {
       setValue("procesosDesarrolloSeleccionados.Corte.selected", false);
     }
   }
@@ -57,8 +67,10 @@ const ClothingProcessesForm = () => {
     corregirSwitchesPorProcesoFichaTecnica();
   }, [valorDeProcesoDesarrolloFichaTecnica]);
   useEffect(() => {
+    corregirSwitchesPorProcesoCorte();
+  }, [valorDeProcesoDesarrolloTizado])
+  useEffect(() => {
     setValue("procesosDesarrolloSeleccionados.Pre-confección.selected", false);
-    setValue("procesosDesarrolloSeleccionados.Tizado.selected", false);
     setValue("procesosDesarrolloSeleccionados.Confección.selected", false);
     setValue("procesosDesarrolloSeleccionados.Terminado.selected", false);
   }, [valorDeProcesoDesarrolloCorte]);

@@ -12,12 +12,14 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   selectedProcess: string;
   rol: string;
 };
 
 const OrderProcessContentGeneral = ({
   orderData,
+  idEstadoOrdenAPrevisualizar,
   selectedProcess,
   rol,
 }: Props) => {
@@ -31,9 +33,18 @@ const OrderProcessContentGeneral = ({
     setSlide(false);
     setValue(0);
     setTimeout(() => setSlide(true), 200);
-  }, [selectedProcess]);
+  }, [selectedProcess, idEstadoOrdenAPrevisualizar]);
 
   function validarFinalizacionDeOrden(): boolean {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosAEvaluar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+      return procesosAEvaluar
+        .filter((procesoDesarrollo) => procesoDesarrollo.idEstado !== 3)
+        .every((procesoDesarrollo) => procesoDesarrollo.idEstado === 6);
+    }
     const procesosAEvaluar =
       orderData.idEstado === 3
         ? orderData.procesosProductivos
@@ -45,11 +56,26 @@ const OrderProcessContentGeneral = ({
 
   const todosLosProcesosEstanFinalizados = useMemo(
     () => validarFinalizacionDeOrden(),
-    [orderData?.procesos, orderData?.procesosProductivos]
+    [
+      orderData?.procesos,
+      orderData?.procesosProductivos,
+      idEstadoOrdenAPrevisualizar,
+    ]
   );
 
-  const precioTotal =
-    orderData.idEstado === 3
+  const precioTotal = (): number => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      return idEstadoOrdenAPrevisualizar === 3
+        ? orderData.procesosProductivos
+            .filter((proceso) => proceso.idEstado === 6)
+            .map((proceso) => proceso.precioActualizado)
+            .reduce((acumulador, precio) => acumulador + precio, 0)
+        : orderData.procesos
+            .filter((proceso) => proceso.idEstado === 6)
+            .map((proceso) => proceso.precioActualizado)
+            .reduce((acumulador, precio) => acumulador + precio, 0);
+    }
+    return orderData.idEstado === 3
       ? orderData.procesosProductivos
           .filter((proceso) => proceso.idEstado === 6)
           .map((proceso) => proceso.precioActualizado)
@@ -58,6 +84,7 @@ const OrderProcessContentGeneral = ({
           .filter((proceso) => proceso.idEstado === 6)
           .map((proceso) => proceso.precioActualizado)
           .reduce((acumulador, precio) => acumulador + precio, 0);
+  };
 
   return (
     <Slide direction="up" in={slide}>
@@ -80,7 +107,7 @@ const OrderProcessContentGeneral = ({
             <div hidden={value !== 0} className="w-full">
               <OrderDetailsTab
                 orderData={orderData}
-                precioDesarrolloTotal={precioTotal}
+                precioDesarrolloTotal={precioTotal()}
               />
             </div>
             <div hidden={value !== 1} className="w-full">
@@ -94,7 +121,10 @@ const OrderProcessContentGeneral = ({
             </div>
             {todosLosProcesosEstanFinalizados && (
               <div hidden={value !== 3} className="w-full">
-                <ServiceReportesTiempoTab orderData={orderData} />
+                <ServiceReportesTiempoTab
+                  orderData={orderData}
+                  idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
+                />
               </div>
             )}
           </div>

@@ -138,8 +138,8 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
     {
       type: "Switch",
       className: "mt-2",
-      scope: "procesosDesarrolloSeleccionados.Corte.selected",
-      label: "Corte Muestra",
+      scope: "procesosDesarrolloSeleccionados.Tizado.selected",
+      label: "Tizado",
       options: {
         labelPlacement: "end",
       },
@@ -174,8 +174,8 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
     {
       type: "Switch",
       className: "mt-2",
-      scope: "procesosDesarrolloSeleccionados.Tizado.selected",
-      label: "Tizado",
+      scope: "procesosDesarrolloSeleccionados.Corte.selected",
+      label: "Corte Muestra",
       options: {
         labelPlacement: "end",
       },
@@ -203,6 +203,10 @@ export const clothingProcessesLayout: LayoutElement<OrderCreationData> = {
         },
         {
           scope: "procesosDesarrolloSeleccionados.Materiales.selected",
+          type: "validate",
+        },
+        {
+          scope: "procesosDesarrolloSeleccionados.Tizado.selected",
           type: "validate",
         },
       ],

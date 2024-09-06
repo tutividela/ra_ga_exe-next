@@ -17,28 +17,55 @@ import { ReporteDeCorteMuestra } from "./Tabs/Services/Reportes/Procesos/Reporte
 
 type Props = {
   orderData: ExtendedOrdenData;
+  idEstadoOrdenAPrevisualizar?: number;
   selectedProcess: string;
   rol: string;
 };
 
 const OrderProcessContentService = ({
   orderData,
+  idEstadoOrdenAPrevisualizar,
   selectedProcess,
   rol,
 }: Props) => {
   const [value, setValue] = useState(0);
   const [slide, setSlide] = useState(true);
+
   const { idProceso } = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+
+      return (
+        procesosABuscar.find(
+          (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+        ) || { idProceso: undefined }
+      );
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
         : orderData.procesos;
 
-    return procesosABuscar.find(
-      (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+    return (
+      procesosABuscar.find(
+        (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+      ) || { idProceso: undefined }
     );
-  }, [selectedProcess]);
+  }, [selectedProcess, idEstadoOrdenAPrevisualizar]);
   const tieneReportes = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData.procesosProductivos
+          : orderData.procesos;
+      const proceso = procesosABuscar.find(
+        (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
+      );
+      return ![4, 7].includes(proceso?.idProceso) || false;
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
@@ -46,18 +73,26 @@ const OrderProcessContentService = ({
     const proceso = procesosABuscar.find(
       (procesoDesarrollo) => procesoDesarrollo.id === selectedProcess
     );
-    return ![4, 7].includes(proceso.idProceso);
-  }, [selectedProcess]);
+    return ![4, 7].includes(proceso?.idProceso) || false;
+  }, [selectedProcess, idEstadoOrdenAPrevisualizar]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
+  const elUsuarioNoEsCliente = [
+    adminRole,
+    ayudanteRole,
+    prestadorDeServiciosRole,
+  ].includes(rol);
+  const laOrdenEstaEnProduccion = orderData?.idEstado === 3 || false;
+  const seQuierePrevisualizarElDesarrollo = idEstadoOrdenAPrevisualizar === 9;
+
   useEffect(() => {
     setSlide(false);
     setValue(0);
     setTimeout(() => setSlide(true), 200);
-  }, [selectedProcess]);
+  }, [selectedProcess, idEstadoOrdenAPrevisualizar]);
 
   return (
     <Slide direction="up" in={slide}>
@@ -78,12 +113,14 @@ const OrderProcessContentService = ({
             <div hidden={value !== 0} className="w-full">
               <ServiceDetailsTab
                 orderData={orderData}
+                idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
                 selectedProcess={selectedProcess}
               />
             </div>
             <div hidden={value !== 1} className="w-full">
               <ServiceFilesTab
                 orderData={orderData}
+                idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
                 selectedProcess={selectedProcess}
               />
             </div>
@@ -93,18 +130,21 @@ const OrderProcessContentService = ({
                 selectedProcess={selectedProcess}
               />
             </div>
-            {orderData?.idEstado === 3 && (
-              <div hidden={value !== 3} className="w-full">
-                <ReporteDeArchivo
-                  idProcesoDesarrollo={selectedProcess}
-                  orderData={orderData}
-                />
-              </div>
-            )}
-            {[adminRole, ayudanteRole, prestadorDeServiciosRole].includes(
-              rol
-            ) &&
-              orderData?.idEstado !== 3 &&
+            {laOrdenEstaEnProduccion &&
+              !seQuierePrevisualizarElDesarrollo &&
+              elUsuarioNoEsCliente &&
+              idProceso && (
+                <div hidden={value !== 3} className="w-full">
+                  <ReporteDeArchivo
+                    idProcesoDesarrollo={selectedProcess}
+                    idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
+                    orderData={orderData}
+                  />
+                </div>
+              )}
+            {elUsuarioNoEsCliente &&
+              (!laOrdenEstaEnProduccion || seQuierePrevisualizarElDesarrollo) &&
+              idProceso &&
               tieneReportes && (
                 <div hidden={value !== 3} className="w-full">
                   {[1].includes(idProceso) && (
@@ -114,6 +154,7 @@ const OrderProcessContentService = ({
                     <ReporteDeArchivo
                       idProcesoDesarrollo={selectedProcess}
                       orderData={orderData}
+                      idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
                     />
                   )}
                   {[3].includes(idProceso) && (
