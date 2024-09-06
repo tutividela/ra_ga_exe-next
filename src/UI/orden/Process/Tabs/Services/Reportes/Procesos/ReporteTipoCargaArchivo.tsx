@@ -35,7 +35,7 @@ export default function ReporteDeArchivo({
     return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
   }, [idProcesoDesarrollo, orderData]);
   const laOrdenEstaEnProduccion = useMemo(
-    () => orderData?.idEstado === 3,
+    () => (orderData?.idEstado === 3 && [0, 3].includes(idEstadoOrdenAPrevisualizar)),
     [orderData]
   );
 

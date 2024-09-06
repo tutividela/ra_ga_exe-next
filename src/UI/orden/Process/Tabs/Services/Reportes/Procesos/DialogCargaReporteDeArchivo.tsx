@@ -131,7 +131,7 @@ export default function DialogCargaReporteDeArchivo({
                     fileSection: "fichaFiles.files",
                     multifile: true,
                     helperText:
-                      "Inserte archivos correspondientes a imágenes, diseños, dibujos o bocetos de la prenda",
+                      `Inserte archivos de reporte para el proceso ${currProcess?.proceso}`,
                   },
                 }}
               />

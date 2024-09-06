@@ -57,14 +57,14 @@ export default function ReporteDeDisenio({ idProcesoDesarrollo }: Props) {
           >
             {reporteDeDiseño ? "Editar reporte" : "Cargar reporte"}
           </Button>
-          <Button
+          {reporteDeDiseño?.comentario && <Button
             variant="outlined"
             className="mr-4 text-xs w-1/5 self-center"
             onClick={() => descargarReporteDisenio(reporteDeDiseño?.comentario)}
             endIcon={<DownloadIcon />}
           >
             Descargar
-          </Button>
+          </Button>}
         </div>
       </div>
 

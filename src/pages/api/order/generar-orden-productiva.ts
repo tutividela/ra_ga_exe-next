@@ -34,7 +34,7 @@ const updateOrderFields = async (req: NextApiRequest, res: NextApiResponse) => {
     const procesos = procesosDesarrollosDeProduccion.map(
       (procesoDesarrollo) => ({
         idProceso: procesoDesarrollo.id,
-        idEstadoProceso: 1,
+        idEstadoProceso: procesoDesarrollo.id === 7 ? 2 : 1,
         idOrdenProductiva: ordenCreada.id,
       })
     );
