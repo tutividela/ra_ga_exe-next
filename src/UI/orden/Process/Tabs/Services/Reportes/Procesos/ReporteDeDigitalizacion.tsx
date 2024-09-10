@@ -29,7 +29,7 @@ export function ReporteDeDigitalizacion({
     useState<boolean>(false);
   const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
-  const { idProceso } = orderData?.procesos.find(
+  const procesoDesarrollo = orderData?.procesos.find(
     (proceso) => proceso.id === idProcesoDesarrollo
   );
 
@@ -61,7 +61,7 @@ export function ReporteDeDigitalizacion({
     await borrarReporteDigitalizacionAsync(reporteDeDigitalizacion?.id);
     await actualizarPrecio({
       emailDePrestador: "",
-      idProceso,
+      idProceso: procesoDesarrollo?.idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
       esDeProduccion: false,
@@ -72,7 +72,7 @@ export function ReporteDeDigitalizacion({
   async function onHandleCalcularPrecioProceso() {
     await actualizarPrecio({
       emailDePrestador: "",
-      idProceso,
+      idProceso: procesoDesarrollo?.idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
       esDeProduccion: false,

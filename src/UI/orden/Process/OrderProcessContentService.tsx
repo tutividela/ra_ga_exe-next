@@ -31,7 +31,7 @@ const OrderProcessContentService = ({
   const [value, setValue] = useState(0);
   const [slide, setSlide] = useState(true);
 
-  const { idProceso } = useMemo(() => {
+  const procesoDesarrollo = useMemo(() => {
     if (idEstadoOrdenAPrevisualizar !== 0) {
       const procesosABuscar =
         idEstadoOrdenAPrevisualizar === 3
@@ -133,7 +133,7 @@ const OrderProcessContentService = ({
             {laOrdenEstaEnProduccion &&
               !seQuierePrevisualizarElDesarrollo &&
               elUsuarioNoEsCliente &&
-              idProceso && (
+              procesoDesarrollo?.idProceso && (
                 <div hidden={value !== 3} className="w-full">
                   <ReporteDeArchivo
                     idProcesoDesarrollo={selectedProcess}
@@ -144,32 +144,32 @@ const OrderProcessContentService = ({
               )}
             {elUsuarioNoEsCliente &&
               (!laOrdenEstaEnProduccion || seQuierePrevisualizarElDesarrollo) &&
-              idProceso &&
+              procesoDesarrollo?.idProceso &&
               tieneReportes && (
                 <div hidden={value !== 3} className="w-full">
-                  {[1].includes(idProceso) && (
+                  {[1].includes(procesoDesarrollo?.idProceso) && (
                     <ReporteDeDisenio idProcesoDesarrollo={selectedProcess} />
                   )}
-                  {[2, 5, 8, 10, 11, 12, 13, 14, 15].includes(idProceso) && (
+                  {[2, 5, 8, 10, 11, 12, 13, 14, 15].includes(procesoDesarrollo?.idProceso) && (
                     <ReporteDeArchivo
                       idProcesoDesarrollo={selectedProcess}
                       orderData={orderData}
                       idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
                     />
                   )}
-                  {[3].includes(idProceso) && (
+                  {[3].includes(procesoDesarrollo?.idProceso) && (
                     <ReporteDeDigitalizacion
                       idProcesoDesarrollo={selectedProcess}
                       orderData={orderData}
                     />
                   )}
-                  {[6].includes(idProceso) && (
+                  {[6].includes(procesoDesarrollo?.idProceso) && (
                     <ReporteDeImpresion
                       idProcesoDesarrollo={selectedProcess}
                       orderData={orderData}
                     />
                   )}
-                  {[9].includes(idProceso) && (
+                  {[9].includes(procesoDesarrollo?.idProceso) && (
                     <ReporteDeCorteMuestra
                       idProcesoDesarrollo={selectedProcess}
                     />
