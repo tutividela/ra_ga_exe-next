@@ -146,7 +146,7 @@ function calcularPrecioPreConfeccion(
   precioDeDolar: number
 ): number {
   return parametroDeCalculo.factores
-    .map((parametrosDeFactor) => parametrosDeFactor.factorMultiplicador)
+    .map((parametrosDeFactor) => parametrosDeFactor.precioFijo)
     .reduce((acumulador, factor) => acumulador + factor * precioDeDolar, 0);
 }
 
