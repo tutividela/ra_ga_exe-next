@@ -265,7 +265,11 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
         {reporteDeCorteMuestra.length > 0 ? (
           <DataGrid
             columns={columnasReporteCorteMuestra}
-            rows={reporteDeCorteMuestra ? reporteDeCorteMuestra : []}
+            rows={reporteDeCorteMuestra ? reporteDeCorteMuestra.map((reporte) => ({
+              ...reporte,
+              esAvio: reporte.esAvio ? "Si" : "No",
+              tipoDeAvio: reporte.tipoDeAvio === "Sin Especificar" ? "N/A" : reporte.tipoDeAvio
+            })) : []}
             pageSize={5}
             className="h-96"
           />

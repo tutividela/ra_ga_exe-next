@@ -4,7 +4,7 @@ import { prisma } from "@server/db/client";
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const users = await prisma.user.findMany({
-      where: { role: { name: "Prestador de Servicios" } },
+      where: { role: { name: "Prestador de Servicios" }, available: true },
       select: {
         id: true,
         name: true,
