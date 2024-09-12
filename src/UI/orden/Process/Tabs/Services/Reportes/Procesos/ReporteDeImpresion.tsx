@@ -26,7 +26,7 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
     useState<boolean>(false);
   const [showBorrarCargaDeCantidades, setShowBorrarCargaDeCantidades] =
     useState<boolean>(false);
-  const { idProceso } = orderData?.procesos.find(
+  const procesoDesarrollo = orderData?.procesos.find(
     (proceso) => proceso.id === idProcesoDesarrollo
   );
 
@@ -64,7 +64,7 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
     await borrarReporteImpresionAsync(reporteDeImpresion?.id);
     await actualizarPrecio({
       emailDePrestador: "",
-      idProceso,
+      idProceso: procesoDesarrollo?.idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
       esDeProduccion: false,
@@ -75,7 +75,7 @@ export function ReporteDeImpresion({ idProcesoDesarrollo, orderData }: Props) {
   async function onHandleCalcularPrecioProceso(): Promise<void> {
     await actualizarPrecio({
       emailDePrestador: "",
-      idProceso,
+      idProceso: procesoDesarrollo?.idProceso,
       idProcesoDesarrollo,
       precioPrendaBase: orderData?.prenda.precioBase,
       esDeProduccion: false,

@@ -18,7 +18,7 @@ export default function ReporteDeArchivo({
   idEstadoOrdenAPrevisualizar,
 }: Props) {
   const [showCargaReporte, setShowCargaReprote] = useState<boolean>(false);
-  const { idProceso } = useMemo(() => {
+  const procesoDesarrollo = useMemo(() => {
     if (idEstadoOrdenAPrevisualizar !== 0) {
       const procesosABuscar =
         idEstadoOrdenAPrevisualizar === 3
@@ -73,7 +73,7 @@ export default function ReporteDeArchivo({
       }
     >
       <div className="h-full border-2 flex justify-center items-center p-4">
-        {idProceso && (
+        {procesoDesarrollo?.idProceso && (
           <div className="flex flex-col space-y-4 items-center">
             <>
               <div>
