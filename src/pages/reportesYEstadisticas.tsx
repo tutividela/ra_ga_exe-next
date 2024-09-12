@@ -1,5 +1,6 @@
+import LaunchIcon from "@mui/icons-material/Launch";
 import { obtainRole } from "@backend/dbcalls/user";
-import { Button, Slide } from "@mui/material";
+import { Button, Link, Slide } from "@mui/material";
 import { DataGrid, GridColumns } from "@mui/x-data-grid";
 import HeaderBar from "@UI/Generic/HeaderBar";
 import PageTitle from "@UI/Generic/Utils/PageTitle";
@@ -129,26 +130,14 @@ const Home: NextPage = () => {
         headerAlign: "center",
       },
       {
-        field: "",
-        flex: 3,
-        headerName: "Reportes",
-        renderCell: () => (
-          <div className="flex flex-row w-full justify-evenly">
-            <Button
-              variant="contained"
-              className="bg-sky-800 text-white rounded-lg"
-            >
-              Tiempos
-            </Button>
-            <Button
-              variant="contained"
-              className="bg-sky-800 text-white rounded-lg"
-            >
-              Procesos
-            </Button>
-          </div>
+        field: "link",
+        headerName: "Link",
+        renderCell: (params) => (
+          <Link href={`/orden/${params.row.id}`}>
+            <LaunchIcon />
+          </Link>
         ),
-      },
+      }
     ],
     []
   );
