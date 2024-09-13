@@ -22,6 +22,7 @@ import { FileUploadResponse } from "@pages/api/drive/uploadToFicha";
 
 type Props = {
   idProcesoDesarrolloOrden?: string;
+  idEstadoOrdenAPrevisualizar: number;
   orderData?: ExtendedOrdenData;
   open: boolean;
   onClose: () => void;
@@ -29,6 +30,7 @@ type Props = {
 
 export default function DialogCargaReporteDeArchivo({
   idProcesoDesarrolloOrden,
+  idEstadoOrdenAPrevisualizar,
   open,
   orderData,
   onClose,
@@ -36,6 +38,14 @@ export default function DialogCargaReporteDeArchivo({
   const { addError } = useContext(ErrorHandlerContext);
   const queryClient = useQueryClient();
   const currProcess = useMemo(() => {
+    if (idEstadoOrdenAPrevisualizar !== 0) {
+      const procesosABuscar =
+        idEstadoOrdenAPrevisualizar === 3
+          ? orderData?.procesosProductivos
+          : orderData?.procesos;
+
+      return procesosABuscar.find((el) => el.id === idProcesoDesarrolloOrden);
+    }
     const procesosABuscar =
       orderData?.idEstado === 3
         ? orderData.procesosProductivos
@@ -44,14 +54,16 @@ export default function DialogCargaReporteDeArchivo({
     return procesosABuscar.find((el) => el.id === idProcesoDesarrolloOrden);
   }, [
     idProcesoDesarrolloOrden,
+    idEstadoOrdenAPrevisualizar,
     orderData?.procesos,
     orderData?.procesosProductivos,
   ]);
   const folderName = orderData?.user?.name || "Sin Asignar";
 
   const laOrdenEstaEnProduccion = useMemo(
-    () => orderData?.idEstado === 3,
-    [orderData]
+    () =>
+      orderData?.idEstado === 3 && [0, 3].includes(idEstadoOrdenAPrevisualizar),
+    [orderData, idEstadoOrdenAPrevisualizar]
   );
 
   const {
@@ -91,8 +103,8 @@ export default function DialogCargaReporteDeArchivo({
       });
       Array.isArray(archivosSubidos)
         ? archivosSubidos.map((archivosSubido: FileUploadResponse) =>
-          updateFileURL(data, archivosSubido)
-        )
+            updateFileURL(data, archivosSubido)
+          )
         : updateFileURL(data, archivosSubidos);
       await cargarReporteDeArchivoAsync({
         idProcesoDesarrolloOProductivo: idProcesoDesarrolloOrden,
@@ -102,7 +114,10 @@ export default function DialogCargaReporteDeArchivo({
     } else {
       console.log("No se cargaron archivos");
     }
-    await queryClient.invalidateQueries(["reportesArchivo", idProcesoDesarrolloOrden]);
+    await queryClient.invalidateQueries([
+      "reportesArchivo",
+      idProcesoDesarrolloOrden,
+    ]);
   }
 
   return (
@@ -130,8 +145,7 @@ export default function DialogCargaReporteDeArchivo({
                   options: {
                     fileSection: "fichaFiles.files",
                     multifile: true,
-                    helperText:
-                      `Inserte archivos de reporte para el proceso ${currProcess?.proceso}`,
+                    helperText: `Inserte archivos de reporte para el proceso ${currProcess?.proceso}`,
                   },
                 }}
               />
