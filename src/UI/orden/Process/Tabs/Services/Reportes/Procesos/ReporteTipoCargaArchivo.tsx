@@ -33,10 +33,11 @@ export default function ReporteDeArchivo({
         : orderData.procesos;
 
     return procesosABuscar.find((el) => el.id === idProcesoDesarrollo);
-  }, [idProcesoDesarrollo, orderData]);
+  }, [idProcesoDesarrollo, orderData, idEstadoOrdenAPrevisualizar]);
   const laOrdenEstaEnProduccion = useMemo(
-    () => (orderData?.idEstado === 3 && [0, 3].includes(idEstadoOrdenAPrevisualizar)),
-    [orderData]
+    () =>
+      orderData?.idEstado === 3 && [0, 3].includes(idEstadoOrdenAPrevisualizar),
+    [orderData, idEstadoOrdenAPrevisualizar]
   );
 
   const {
@@ -122,6 +123,7 @@ export default function ReporteDeArchivo({
                 onClose={() => setShowCargaReprote(false)}
                 open={showCargaReporte}
                 idProcesoDesarrolloOrden={idProcesoDesarrollo}
+                idEstadoOrdenAPrevisualizar={idEstadoOrdenAPrevisualizar}
                 orderData={orderData}
               />
             )}

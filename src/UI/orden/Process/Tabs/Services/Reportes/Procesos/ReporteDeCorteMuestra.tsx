@@ -41,7 +41,7 @@ export function ReporteDeCorteMuestra({ idProcesoDesarrollo }: Props) {
 
   const {
     mutateAsync: borrarReporteCorteMuestraAsync,
-    isLoading: seEstaBorrandoReporteDigitalizacion,
+    isLoading: seEstaBorrandoReporteCorteMuestra,
   } = useMutation(borrarReporteCorteMuestraPorProcesoDesarrollo, {
     onError: () => addError("Error en la eliminacion del consumo", "error"),
     onSuccess: () => {
@@ -123,7 +123,7 @@ export function ReporteDeCorteMuestra({ idProcesoDesarrollo }: Props) {
       <LoadingIndicator
         show={
           seEstanBuscandoReportesDeCorteMuestra ||
-          seEstaBorrandoReporteDigitalizacion
+          seEstaBorrandoReporteCorteMuestra
         }
       >
         <div
