@@ -4,8 +4,9 @@
 
 - [Objetivos](#objetivos)
 - [Funcionalidad del proyecto](#funcionalidad)
-- [Complejidad](#complejidad)
-- [Flujo de ordenes](#flujo)
+  - [Roles](#roles)
+  - [Complejidad](#complejidad)
+  - [Funcionalidades por Rol](#funcionalidades-por-rol)
 
 <a name="objetivos"/>
 
@@ -23,8 +24,7 @@ Los objetivos del proyecto a desarrollar consisten en agilizar la creación de n
 prendas y mantener un seguimiento del flujo de los estados de las órdenes creadas, con la finalidad que
 los clientes dispongan de un sitio para visualizar sus órdenes y los estados en los que se encuentran.
 
-Este desarrollo web permitirá a Taller HS automatizar la parte de la cotización de prendas que
-actualmente se realiza de manera manual a través de hojas de cálculo Excel, a la vez que ahorrar tiempo
+Este desarrollo web permitirá a Taller HS facilitar la parte de la cotización de prendas y a la vez que ahorrar tiempo
 a la hora de informar al cliente el estado de sus órdenes, ya que será posible consultarlas dentro del
 portal web.
 
@@ -32,16 +32,20 @@ portal web.
 
 ## Funcionalidad del proyecto
 
-Las funcionalidades principales brindadas por la aplicación son las siguientes:
+<a name="roles"/>
 
-- Poder customizar una prenda y obtener su precio estimado en tiempo real: <p align="center"><img src='https://i.imgur.com/fq4fRg8.png'/></p>
-- Poder visualizar las ordenes y cotizaciones que un usuario cliente posee al igual que su información de usuario: <p align="center"><img src='https://i.imgur.com/Y3yuZNp.png'/></p>
-- Hay dos usuarios: Administradores y Clientes.
-- Los usuarios Administradores tienen un panel donde pueden visualizar las ordenes, usuarios y modificar precios base de los productos. <p align="center"><img src='https://i.imgur.com/4BvPnTT.png'/></p>
+### Roles
+
+En la aplicacion se tienen 4 roles de los usuarios que se registran:
+
+- **Cliente**: un usuario que puede crear ordenes y visualizarlas.
+- **Prestador de Servicio**: un usuario, que esta por fuera del HS Taller, que trabaja en las ordenes.
+- **Administrador**: un usuario con posibilidad de gestionar todas las ordenes, servicios, usuarios, reportes y estadisticas.
+- **Ayudante**: un usuario ,que forma parte de HS Taller, que trabaja en las ordenes.
 
 <a name="complejidad"/>
 
-## Complejidad
+### Complejidad
 
 Uno de los puntos más importantes a la hora de determinar el precio de las prendas a producir es poder determinar su complejidad. Según que tan compleja sea una prenda, su precio va a variar y el estimado que el cotizador arroje se verá modificado. Se establecieron seis distintas complejidades:
 
@@ -54,14 +58,31 @@ Uno de los puntos más importantes a la hora de determinar el precio de las pren
 
 Para que el cotizador pueda funcionar de manera precisa indicando el precio, es necesario que tenga en cuenta cuál es la complejidad de la prenda.
 
-<a name="flujo"/>
+<a name="funcionalidades-por-rol"/>
 
-## Flujo de ordenes
+### Funcionalidades por Rol
 
-Una vez que el cliente crea su cotización, estas estarán disponibles en su pantalla principal. En esta podrá ver un historial de sus cotizaciones, información del usuario y el botón de creación de nuevas cotizaciones.
+Se describiran las funcionalidades principales brindadas por la aplicación por rol de usuario:
 
-<p align="center"><img src='https://i.imgur.com/yJq2JX8.png'/></p>
+- **Cliente**
 
-Una vez que el cliente hace click en el botón señalado con un círculo rojo en la imagen puede visualizar su orden y ver el estado en el que se encuentra.
+  - Poder crear una orden y obtener su precio estimado para los usuarios Cliente: <p align="center"><img src='https://i.imgur.com/fq4fRg8.png'/><img src='./docs/capturas/Captura_Creacion_Orden.png'/></p>
+  - Poder visualizar las ordenes creadas: <p align="center"><img src='./docs/capturas/Captura_Tabla_Ordenes_Usuario.png'/></p>
+  - Poder editar sus propios datos: <p align="center"><img src='./docs/capturas/Captura_Editar_Datos_Usuario.png'/></p>
 
-En esta pantalla se incluirán los datos de la cotización, junto con el estado en que se encuentra.
+- **Prestador de Servicio**:
+
+  - Poder visualizar y trabajar en las ordenes en donde se le fue asignado un proceso: <p align="center"><img src='./docs/capturas/Captura_Orden_Prestador.png'/></p>
+  - Poder editar sus propios datos: <p align="center"><img src='./docs/capturas/Captura_Editar_Datos_Prestador.png'/></p>
+  - Poder editar sus propios precios de servicios: <p align="center"><img src='./docs/capturas/Captura_Editar_Precios_Prestador.png'/></p>
+
+- **Administrador**:
+
+  - Poder visualizar y trabajar en todas las ordenes creadas: <p align="center"><img src='./docs/capturas/Captura_Tabla_Ordenes_Admin.png'/></p>
+  - Poder editar sus propios precios de servicios: <p align="center"><img src='./docs/capturas/Captura_Gestionar_Precios_Admin.png'/></p>
+  - Poder editar los usuarios: <p align="center"><img src='./docs/capturas/Captura_Gestionar_Usuario_Admin.png'/></p>
+  - Poder ver los reportes y estadisticas de las ordenes: <p align="center"><img src='./docs/capturas/Captura_Ver_Reportes_Estadisticas_Admin.png'/></p>
+
+- **Ayudante**:
+  - Poder visualizar y trabajar en todas las ordenes creadas: <p align="center"><img src='./docs/capturas/Captura_Tabla_Ordenes_Ayudante.png'/><img src='./docs/capturas/Captura_Orden_Ayudante.png'/></p>
+    <a name="complejidad"/>
