@@ -55,7 +55,8 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
   const columnasReporteImpresion: GridColDef[] = [
     {
       field: "cantidadDeMetros",
-      headerName: "Cantidad de Moldes",
+      headerName: "Cantidad de Metros",
+      flex: 1,
       width: 150,
       align: "center",
     },
@@ -71,7 +72,7 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
     {
       field: "cantidad",
       headerAlign: "center",
-      headerName: "Consumo",
+      headerName: "Consumo (en Metros o Unidades)",
       width: 220,
       align: "center",
     },
@@ -126,7 +127,7 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
 
   const reporteDeImpresion =
     (reportes?.disenio.find((reporte) => reporte.idProceso === 6)
-      ?.reportesDeDigitalizacion as ReporteDeImpresion) || null;
+      ?.reportesDeImpresion as ReporteDeImpresion) || null;
 
   const reporteDeTizado = reportes?.disenio.find(
     (reporte) => reporte.idProceso === 8
@@ -265,11 +266,18 @@ export function DialogReporteDeProcesos({ open, onClose, idOrden }: Props) {
         {reporteDeCorteMuestra.length > 0 ? (
           <DataGrid
             columns={columnasReporteCorteMuestra}
-            rows={reporteDeCorteMuestra ? reporteDeCorteMuestra.map((reporte) => ({
-              ...reporte,
-              esAvio: reporte.esAvio ? "Si" : "No",
-              tipoDeAvio: reporte.tipoDeAvio === "Sin Especificar" ? "N/A" : reporte.tipoDeAvio
-            })) : []}
+            rows={
+              reporteDeCorteMuestra
+                ? reporteDeCorteMuestra.map((reporte) => ({
+                    ...reporte,
+                    esAvio: reporte.esAvio ? "Si" : "No",
+                    tipoDeAvio:
+                      reporte.tipoDeAvio === "Sin Especificar"
+                        ? "N/A"
+                        : reporte.tipoDeAvio,
+                  }))
+                : []
+            }
             pageSize={5}
             className="h-96"
           />
