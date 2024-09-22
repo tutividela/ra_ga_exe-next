@@ -7,6 +7,7 @@
   - [Roles](#roles)
   - [Complejidad](#complejidad)
   - [Funcionalidades por Rol](#funcionalidades-por-rol)
+- [Entrega: Reportes y Estadísticas](#reportes-estadisticas)
 
 <a name="objetivos"/>
 
@@ -85,4 +86,79 @@ Se describiran las funcionalidades principales brindadas por la aplicación por 
 
 - **Ayudante**:
   - Poder visualizar y trabajar en todas las ordenes creadas: <p align="center"><img src='./docs/capturas/Captura_Tabla_Ordenes_Ayudante.png'/><img src='./docs/capturas/Captura_Orden_Ayudante.png'/></p>
-    <a name="complejidad"/>
+
+
+<a name="reportes-estadisticas"/>
+
+## Entrega: Reportes y Estadísticas
+
+Para esta entrega se incorporó reportes y estadísticas a las órdenes que se trabajan en la aplicacion.
+
+El usuario con rol *Administrador* es el que va a poder gestionar los distintos reportes y estadísticas de todas las órdenes. Al ser el dueño del taller, podra ver la información que cada proceso genera mientras se trabaja en la orden.
+
+El usuario con rol *Ayudante* también podra gestionar los reportes que se guardan a la aplicacion ya que correspondera a una persona trabajando en el taller junto con el usuario *Administrador*.
+
+El usuario con rol *Prestador de Servicio* podra gestionar solamente los reportes asociados a los procesos que le fueron asignados.
+
+En la aplicación se podrá ver los reportes en la pestaña *Reporte* al ir seleccionando cada proceso en cada orden.
+<p align="center"><img src='./docs/capturas/Captura_Visualizacion_Reporte.png'/></p>
+
+
+### Reportes
+
+Los reportes, en la aplicación, están relacionadas tanto a los procesos de Diseño/Desarrollo como a los de Producción. Cada reporte sera diferente en cada proceso.
+
+#### Reporte de Diseño/Desarrollo
+
+Los reportes para Diseño/Desarrollo son:
+* Diseño: El reporte de Diseño consiste la carga de un comentario de texto explicando sobre como se llevo a cabo el diseño de la prenda.
+
+* Moldería: El reporte de Moldería consiste en la carga de un archivo PDF que es la moldería de la prenda.
+
+* Digitalización y Progresión: Los reportes de Digitalización y Progresión consisten en una carga de cantidades de moldes, avíos, taller y materiales junto con 2 archivos excel y 2 archivos PDF's.
+
+* Geometral: El reporte de Molderia consiste en la carga de 5 imagenes que forman parte del geometral de la prenda.
+
+* Impresion: El reporte de Impresion consiste en la carga de la cantidad de metros que fueron impresos de la molderia.
+
+* Tizado: El reporte de Tizado consiste en la carga de uno o varios archivos de la tizada de la prenda. Una tizada es la distribución de los moldes de la prenda en la tela, para luego hacer el corte, de forma tal de minimizar el desperdicio.
+
+* Corte: El reporte de Corte consiste en la carga de uno o varios archivos que reflejan el corte hecho de la prenda.
+
+* Pre-confección: El reporte de Pre-confección consiste en la carga de uno o varios archivos que reflejan la preconfección hecha.
+
+* Confección: El reporte de Confección consiste en la carga de uno o varios archivos que reflejan la Confección hecha.
+
+* Terminado: El reporte de Terminado consiste en la carga de uno o varios archivos que reflejan las terminaciones hechas en la prenda.
+
+* Planchado: El reporte de Planchado consiste en la carga de uno o varios archivos que reflejan el proceso hecho.
+
+* Entregado: El reporte de Entregado consiste en la carga de uno o varios archivos que reflejan el proceso hecho.
+
+#### Reporte de Producción
+
+Los reportes para Producción corresponderan, para todos los procesos correspondiente, cargas de archivos que reflejan que el proceso se ha realizado.
+
+Los procesos de Producción son:
+* Materiales
+* Tizado
+* Corte
+* Pre-confección
+* Confección
+* Terminado
+* Planchado
+* Entregado
+* Aprobado
+
+### Estadísticas
+
+Las estadísticas, en las órdenes, sera un reporte de las duraciones de cada proceso junto con un gráfico de tipo *piechart* que refleja los dichos.
+
+Esta estadística se refleja tanto en los procesos de Diseño/Desarrollo como en los procesos de Producción.
+
+La estadística se puede ver en la sección *General*, en la pestaña *Tiempos por Proceso*.
+
+<p align="center"><img src='./docs/capturas/Captura_Visualizacion_Estadistica.png'/><img src='./docs/capturas/Captura_Visualizacion_Estadistica_Grafico.png'/></p>
+
+Finalmente, el usuario con rol *Administrador* podra ver todos los reportes y estadisticas de todas las ordenes.
+<p align="center"><img src='./docs/capturas/Captura_Dashboard_Administrador.png'/><img src='./docs/capturas/Captura_Visualizacion_Todos_Reportes_Estadisticas.png'/></p>
