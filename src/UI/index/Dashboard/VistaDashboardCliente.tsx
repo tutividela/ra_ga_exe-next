@@ -46,12 +46,13 @@ const VistaDashboardCliente = (props: props) => {
     }
   );
 
-  const { data: reducedUserInfo, isLoading: isFetchingReducedUserInfo } =
+  const { data: reducedUserInfo, isFetching } =
     useQuery<ReducedUserInfoSchemaType>(
       ["reducedUserInfo", props?.emailToFetchOrders],
       () => getReducedUser(props?.emailToFetchOrders),
       {
         onError: () => addError("Error al traer información del usuario"),
+        refetchOnWindowFocus: false,
       }
     );
 
@@ -131,7 +132,7 @@ const VistaDashboardCliente = (props: props) => {
         </div>
 
         <div className="hidden lg:flex lg:flex-col p-4 lg:w-1/3 xl:w-1/4 shadow-2xl rounded-3xl bg-gray-100  mr-10">
-          <LoadingIndicator show={isFetchingReducedUserInfo}>
+          <LoadingIndicator show={isFetching}>
             <div className="text-xl my-8 flex justify-between">
               <div>Mi cuenta</div>
               <div>
@@ -148,7 +149,7 @@ const VistaDashboardCliente = (props: props) => {
               </div>
             </div>
 
-            {!isFetchingReducedUserInfo && (
+            {!isFetching && (
               <HookForm
                 defaultValues={reducedUserInfo}
                 formOptions={{ resolver: zodResolver(ReducedUserInfoSchema) }}

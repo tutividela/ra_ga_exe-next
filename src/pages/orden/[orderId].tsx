@@ -86,13 +86,23 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   const sePuedePrevisualizarLosProcesosDesarrollo =
     (orderData?.idEstado === 3 && [adminRole].includes(role)) || false;
 
+  const elUsuarioNoEsPrestador = [
+    adminRole,
+    clienteRole,
+    ayudanteRole,
+  ].includes(role);
+
   const [selectedProcess, setSelectedProcess] = useState("general");
-  const [etapaDeOrden, setEtapaDeOrden] = useState(estadosDeOrden[0]);
+  const [valor, setValor] = useState<string>(estadosDeOrden[0].label);
+  const idValor = useMemo(
+    () => estadosDeOrden.find((estado) => estado.label === valor)?.id,
+    [valor]
+  );
   const handleSelectProcess = (processID: string) => {
     setSelectedProcess(processID);
   };
 
-  useEffect(() => setSelectedProcess("general"), [etapaDeOrden]);
+  useEffect(() => setSelectedProcess("general"), [valor]);
 
   return (
     <div className="bg-split-white-black">
@@ -117,19 +127,19 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                 {orderData?.id && (
                   <OrderViewProvider orderData={orderData}>
                     <OrderHeader orderData={orderData} />
-                    <div className="flex flex-row">
-                      <div className="ml-4 pl-4">
+                    <div className="flex md:flex-row flex-col">
+                      <div className="ml-4 pl-4 mt-3">
                         {sePuedePrevisualizarLosProcesosDesarrollo && (
                           <Autocomplete
                             className="w-60"
                             disableClearable={true}
-                            options={estadosDeOrden}
-                            onInputChange={(_, etapaNueva) => {
-                              const etapa = estadosDeOrden.find(
-                                (estadoOrden) =>
-                                  estadoOrden.label === etapaNueva
-                              );
-                              setEtapaDeOrden(etapa);
+                            options={estadosDeOrden.map(
+                              (estado) => estado.label
+                            )}
+                            value={valor}
+                            inputValue={valor}
+                            onInputChange={(_, etapaElegida) => {
+                              setValor(etapaElegida);
                             }}
                             renderInput={(params) => (
                               <TextField {...params} label="Ver procesos de" />
@@ -139,10 +149,8 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       </div>
                       {laOrdenDeDesarrolloFueFinalizada &&
                         !laOrdenEstaFrenada &&
-                        [adminRole, clienteRole, ayudanteRole].includes(
-                          role
-                        ) && (
-                          <div className="ml-4 pl-4">
+                        elUsuarioNoEsPrestador && (
+                          <div className="ml-4 pl-4 mt-3">
                             <Button
                               variant="outlined"
                               onClick={() => setSeGeneraOrdenProductiva(true)}
@@ -175,7 +183,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       <div className="w-full md:w-1/3">
                         <OrderProcessSidebar
                           orderData={orderData}
-                          idEstadoOrdenAPrevisualizar={etapaDeOrden.id}
+                          idEstadoOrdenAPrevisualizar={idValor}
                           ordenFrenada={laOrdenEstaFrenada}
                           onSelect={handleSelectProcess}
                           role={role}
@@ -185,7 +193,7 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                       <div className="hidden md:w-2/3 m-6 p-4 md:flex flex-col items-center ">
                         <OrderProcessContent
                           orderData={orderData}
-                          idEstadoOrdenAPrevisualizar={etapaDeOrden.id}
+                          idEstadoOrdenAPrevisualizar={idValor}
                           ordenFrenada={laOrdenEstaFrenada}
                           selectedProcess={selectedProcess}
                           rol={role}
