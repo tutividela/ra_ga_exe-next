@@ -154,60 +154,56 @@ const UsuariosDashboard = () => {
   }
 
   return (
-    <div>
+    <div className="h-full w-full">
       <PageTitle title="Órdenes" hasBack />
       <div className="md:mt-9 flex justify-center md:justify-evenly md:mx-10 lg:mx-0">
         <div className="hidden md:flex flex-col p-4 md:w-full lg:w-2/3 xl:w-5/6 shadow-2xl rounded-3xl bg-gray-100 mx-10">
-          <div>
-            <LoadingIndicator show={isFetchingAllOrders}>
-              <div style={{ height: 510, width: "100%" }}>
-                <DataGrid
-                  rows={allOrderData || []}
-                  columns={columns || []}
-                  components={{
-                    Toolbar: CustomToolbar,
-                  }}
-                  autoPageSize
-                  disableSelectionOnClick
-                  disableColumnSelector
-                  initialState={{
-                    columns: {
-                      columnVisibilityModel: {
-                        id: true,
-                      },
+          <LoadingIndicator show={isFetchingAllOrders}>
+            <div style={{ height: 510, width: "100%" }}>
+              <DataGrid
+                rows={allOrderData || []}
+                columns={columns || []}
+                components={{
+                  Toolbar: CustomToolbar,
+                }}
+                autoPageSize={true}
+                disableSelectionOnClick
+                disableColumnSelector
+                initialState={{
+                  columns: {
+                    columnVisibilityModel: {
+                      id: true,
                     },
-                  }}
-                />
-              </div>
-            </LoadingIndicator>
-          </div>
+                  },
+                }}
+              />
+            </div>
+          </LoadingIndicator>
         </div>
+      </div>
 
-        <div className="md:hidden w-full flex-col shadow-2xl rounded-3xl bg-gray-100">
-          <div>
-            <LoadingIndicator show={isFetchingAllOrders}>
-              <div style={{ height: 510, width: "100%" }}>
-                <DataGrid
-                  rows={allOrderData || []}
-                  columns={mobileColumns || []}
-                  components={{
-                    Toolbar: CustomToolbar,
-                  }}
-                  autoPageSize
-                  disableSelectionOnClick
-                  disableColumnSelector
-                  initialState={{
-                    columns: {
-                      columnVisibilityModel: {
-                        id: true,
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </LoadingIndicator>
+      <div className="md:hidden w-full flex-col shadow-2xl rounded-3xl bg-gray-100">
+        <LoadingIndicator show={isFetchingAllOrders}>
+          <div style={{ height: 510, width: "100%" }}>
+            <DataGrid
+              rows={allOrderData || []}
+              columns={mobileColumns || []}
+              components={{
+                Toolbar: CustomToolbar,
+              }}
+              autoPageSize={true}
+              disableSelectionOnClick
+              disableColumnSelector
+              initialState={{
+                columns: {
+                  columnVisibilityModel: {
+                    id: true,
+                  },
+                },
+              }}
+            />
           </div>
-        </div>
+        </LoadingIndicator>
       </div>
     </div>
   );
