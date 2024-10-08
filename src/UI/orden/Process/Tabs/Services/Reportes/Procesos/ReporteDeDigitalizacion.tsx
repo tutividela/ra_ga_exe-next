@@ -7,7 +7,7 @@ import {
   borrarReporteDigitalizacionPorProcesoDesarrollo,
   obtenerReporteDigitalizacionPorProcesoDesarrollo,
 } from "@utils/queries/reportes/procesos/digitalizacion";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid";
 import LoadingIndicator from "@utils/LoadingIndicator/LoadingIndicator";
 import { Button } from "@mui/material";
 import { DialogCargaReporteDigitalizacion } from "./DialogCargaReporteDigitalizacion";
@@ -129,10 +129,10 @@ export function ReporteDeDigitalizacion({
         />
         <div
           style={{
-            height: 250,
+            height: 280,
             width: "100%",
             borderWidth: 2,
-            marginTop: 10,
+            marginTop: 5,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -141,9 +141,15 @@ export function ReporteDeDigitalizacion({
           {reporteDeDigitalizacion && (
             <DataGrid
               columns={columns || []}
-              rows={[reporteDeDigitalizacion] || []}
+              rows={[reporteDeDigitalizacion]}
               pageSize={1}
-              className="m-2"
+              components={{
+                Toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarExport />
+                  </GridToolbarContainer>
+                ),
+              }}
             />
           )}
           {!reporteDeDigitalizacion && (

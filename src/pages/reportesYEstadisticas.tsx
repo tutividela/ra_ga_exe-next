@@ -159,24 +159,24 @@ const Home: NextPage = () => {
             <PageTitle title="Reportes y Estadistícas" hasBack />
             <LoadingIndicator show={seEstanBuscandoLasOrdenes}>
               <div className="hidden lg:flex flex-col">
-                <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
+                <div style={{ height: 510, width: "100%" }}>
                   <DataGrid
                     rows={rows}
                     columns={columns}
-                    autoPageSize
-                    disableSelectionOnClick
-                    disableColumnSelector
+                    pageSize={7}
+                    disableSelectionOnClick={true}
+                    disableColumnSelector={true}
                   />
                 </div>
               </div>
               <div className="lg:hidden w-full flex-col">
-                <div style={{ height: 510, width: "100%", paddingTop: 30 }}>
+                <div style={{ height: 510, width: "100%" }}>
                   <DataGrid
                     rows={rows}
                     columns={mobileColumns}
-                    autoPageSize
-                    disableSelectionOnClick
-                    disableColumnSelector
+                    pageSize={7}
+                    disableSelectionOnClick={true}
+                    disableColumnSelector={true}
                   />
                 </div>
               </div>

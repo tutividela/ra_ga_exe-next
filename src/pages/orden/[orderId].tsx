@@ -1,6 +1,6 @@
 import { verifyUserOrder } from "@backend/dbcalls/order";
 import { obtainRole } from "@backend/dbcalls/user";
-import { Autocomplete, Button, Slide, TextField } from "@mui/material";
+import { Button, Slide } from "@mui/material";
 import { Session } from "@prisma/client";
 import Footer from "@UI/Generic/Footer";
 import HeaderBar from "@UI/Generic/HeaderBar";
@@ -24,6 +24,8 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import { generarMensajePorEstado } from "@utils/Order/generarMensajePorEstado";
+import HookForm from "@UI/Forms/HookForm";
+import { ProcesosPorEtapaDropdown } from "@UI/orden/ProcesosPorEtapaDropdown";
 
 const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
   const { addError } = useContext(ErrorHandlerContext);
@@ -130,21 +132,12 @@ const Home: NextPage<{ session: Session; role: string }> = ({ role }) => {
                     <div className="flex md:flex-row flex-col">
                       <div className="ml-4 pl-4 mt-3">
                         {sePuedePrevisualizarLosProcesosDesarrollo && (
-                          <Autocomplete
-                            className="w-60"
-                            disableClearable={true}
-                            options={estadosDeOrden.map(
-                              (estado) => estado.label
-                            )}
-                            value={valor}
-                            inputValue={valor}
-                            onInputChange={(_, etapaElegida) => {
-                              setValor(etapaElegida);
-                            }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="Ver procesos de" />
-                            )}
-                          />
+                          <HookForm defaultValues={{ etapa: estadosDeOrden[0].label }} onSubmit={() => console.log("submit")}>
+                            <ProcesosPorEtapaDropdown
+                              onHandleCambioEtapa={(etapa: string) => setValor(etapa)}
+                              etapas={estadosDeOrden.map((estado) => ({ key: estado.label, text: estado.label }))}
+                            />
+                          </HookForm>
                         )}
                       </div>
                       {laOrdenDeDesarrolloFueFinalizada &&

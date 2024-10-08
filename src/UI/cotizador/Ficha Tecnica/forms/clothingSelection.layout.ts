@@ -35,14 +35,5 @@ export const clothingSelectionLayout: LayoutElement<OrderCreationData> = {
         required: true,
       },
     },
-    /*     {
-      type: "Input",
-      scope: "atributosPrenda.material.observaciones",
-      width: { xs: 12, sm: 12, md: 12, lg: 6, xl: 6 },
-      label: "Material",
-      options: {
-        required: true,
-      },
-    }, */
   ],
 };
