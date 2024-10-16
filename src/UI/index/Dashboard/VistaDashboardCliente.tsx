@@ -81,7 +81,7 @@ const VistaDashboardCliente = (props: props) => {
             </Link>
           </div>
           <div className="lg:hidden rounded-2xl">
-            <Link href={"/fichaTecnicaForm"}>
+            <Link href={"/user/" + reducedUserInfo?.user.id}>
               <Button variant="outlined" startIcon={<PersonIcon />}>
                 Datos de usuario
               </Button>
